@@ -71,6 +71,8 @@ target_link_libraries(chatServer
 #     ${_GRPC_GRPCPP}
 #     ${_PROTOBUF_LIBPROTOBUF})
 
+enable_testing()
+
 add_executable(
   storageTests
   ./tests/storageTests.cc
@@ -85,4 +87,20 @@ target_link_libraries(
   ${_PROTOBUF_LIBPROTOBUF}
 )
 
-  
+add_executable(
+  storageUpdatesTests
+  ./tests/storageUpdatesTests.cc
+) 
+target_link_libraries(
+  storageUpdatesTests
+  gtest
+  gtest_main
+  cs_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF}
+)
+
+include(GoogleTest)
+gtest_add_tests(TARGET storageTests)
+gtest_add_tests(TARGET storageUpdatesTests)

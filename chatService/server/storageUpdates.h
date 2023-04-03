@@ -56,9 +56,10 @@ int logout(std::string username) {
 // Update messages dictionary
 int sendMessage(std::string sender, std::string recipient, std::string content) {
     int status = 0;
-    bool userExists = userTrie.userExists(recipient);
+    bool senderExists = userTrie.userExists(sender);
+    bool recipientExists = userTrie.userExists(recipient);
 
-    if (userExists) {
+    if (senderExists && recipientExists) {
         // Add message to messages dictionary
         UserPair userPair(sender, recipient);
         messagesDictionary[userPair].addMessage(sender, recipient, content);
@@ -88,7 +89,7 @@ int deleteAccount(std::string username) {
     try {
         userTrie.deleteUser(username);
     } catch (std::runtime_error &e) {
-        int status = 1;     // Account not deleted
+        status = 1;     // Account not deleted
     }
     userTrie_mutex.unlock();
 

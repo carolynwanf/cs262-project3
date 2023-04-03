@@ -2,6 +2,8 @@
 #include "../chatService/server/storage.h"
 #include <unordered_set>
 
+// Tests for the data structures
+
 std::vector<std::string> usernameQuery (UserTrie trie, std::string query) {
   try {
     std::vector<std::string> users = trie.returnUsersWithPrefix(query);
@@ -19,8 +21,7 @@ void dummyIncrement(int Z, ConversationsDictionary* testConversationsDictionary,
   std::cerr << "incremented\n";
 
 };
-
-void dummyDecrement(int Z, ConversationsDictionary* testConversationsDictionary, char sender[g_UsernameLimit], char recipient[g_UsernameLimit]) {
+ void dummyDecrement(int Z, ConversationsDictionary* testConversationsDictionary, char sender[g_UsernameLimit], char recipient[g_UsernameLimit]) {
   for (int i = 0; i < Z; i++) {
       testConversationsDictionary->notificationSeen(sender, recipient);
   }
