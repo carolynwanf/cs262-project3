@@ -1,5 +1,6 @@
 #include "../chatService.grpc.pb.h"
-#include "storage.h"
+#include "storageUpdates.h"
+#include <fstream>
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -20,6 +21,9 @@ using chatservice::QueryNotificationsMessage;
 using chatservice::QueryMessagesMessage;
 using chatservice::DeleteAccountMessage;
 using chatservice::MessagesSeenMessage;
+using chatservice::HeartBeatRequest;
+using chatservice::LeaderElectionProposal;
+using chatservice::CandidateValue;
 // Replies
 using chatservice::CreateAccountReply;
 using chatservice::LoginReply;
@@ -28,41 +32,43 @@ using chatservice::User;
 using chatservice::SendMessageReply;
 using chatservice::Notification;
 using chatservice::DeleteAccountReply;
-using chatservice::NewMessageReply;
+// using chatservice::NewMessageReply;
 using chatservice::RefreshRequest;
 using chatservice::RefreshResponse;
 using chatservice::MessagesSeenReply;
+using chatservice::HeartBeatResponse;
+using chatservice::LeaderElectionProposalResponse;
+using chatservice::LeaderElectionResponse;
 
 class ChatServiceImpl final : public chatservice::ChatService::Service {
     private:
         std::mutex mu_;
         // This might be where we store the conversations open per user or something
+        std::ofstream logWriter;
 
     public:
-        explicit ChatServiceImpl() {}
+        explicit ChatServiceImpl(std::string fileName) {
+            // initialize the CSV log
+            logWriter.open(fileName);
+            logWriter << csvFields << std::endl;
+        }
 
         Status CreateAccount(ServerContext* context, const CreateAccountMessage* create_account_message, 
                             CreateAccountReply* server_reply) {
             // Mutex lock, check for existing users, add user, etc.
-            if (userTrie.userExists(create_account_message->username())) {
+            std::string username = create_account_message->username();
+            std::string password = create_account_message->password();
+            int createAccountStatus = createAccount(username, password);
+
+            // Update error messages and reply based on account creation status
+            if (createAccountStatus == 1) {
                 std::string errorMsg = "Username '" + create_account_message->username() + "' already exists.";
                 server_reply->set_errormsg(errorMsg);
                 server_reply->set_createaccountsuccess(false);
             } else {
-                // Update storage with new user
-                std::string username = create_account_message->username();
-                std::string password = create_account_message->password();
-                userTrie_mutex.lock();
-                userTrie.addUsername(username, password);
-                userTrie_mutex.unlock();
-
-                activeUser_mutex.lock();
-                activeUsers.insert(username);
-                activeUser_mutex.unlock();
-
-                std::cout << "Added user " << username << std::endl;
                 server_reply->set_createaccountsuccess(true);
             }
+
             return Status::OK;
         }
 
@@ -72,15 +78,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string username = login_message->username();
             std::string password = login_message->password();
 
-            userTrie_mutex.lock();
-            bool verified = userTrie.verifyUser(username, password);
-            userTrie_mutex.unlock();
+            int loginStatus = login(username, password);
             
-            if (verified) {
+            if (loginStatus == 0) {
                 server_reply->set_loginsuccess(true);
-                activeUser_mutex.lock();
-                activeUsers.insert(username);
-                activeUser_mutex.unlock();
             } else {
                 server_reply->set_loginsuccess(false);
                 server_reply->set_errormsg("Incorrect username or password.");
@@ -91,9 +92,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status Logout(ServerContext* context, const LogoutMessage* logout_message, LogoutReply* server_reply) {
-            activeUser_mutex.lock();
-            activeUsers.erase(logout_message->username());
-            activeUser_mutex.unlock();
+            int logoutStatus = logout(logout_message->username());
             return Status::OK;
         }
 
@@ -120,32 +119,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status SendMessage(ServerContext* context, const ChatMessage* msg, SendMessageReply* server_reply) {
-            bool userExists = userTrie.userExists(msg->recipientusername());
+            int sendMessageStatus = sendMessage(msg->senderusername(), msg->recipientusername(), msg->msgcontent());
 
-            if (userExists) {
-                std::cout << "Adding message to storage from '" << msg->senderusername() << "' to '" << msg->recipientusername() << "'" << std::endl;
-                // Add message to messages dictionary
-                std::string sender = msg->senderusername();
-                std::string recipient = msg->recipientusername();
-                std::string content = msg->msgcontent();
-                UserPair userPair(sender, recipient);
-                messagesDictionary[userPair].addMessage(sender, recipient, content);
-
-                activeUser_mutex.lock();
-                if (activeUsers.find(recipient) != activeUsers.end()) {
-                    queuedOperations_mutex.lock();
-                    Notification note;
-                    note.set_user(sender);
-                    queuedOperationsDictionary[recipient].push_back(note);
-                    queuedOperations_mutex.unlock();
-                }
-                activeUser_mutex.unlock();
-
+            if (sendMessageStatus == 0) {
                 server_reply->set_messagesent(true);
             } else {
                 std::string errormsg = "Tried to send a message to a user that doesn't exist '" + msg->recipientusername() + "'";
                 server_reply->set_errormsg(errormsg);
             }
+
             return Status::OK;
         }
 
@@ -171,57 +153,33 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                             ServerWriter<ChatMessage>* writer) {
             std::cout << "Getting messages between '" << query->clientusername() << "' and '"<< query->otherusername() << "'" << std::endl;
 
-            // Get stored messages depending on if the client has the conversation open
-            UserPair userPair(query->clientusername(), query->otherusername());
-            int lastMessageDeliveredIndex = -1;
-            CurrentConversation currentConversation = currentConversationsDict[query->clientusername()];
-            if (currentConversation.username == query->otherusername()) {
-                lastMessageDeliveredIndex = currentConversation.messagesSentStartIndex;
-            } else {
-                currentConversation.username = query->otherusername();
-            }
+            std::vector<ChatMessage> queryMessagesMessageList = queryMessages(query->clientusername(), query->otherusername());
 
-            GetStoredMessagesReturnValue returnVal = messagesDictionary[userPair].getStoredMessages(query->clientusername(), lastMessageDeliveredIndex);
-
-            // Update current conversation information
-            currentConversation.messagesSentStartIndex = returnVal.firstMessageIndex;
-            currentConversation.messagesSentEndIndex = returnVal.lastMessageIndex;
-            currentConversationsDict[query->clientusername()] = currentConversation;
-
-            for (auto message : returnVal.messageList) {
+            for (auto message : queryMessagesMessageList) {
                 writer->Write(message);
             }
 
             return Status::OK;
         }
 
-        Status DeleteAccount(ServerContext* context, const DeleteAccountMessage* delete_acount_message,
+        Status DeleteAccount(ServerContext* context, const DeleteAccountMessage* delete_account_message,
                             DeleteAccountReply* server_reply) {
-            std::cout << "Deleting account of '" << delete_acount_message->username() << "'" << std::endl;
+            std::cout << "Deleting account of '" << delete_account_message->username() << "'" << std::endl;
             // Flag user account as deleted in trie
-            userTrie_mutex.lock();
-            try {
-                userTrie.deleteUser(delete_acount_message->username());
-            } catch (std::runtime_error &e) {
-                std::cout << e.what() << std::endl;
-                server_reply->set_errormsg(e.what());
-                server_reply->set_deletedaccount(false);
-                return Status::OK;
-            }
-            userTrie_mutex.unlock();
+            int deleteAccountStatus = deleteAccount(delete_account_message->username());
 
-            currentConversationsDict.erase(delete_acount_message->username());
-            server_reply->set_deletedaccount(true);
+            if (deleteAccountStatus == 1) {
+                server_reply->set_deletedaccount(false);
+            } else {
+                server_reply->set_deletedaccount(true);
+            }
+            
             return Status::OK;
         }
 
 
         Status MessagesSeen(ServerContext* context, const MessagesSeenMessage* msg, MessagesSeenReply* reply) {
-            UserPair userPair(msg->clientusername(), msg->otherusername());
-            int startIdx = currentConversationsDict[msg->clientusername()].messagesSentStartIndex;
-            // if (messagesSeenMessage.startingIndex == -1)
-            messagesDictionary[userPair].setRead(startIdx,
-                                                    startIdx+msg->messagesseen() - 1, msg->clientusername());
+            int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
 
             return Status::OK;
         }
@@ -239,4 +197,16 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
             return Status::OK;
         }
+
+        Status HeartBeat(ServerContext* context, const HeartBeatRequest* request, HeartBeatResponse* reply) {
+            isLeaderMutex.lock();
+            if (g_isLeader) {
+                return Status::OK;
+            }
+            isLeaderMutex.unlock();
+        }
+
+        // TODO: implement leader election proposal RPC
+
+        // TODO: implement leader election RPC (they basically just send their numbers)
 };

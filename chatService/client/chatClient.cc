@@ -4,11 +4,11 @@
 #include <cstring>
 
 int main (void) {
-    std::string ip_addr;
-    std::cout << "Input IP Address of Server: ";
-    std::cin >> ip_addr;
+    std::string server_addr;
+    std::cout << "Input Address of Server (IP_ADDR:PORT_NUMBER): ";
+    std::cin >> server_addr;
 
-    auto channel = grpc::CreateChannel(ip_addr, grpc::InsecureChannelCredentials());
+    auto channel = grpc::CreateChannel(server_addr, grpc::InsecureChannelCredentials());
     ChatServiceClient client(channel);
 
     // Main loop for user

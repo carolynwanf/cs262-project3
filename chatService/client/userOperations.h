@@ -35,7 +35,7 @@ using chatservice::User;
 using chatservice::SendMessageReply;
 using chatservice::Notification;
 using chatservice::DeleteAccountReply;
-using chatservice::NewMessageReply;
+// using chatservice::NewMessageReply;
 using chatservice::RefreshRequest;
 using chatservice::RefreshResponse;
 using chatservice::MessagesSeenReply;

@@ -19,6 +19,12 @@
 using chatservice::ChatMessage;
 using chatservice::Notification;
 
+std::string g_logFile = "log.csv";
+std::string csvFields = "message_type,username1,username2,password,message_content,leader";
+
+std::mutex isLeaderMutex;
+bool g_isLeader = false;
+
 struct CurrentConversation {
     std::string username;
     int messagesSentStartIndex;
@@ -26,6 +32,7 @@ struct CurrentConversation {
 };
 
 std::map<std::string, CurrentConversation> currentConversationsDict;
+std::mutex currentConversationsDictMutex;
 
 // Key: user with active conversations, Value: map from users to number of notifications they have
 struct ConversationsDictionary {

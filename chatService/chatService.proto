@@ -12,6 +12,9 @@ service ChatService {
     rpc QueryMessages(QueryMessagesMessage) returns (stream ChatMessage);
     rpc DeleteAccount(DeleteAccountMessage) returns (DeleteAccountReply);
     rpc RefreshClient(RefreshRequest) returns (RefreshResponse);
+    rpc HeartBeat(HeartBeatRequest) returns (HeartBeatResponse);
+    rpc ProposeLeaderElection(LeaderElectionProposal) returns (LeaderElectionProposalResponse);
+    rpc LeaderElection(CandidateValue) returns (LeaderElectionResponse);
 
     // May not need this anymore?
     rpc MessagesSeen(MessagesSeenMessage) returns (MessagesSeenReply);
@@ -122,4 +125,23 @@ message RefreshRequest {
 message RefreshResponse {
     bool forceLogout=1;
     repeated Notification notifications=2;
+}
+
+message HeartBeatRequest {
+}
+
+message HeartBeatResponse {
+}
+
+message LeaderElectionProposal {
+}
+
+message LeaderElectionProposalResponse {
+}
+
+message CandidateValue {
+    int32 number=1;
+}
+
+message LeaderElectionResponse {
 }

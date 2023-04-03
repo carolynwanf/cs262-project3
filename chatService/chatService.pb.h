@@ -46,6 +46,9 @@ struct TableStruct_chatService_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_chatService_2eproto;
 namespace chatservice {
+class CandidateValue;
+struct CandidateValueDefaultTypeInternal;
+extern CandidateValueDefaultTypeInternal _CandidateValue_default_instance_;
 class ChatMessage;
 struct ChatMessageDefaultTypeInternal;
 extern ChatMessageDefaultTypeInternal _ChatMessage_default_instance_;
@@ -61,6 +64,21 @@ extern DeleteAccountMessageDefaultTypeInternal _DeleteAccountMessage_default_ins
 class DeleteAccountReply;
 struct DeleteAccountReplyDefaultTypeInternal;
 extern DeleteAccountReplyDefaultTypeInternal _DeleteAccountReply_default_instance_;
+class HeartBeatRequest;
+struct HeartBeatRequestDefaultTypeInternal;
+extern HeartBeatRequestDefaultTypeInternal _HeartBeatRequest_default_instance_;
+class HeartBeatResponse;
+struct HeartBeatResponseDefaultTypeInternal;
+extern HeartBeatResponseDefaultTypeInternal _HeartBeatResponse_default_instance_;
+class LeaderElectionProposal;
+struct LeaderElectionProposalDefaultTypeInternal;
+extern LeaderElectionProposalDefaultTypeInternal _LeaderElectionProposal_default_instance_;
+class LeaderElectionProposalResponse;
+struct LeaderElectionProposalResponseDefaultTypeInternal;
+extern LeaderElectionProposalResponseDefaultTypeInternal _LeaderElectionProposalResponse_default_instance_;
+class LeaderElectionResponse;
+struct LeaderElectionResponseDefaultTypeInternal;
+extern LeaderElectionResponseDefaultTypeInternal _LeaderElectionResponse_default_instance_;
 class LoginMessage;
 struct LoginMessageDefaultTypeInternal;
 extern LoginMessageDefaultTypeInternal _LoginMessage_default_instance_;
@@ -79,9 +97,6 @@ extern MessagesSeenMessageDefaultTypeInternal _MessagesSeenMessage_default_insta
 class MessagesSeenReply;
 struct MessagesSeenReplyDefaultTypeInternal;
 extern MessagesSeenReplyDefaultTypeInternal _MessagesSeenReply_default_instance_;
-class NewMessageReply;
-struct NewMessageReplyDefaultTypeInternal;
-extern NewMessageReplyDefaultTypeInternal _NewMessageReply_default_instance_;
 class Notification;
 struct NotificationDefaultTypeInternal;
 extern NotificationDefaultTypeInternal _Notification_default_instance_;
@@ -108,18 +123,23 @@ struct UserDefaultTypeInternal;
 extern UserDefaultTypeInternal _User_default_instance_;
 }  // namespace chatservice
 PROTOBUF_NAMESPACE_OPEN
+template<> ::chatservice::CandidateValue* Arena::CreateMaybeMessage<::chatservice::CandidateValue>(Arena*);
 template<> ::chatservice::ChatMessage* Arena::CreateMaybeMessage<::chatservice::ChatMessage>(Arena*);
 template<> ::chatservice::CreateAccountMessage* Arena::CreateMaybeMessage<::chatservice::CreateAccountMessage>(Arena*);
 template<> ::chatservice::CreateAccountReply* Arena::CreateMaybeMessage<::chatservice::CreateAccountReply>(Arena*);
 template<> ::chatservice::DeleteAccountMessage* Arena::CreateMaybeMessage<::chatservice::DeleteAccountMessage>(Arena*);
 template<> ::chatservice::DeleteAccountReply* Arena::CreateMaybeMessage<::chatservice::DeleteAccountReply>(Arena*);
+template<> ::chatservice::HeartBeatRequest* Arena::CreateMaybeMessage<::chatservice::HeartBeatRequest>(Arena*);
+template<> ::chatservice::HeartBeatResponse* Arena::CreateMaybeMessage<::chatservice::HeartBeatResponse>(Arena*);
+template<> ::chatservice::LeaderElectionProposal* Arena::CreateMaybeMessage<::chatservice::LeaderElectionProposal>(Arena*);
+template<> ::chatservice::LeaderElectionProposalResponse* Arena::CreateMaybeMessage<::chatservice::LeaderElectionProposalResponse>(Arena*);
+template<> ::chatservice::LeaderElectionResponse* Arena::CreateMaybeMessage<::chatservice::LeaderElectionResponse>(Arena*);
 template<> ::chatservice::LoginMessage* Arena::CreateMaybeMessage<::chatservice::LoginMessage>(Arena*);
 template<> ::chatservice::LoginReply* Arena::CreateMaybeMessage<::chatservice::LoginReply>(Arena*);
 template<> ::chatservice::LogoutMessage* Arena::CreateMaybeMessage<::chatservice::LogoutMessage>(Arena*);
 template<> ::chatservice::LogoutReply* Arena::CreateMaybeMessage<::chatservice::LogoutReply>(Arena*);
 template<> ::chatservice::MessagesSeenMessage* Arena::CreateMaybeMessage<::chatservice::MessagesSeenMessage>(Arena*);
 template<> ::chatservice::MessagesSeenReply* Arena::CreateMaybeMessage<::chatservice::MessagesSeenReply>(Arena*);
-template<> ::chatservice::NewMessageReply* Arena::CreateMaybeMessage<::chatservice::NewMessageReply>(Arena*);
 template<> ::chatservice::Notification* Arena::CreateMaybeMessage<::chatservice::Notification>(Arena*);
 template<> ::chatservice::QueryMessagesMessage* Arena::CreateMaybeMessage<::chatservice::QueryMessagesMessage>(Arena*);
 template<> ::chatservice::QueryNotificationsMessage* Arena::CreateMaybeMessage<::chatservice::QueryNotificationsMessage>(Arena*);
@@ -2733,7 +2753,6 @@ class MessagesSeenMessage final :
     kClientUsernameFieldNumber = 1,
     kOtherUsernameFieldNumber = 2,
     kMessagesSeenFieldNumber = 3,
-    kFirstMessageIdxFieldNumber = 4,
   };
   // string clientUsername = 1;
   void clear_clientusername();
@@ -2772,15 +2791,6 @@ class MessagesSeenMessage final :
   void _internal_set_messagesseen(int32_t value);
   public:
 
-  // int32 firstMessageIdx = 4;
-  void clear_firstmessageidx();
-  int32_t firstmessageidx() const;
-  void set_firstmessageidx(int32_t value);
-  private:
-  int32_t _internal_firstmessageidx() const;
-  void _internal_set_firstmessageidx(int32_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:chatservice.MessagesSeenMessage)
  private:
   class _Internal;
@@ -2792,7 +2802,6 @@ class MessagesSeenMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr otherusername_;
     int32_t messagesseen_;
-    int32_t firstmessageidx_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2918,154 +2927,6 @@ class MessagesSeenReply final :
 };
 // -------------------------------------------------------------------
 
-class NewMessageReply final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chatservice.NewMessageReply) */ {
- public:
-  inline NewMessageReply() : NewMessageReply(nullptr) {}
-  ~NewMessageReply() override;
-  explicit PROTOBUF_CONSTEXPR NewMessageReply(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  NewMessageReply(const NewMessageReply& from);
-  NewMessageReply(NewMessageReply&& from) noexcept
-    : NewMessageReply() {
-    *this = ::std::move(from);
-  }
-
-  inline NewMessageReply& operator=(const NewMessageReply& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline NewMessageReply& operator=(NewMessageReply&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const NewMessageReply& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const NewMessageReply* internal_default_instance() {
-    return reinterpret_cast<const NewMessageReply*>(
-               &_NewMessageReply_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    17;
-
-  friend void swap(NewMessageReply& a, NewMessageReply& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(NewMessageReply* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(NewMessageReply* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  NewMessageReply* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<NewMessageReply>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const NewMessageReply& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const NewMessageReply& from) {
-    NewMessageReply::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  uint8_t* _InternalSerialize(
-      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(NewMessageReply* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "chatservice.NewMessageReply";
-  }
-  protected:
-  explicit NewMessageReply(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kReceivedFieldNumber = 1,
-  };
-  // bool received = 1;
-  void clear_received();
-  bool received() const;
-  void set_received(bool value);
-  private:
-  bool _internal_received() const;
-  void _internal_set_received(bool value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:chatservice.NewMessageReply)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    bool received_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_chatService_2eproto;
-};
-// -------------------------------------------------------------------
-
 class RefreshRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chatservice.RefreshRequest) */ {
  public:
@@ -3114,7 +2975,7 @@ class RefreshRequest final :
                &_RefreshRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    17;
 
   friend void swap(RefreshRequest& a, RefreshRequest& b) {
     a.Swap(&b);
@@ -3267,7 +3128,7 @@ class RefreshResponse final :
                &_RefreshResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    18;
 
   friend void swap(RefreshResponse& a, RefreshResponse& b) {
     a.Swap(&b);
@@ -3383,6 +3244,744 @@ class RefreshResponse final :
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class HeartBeatRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.HeartBeatRequest) */ {
+ public:
+  inline HeartBeatRequest() : HeartBeatRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR HeartBeatRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  HeartBeatRequest(const HeartBeatRequest& from);
+  HeartBeatRequest(HeartBeatRequest&& from) noexcept
+    : HeartBeatRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline HeartBeatRequest& operator=(const HeartBeatRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline HeartBeatRequest& operator=(HeartBeatRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const HeartBeatRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const HeartBeatRequest* internal_default_instance() {
+    return reinterpret_cast<const HeartBeatRequest*>(
+               &_HeartBeatRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    19;
+
+  friend void swap(HeartBeatRequest& a, HeartBeatRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(HeartBeatRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(HeartBeatRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  HeartBeatRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<HeartBeatRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const HeartBeatRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const HeartBeatRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.HeartBeatRequest";
+  }
+  protected:
+  explicit HeartBeatRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.HeartBeatRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class HeartBeatResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.HeartBeatResponse) */ {
+ public:
+  inline HeartBeatResponse() : HeartBeatResponse(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR HeartBeatResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  HeartBeatResponse(const HeartBeatResponse& from);
+  HeartBeatResponse(HeartBeatResponse&& from) noexcept
+    : HeartBeatResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline HeartBeatResponse& operator=(const HeartBeatResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline HeartBeatResponse& operator=(HeartBeatResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const HeartBeatResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const HeartBeatResponse* internal_default_instance() {
+    return reinterpret_cast<const HeartBeatResponse*>(
+               &_HeartBeatResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    20;
+
+  friend void swap(HeartBeatResponse& a, HeartBeatResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(HeartBeatResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(HeartBeatResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  HeartBeatResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<HeartBeatResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const HeartBeatResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const HeartBeatResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.HeartBeatResponse";
+  }
+  protected:
+  explicit HeartBeatResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.HeartBeatResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class LeaderElectionProposal final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.LeaderElectionProposal) */ {
+ public:
+  inline LeaderElectionProposal() : LeaderElectionProposal(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR LeaderElectionProposal(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LeaderElectionProposal(const LeaderElectionProposal& from);
+  LeaderElectionProposal(LeaderElectionProposal&& from) noexcept
+    : LeaderElectionProposal() {
+    *this = ::std::move(from);
+  }
+
+  inline LeaderElectionProposal& operator=(const LeaderElectionProposal& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LeaderElectionProposal& operator=(LeaderElectionProposal&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LeaderElectionProposal& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LeaderElectionProposal* internal_default_instance() {
+    return reinterpret_cast<const LeaderElectionProposal*>(
+               &_LeaderElectionProposal_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    21;
+
+  friend void swap(LeaderElectionProposal& a, LeaderElectionProposal& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LeaderElectionProposal* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LeaderElectionProposal* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  LeaderElectionProposal* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LeaderElectionProposal>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const LeaderElectionProposal& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const LeaderElectionProposal& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.LeaderElectionProposal";
+  }
+  protected:
+  explicit LeaderElectionProposal(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.LeaderElectionProposal)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class LeaderElectionProposalResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.LeaderElectionProposalResponse) */ {
+ public:
+  inline LeaderElectionProposalResponse() : LeaderElectionProposalResponse(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR LeaderElectionProposalResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LeaderElectionProposalResponse(const LeaderElectionProposalResponse& from);
+  LeaderElectionProposalResponse(LeaderElectionProposalResponse&& from) noexcept
+    : LeaderElectionProposalResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline LeaderElectionProposalResponse& operator=(const LeaderElectionProposalResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LeaderElectionProposalResponse& operator=(LeaderElectionProposalResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LeaderElectionProposalResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LeaderElectionProposalResponse* internal_default_instance() {
+    return reinterpret_cast<const LeaderElectionProposalResponse*>(
+               &_LeaderElectionProposalResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    22;
+
+  friend void swap(LeaderElectionProposalResponse& a, LeaderElectionProposalResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LeaderElectionProposalResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LeaderElectionProposalResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  LeaderElectionProposalResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LeaderElectionProposalResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const LeaderElectionProposalResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const LeaderElectionProposalResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.LeaderElectionProposalResponse";
+  }
+  protected:
+  explicit LeaderElectionProposalResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.LeaderElectionProposalResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CandidateValue final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chatservice.CandidateValue) */ {
+ public:
+  inline CandidateValue() : CandidateValue(nullptr) {}
+  ~CandidateValue() override;
+  explicit PROTOBUF_CONSTEXPR CandidateValue(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CandidateValue(const CandidateValue& from);
+  CandidateValue(CandidateValue&& from) noexcept
+    : CandidateValue() {
+    *this = ::std::move(from);
+  }
+
+  inline CandidateValue& operator=(const CandidateValue& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CandidateValue& operator=(CandidateValue&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CandidateValue& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CandidateValue* internal_default_instance() {
+    return reinterpret_cast<const CandidateValue*>(
+               &_CandidateValue_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    23;
+
+  friend void swap(CandidateValue& a, CandidateValue& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CandidateValue* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CandidateValue* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CandidateValue* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CandidateValue>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CandidateValue& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CandidateValue& from) {
+    CandidateValue::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CandidateValue* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.CandidateValue";
+  }
+  protected:
+  explicit CandidateValue(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNumberFieldNumber = 1,
+  };
+  // int32 number = 1;
+  void clear_number();
+  int32_t number() const;
+  void set_number(int32_t value);
+  private:
+  int32_t _internal_number() const;
+  void _internal_set_number(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chatservice.CandidateValue)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t number_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class LeaderElectionResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.LeaderElectionResponse) */ {
+ public:
+  inline LeaderElectionResponse() : LeaderElectionResponse(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR LeaderElectionResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LeaderElectionResponse(const LeaderElectionResponse& from);
+  LeaderElectionResponse(LeaderElectionResponse&& from) noexcept
+    : LeaderElectionResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline LeaderElectionResponse& operator=(const LeaderElectionResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LeaderElectionResponse& operator=(LeaderElectionResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LeaderElectionResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LeaderElectionResponse* internal_default_instance() {
+    return reinterpret_cast<const LeaderElectionResponse*>(
+               &_LeaderElectionResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    24;
+
+  friend void swap(LeaderElectionResponse& a, LeaderElectionResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LeaderElectionResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LeaderElectionResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  LeaderElectionResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LeaderElectionResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const LeaderElectionResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const LeaderElectionResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.LeaderElectionResponse";
+  }
+  protected:
+  explicit LeaderElectionResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.LeaderElectionResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
   friend struct ::TableStruct_chatService_2eproto;
 };
 // ===================================================================
@@ -4834,53 +5433,9 @@ inline void MessagesSeenMessage::set_messagesseen(int32_t value) {
   // @@protoc_insertion_point(field_set:chatservice.MessagesSeenMessage.messagesSeen)
 }
 
-// int32 firstMessageIdx = 4;
-inline void MessagesSeenMessage::clear_firstmessageidx() {
-  _impl_.firstmessageidx_ = 0;
-}
-inline int32_t MessagesSeenMessage::_internal_firstmessageidx() const {
-  return _impl_.firstmessageidx_;
-}
-inline int32_t MessagesSeenMessage::firstmessageidx() const {
-  // @@protoc_insertion_point(field_get:chatservice.MessagesSeenMessage.firstMessageIdx)
-  return _internal_firstmessageidx();
-}
-inline void MessagesSeenMessage::_internal_set_firstmessageidx(int32_t value) {
-  
-  _impl_.firstmessageidx_ = value;
-}
-inline void MessagesSeenMessage::set_firstmessageidx(int32_t value) {
-  _internal_set_firstmessageidx(value);
-  // @@protoc_insertion_point(field_set:chatservice.MessagesSeenMessage.firstMessageIdx)
-}
-
 // -------------------------------------------------------------------
 
 // MessagesSeenReply
-
-// -------------------------------------------------------------------
-
-// NewMessageReply
-
-// bool received = 1;
-inline void NewMessageReply::clear_received() {
-  _impl_.received_ = false;
-}
-inline bool NewMessageReply::_internal_received() const {
-  return _impl_.received_;
-}
-inline bool NewMessageReply::received() const {
-  // @@protoc_insertion_point(field_get:chatservice.NewMessageReply.received)
-  return _internal_received();
-}
-inline void NewMessageReply::_internal_set_received(bool value) {
-  
-  _impl_.received_ = value;
-}
-inline void NewMessageReply::set_received(bool value) {
-  _internal_set_received(value);
-  // @@protoc_insertion_point(field_set:chatservice.NewMessageReply.received)
-}
 
 // -------------------------------------------------------------------
 
@@ -5000,9 +5555,63 @@ RefreshResponse::notifications() const {
   return _impl_.notifications_;
 }
 
+// -------------------------------------------------------------------
+
+// HeartBeatRequest
+
+// -------------------------------------------------------------------
+
+// HeartBeatResponse
+
+// -------------------------------------------------------------------
+
+// LeaderElectionProposal
+
+// -------------------------------------------------------------------
+
+// LeaderElectionProposalResponse
+
+// -------------------------------------------------------------------
+
+// CandidateValue
+
+// int32 number = 1;
+inline void CandidateValue::clear_number() {
+  _impl_.number_ = 0;
+}
+inline int32_t CandidateValue::_internal_number() const {
+  return _impl_.number_;
+}
+inline int32_t CandidateValue::number() const {
+  // @@protoc_insertion_point(field_get:chatservice.CandidateValue.number)
+  return _internal_number();
+}
+inline void CandidateValue::_internal_set_number(int32_t value) {
+  
+  _impl_.number_ = value;
+}
+inline void CandidateValue::set_number(int32_t value) {
+  _internal_set_number(value);
+  // @@protoc_insertion_point(field_set:chatservice.CandidateValue.number)
+}
+
+// -------------------------------------------------------------------
+
+// LeaderElectionResponse
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
