@@ -140,5 +140,10 @@ std::vector<ChatMessage> queryMessages(std::string clientusername, std::string o
     return returnVal.messageList;
 }
 
+void parseLine(std::vector<std::string> line) {
+    int operation = stoi(line[0]);
+
+}
+
 
 

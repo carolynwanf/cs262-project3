@@ -140,6 +140,86 @@ TEST(StorageUpdates, DeletingAnAccount) {
 
 }
 
+TEST(StorageUpdates, SeeingMessages) {
+    std::string username = "carolyn";
+    std::string password = "password";
+    std::string anotherusername = "victor";
+    std::string anotherpassword = "anotherpassword";
+    std::string message = "hello";
+
+    // Both users don't exist
+    int messagesSeenStatus = messagesSeen(username, anotherusername, 0);
+
+    EXPECT_EQ(messagesSeenStatus, 1);
+
+    // First user doesn't exist 
+    createAccount(username, password);
+    messagesSeenStatus = messagesSeen(anotherusername, username, 0);
+
+    EXPECT_EQ(messagesSeenStatus, 1);
+
+    // Second user doesn't exist
+    messagesSeenStatus = messagesSeen(username, anotherusername, 0);
+
+    EXPECT_EQ(messagesSeenStatus, 1);
+
+    // Both users exist, no conversation between users
+    createAccount(anotherusername, anotherpassword);
+
+    messagesSeenStatus = messagesSeen(username, anotherusername, 0);
+
+    EXPECT_EQ(messagesSeenStatus, 1);
+
+    // Both users exist, existing conversation between users
+    sendMessage(username, anotherusername, message);
+    
+    messagesSeenStatus = messagesSeen(username, anotherusername, 0);
+
+    EXPECT_EQ(messagesSeenStatus, 0);
+
+}
+
+TEST(StorageUpdates, messagesQueried) {
+    std::string username = "carolyn";
+    std::string password = "password";
+    std::string anotherusername = "victor";
+    std::string anotherpassword = "anotherpassword";
+    std::string message = "hello";
+
+    // Both users don't exist
+    std::vector<ChatMessage> messageQueriedStatus = queryMessages(username, anotherusername);
+
+    EXPECT_EQ(messageQueriedStatus.size(), 0);
+
+    // First user doesn't exist 
+    createAccount(username, password);
+    messageQueriedStatus = queryMessages(username, anotherusername);
+
+    EXPECT_EQ(messageQueriedStatus.size(), 0);
+
+    // Second user doesn't exist
+    messageQueriedStatus = queryMessages(username, anotherusername);
+
+    EXPECT_EQ(messageQueriedStatus.size(), 0);
+
+    // Both users exist, no conversation between users
+    createAccount(anotherusername, anotherpassword);
+
+    messageQueriedStatus = queryMessages(username, anotherusername);
+
+    EXPECT_EQ(messageQueriedStatus.size(), 0);
+
+    // Both users exist, existing conversation between users
+    int sendMessageStatus = sendMessage(username, anotherusername, message);
+
+    EXPECT_EQ(sendMessageStatus, 0);
+    
+    messageQueriedStatus = queryMessages(anotherusername, username);
+
+    EXPECT_EQ(messageQueriedStatus.size(), 1);
+
+}
+
 int main(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc,argv);
   return RUN_ALL_TESTS();

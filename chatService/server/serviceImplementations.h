@@ -50,7 +50,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         explicit ChatServiceImpl(std::string fileName) {
             // initialize the CSV log
             logWriter.open(fileName);
-            logWriter << csvFields << std::endl;
+            logWriter << g_csvFields << std::endl;
         }
 
         Status CreateAccount(ServerContext* context, const CreateAccountMessage* create_account_message, 
@@ -206,7 +206,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             isLeaderMutex.unlock();
         }
 
-        // TODO: implement leader election proposal RPC
+        Status ProposeLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse reply) {
+            // TODO: implement leader election proposal RPC
+        }
 
-        // TODO: implement leader election RPC (they basically just send their numbers)
+        Status LeaderElection(ServerContext* context, const CandidateValue* request, LeaderElectionResponse* reply) {
+            // TODO: implement leader election RPC (they basically just send their numbers)
+        }
 };
