@@ -320,7 +320,9 @@ struct LeaderElectionProposalDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LeaderElectionProposalDefaultTypeInternal _LeaderElectionProposal_default_instance_;
 PROTOBUF_CONSTEXPR LeaderElectionProposalResponse::LeaderElectionProposalResponse(
-    ::_pbi::ConstantInitialized) {}
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.accept_)*/false
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct LeaderElectionProposalResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR LeaderElectionProposalResponseDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -540,6 +542,7 @@ const uint32_t TableStruct_chatService_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chatservice::LeaderElectionProposalResponse, _impl_.accept_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chatservice::CandidateValue, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -578,8 +581,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 162, -1, -1, sizeof(::chatservice::HeartBeatResponse)},
   { 168, -1, -1, sizeof(::chatservice::LeaderElectionProposal)},
   { 174, -1, -1, sizeof(::chatservice::LeaderElectionProposalResponse)},
-  { 180, -1, -1, sizeof(::chatservice::CandidateValue)},
-  { 187, -1, -1, sizeof(::chatservice::LeaderElectionResponse)},
+  { 181, -1, -1, sizeof(::chatservice::CandidateValue)},
+  { 188, -1, -1, sizeof(::chatservice::LeaderElectionResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -642,40 +645,40 @@ const char descriptor_table_protodef_chatService_2eproto[] PROTOBUF_SECTION_VARI
   "esponse\022\023\n\013forceLogout\030\001 \001(\010\0220\n\rnotifica"
   "tions\030\002 \003(\0132\031.chatservice.Notification\"\022"
   "\n\020HeartBeatRequest\"\023\n\021HeartBeatResponse\""
-  "\030\n\026LeaderElectionProposal\" \n\036LeaderElect"
-  "ionProposalResponse\" \n\016CandidateValue\022\016\n"
-  "\006number\030\001 \001(\005\"\030\n\026LeaderElectionResponse2"
-  "\222\010\n\013ChatService\022S\n\rCreateAccount\022!.chats"
-  "ervice.CreateAccountMessage\032\037.chatservic"
-  "e.CreateAccountReply\022;\n\005Login\022\031.chatserv"
-  "ice.LoginMessage\032\027.chatservice.LoginRepl"
-  "y\022>\n\006Logout\022\032.chatservice.LogoutMessage\032"
-  "\030.chatservice.LogoutReply\022@\n\tListUsers\022\036"
-  ".chatservice.QueryUsersMessage\032\021.chatser"
-  "vice.User0\001\022F\n\013SendMessage\022\030.chatservice"
-  ".ChatMessage\032\035.chatservice.SendMessageRe"
-  "ply\022Y\n\022QueryNotifications\022&.chatservice."
-  "QueryNotificationsMessage\032\031.chatservice."
-  "Notification0\001\022N\n\rQueryMessages\022!.chatse"
-  "rvice.QueryMessagesMessage\032\030.chatservice"
-  ".ChatMessage0\001\022S\n\rDeleteAccount\022!.chatse"
-  "rvice.DeleteAccountMessage\032\037.chatservice"
-  ".DeleteAccountReply\022J\n\rRefreshClient\022\033.c"
-  "hatservice.RefreshRequest\032\034.chatservice."
-  "RefreshResponse\022J\n\tHeartBeat\022\035.chatservi"
-  "ce.HeartBeatRequest\032\036.chatservice.HeartB"
-  "eatResponse\022i\n\025ProposeLeaderElection\022#.c"
-  "hatservice.LeaderElectionProposal\032+.chat"
-  "service.LeaderElectionProposalResponse\022R"
-  "\n\016LeaderElection\022\033.chatservice.Candidate"
-  "Value\032#.chatservice.LeaderElectionRespon"
-  "se\022P\n\014MessagesSeen\022 .chatservice.Message"
-  "sSeenMessage\032\036.chatservice.MessagesSeenR"
-  "eplyb\006proto3"
+  "\030\n\026LeaderElectionProposal\"0\n\036LeaderElect"
+  "ionProposalResponse\022\016\n\006accept\030\001 \001(\010\" \n\016C"
+  "andidateValue\022\016\n\006number\030\001 \001(\005\"\030\n\026LeaderE"
+  "lectionResponse2\222\010\n\013ChatService\022S\n\rCreat"
+  "eAccount\022!.chatservice.CreateAccountMess"
+  "age\032\037.chatservice.CreateAccountReply\022;\n\005"
+  "Login\022\031.chatservice.LoginMessage\032\027.chats"
+  "ervice.LoginReply\022>\n\006Logout\022\032.chatservic"
+  "e.LogoutMessage\032\030.chatservice.LogoutRepl"
+  "y\022@\n\tListUsers\022\036.chatservice.QueryUsersM"
+  "essage\032\021.chatservice.User0\001\022F\n\013SendMessa"
+  "ge\022\030.chatservice.ChatMessage\032\035.chatservi"
+  "ce.SendMessageReply\022Y\n\022QueryNotification"
+  "s\022&.chatservice.QueryNotificationsMessag"
+  "e\032\031.chatservice.Notification0\001\022N\n\rQueryM"
+  "essages\022!.chatservice.QueryMessagesMessa"
+  "ge\032\030.chatservice.ChatMessage0\001\022S\n\rDelete"
+  "Account\022!.chatservice.DeleteAccountMessa"
+  "ge\032\037.chatservice.DeleteAccountReply\022J\n\rR"
+  "efreshClient\022\033.chatservice.RefreshReques"
+  "t\032\034.chatservice.RefreshResponse\022J\n\tHeart"
+  "Beat\022\035.chatservice.HeartBeatRequest\032\036.ch"
+  "atservice.HeartBeatResponse\022i\n\025ProposeLe"
+  "aderElection\022#.chatservice.LeaderElectio"
+  "nProposal\032+.chatservice.LeaderElectionPr"
+  "oposalResponse\022R\n\016LeaderElection\022\033.chats"
+  "ervice.CandidateValue\032#.chatservice.Lead"
+  "erElectionResponse\022P\n\014MessagesSeen\022 .cha"
+  "tservice.MessagesSeenMessage\032\036.chatservi"
+  "ce.MessagesSeenReplyb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_chatService_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_chatService_2eproto = {
-    false, false, 2412, descriptor_table_protodef_chatService_2eproto,
+    false, false, 2428, descriptor_table_protodef_chatService_2eproto,
     "chatService.proto",
     &descriptor_table_chatService_2eproto_once, nullptr, 0, 25,
     schemas, file_default_instances, TableStruct_chatService_2eproto::offsets,
@@ -5117,31 +5120,169 @@ class LeaderElectionProposalResponse::_Internal {
 
 LeaderElectionProposalResponse::LeaderElectionProposalResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:chatservice.LeaderElectionProposalResponse)
 }
 LeaderElectionProposalResponse::LeaderElectionProposalResponse(const LeaderElectionProposalResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   LeaderElectionProposalResponse* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.accept_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.accept_ = from._impl_.accept_;
   // @@protoc_insertion_point(copy_constructor:chatservice.LeaderElectionProposalResponse)
 }
 
+inline void LeaderElectionProposalResponse::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.accept_){false}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
 
+LeaderElectionProposalResponse::~LeaderElectionProposalResponse() {
+  // @@protoc_insertion_point(destructor:chatservice.LeaderElectionProposalResponse)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
 
+inline void LeaderElectionProposalResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
 
+void LeaderElectionProposalResponse::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void LeaderElectionProposalResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:chatservice.LeaderElectionProposalResponse)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.accept_ = false;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* LeaderElectionProposalResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // bool accept = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.accept_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* LeaderElectionProposalResponse::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chatservice.LeaderElectionProposalResponse)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool accept = 1;
+  if (this->_internal_accept() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_accept(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chatservice.LeaderElectionProposalResponse)
+  return target;
+}
+
+size_t LeaderElectionProposalResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chatservice.LeaderElectionProposalResponse)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // bool accept = 1;
+  if (this->_internal_accept() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LeaderElectionProposalResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    LeaderElectionProposalResponse::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LeaderElectionProposalResponse::GetClassData() const { return &_class_data_; }
 
 
+void LeaderElectionProposalResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LeaderElectionProposalResponse*>(&to_msg);
+  auto& from = static_cast<const LeaderElectionProposalResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chatservice.LeaderElectionProposalResponse)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  if (from._internal_accept() != 0) {
+    _this->_internal_set_accept(from._internal_accept());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void LeaderElectionProposalResponse::CopyFrom(const LeaderElectionProposalResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chatservice.LeaderElectionProposalResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool LeaderElectionProposalResponse::IsInitialized() const {
+  return true;
+}
 
+void LeaderElectionProposalResponse::InternalSwap(LeaderElectionProposalResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.accept_, other->_impl_.accept_);
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LeaderElectionProposalResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(

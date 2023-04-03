@@ -3603,9 +3603,10 @@ class LeaderElectionProposal final :
 // -------------------------------------------------------------------
 
 class LeaderElectionProposalResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.LeaderElectionProposalResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chatservice.LeaderElectionProposalResponse) */ {
  public:
   inline LeaderElectionProposalResponse() : LeaderElectionProposalResponse(nullptr) {}
+  ~LeaderElectionProposalResponse() override;
   explicit PROTOBUF_CONSTEXPR LeaderElectionProposalResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   LeaderElectionProposalResponse(const LeaderElectionProposalResponse& from);
@@ -3678,15 +3679,29 @@ class LeaderElectionProposalResponse final :
   LeaderElectionProposalResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<LeaderElectionProposalResponse>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const LeaderElectionProposalResponse& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const LeaderElectionProposalResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const LeaderElectionProposalResponse& from) {
+    LeaderElectionProposalResponse::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const LeaderElectionProposalResponse& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(LeaderElectionProposalResponse* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -3707,6 +3722,18 @@ class LeaderElectionProposalResponse final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kAcceptFieldNumber = 1,
+  };
+  // bool accept = 1;
+  void clear_accept();
+  bool accept() const;
+  void set_accept(bool value);
+  private:
+  bool _internal_accept() const;
+  void _internal_set_accept(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.LeaderElectionProposalResponse)
  private:
   class _Internal;
@@ -3715,7 +3742,10 @@ class LeaderElectionProposalResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    bool accept_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
 };
 // -------------------------------------------------------------------
@@ -5570,6 +5600,26 @@ RefreshResponse::notifications() const {
 // -------------------------------------------------------------------
 
 // LeaderElectionProposalResponse
+
+// bool accept = 1;
+inline void LeaderElectionProposalResponse::clear_accept() {
+  _impl_.accept_ = false;
+}
+inline bool LeaderElectionProposalResponse::_internal_accept() const {
+  return _impl_.accept_;
+}
+inline bool LeaderElectionProposalResponse::accept() const {
+  // @@protoc_insertion_point(field_get:chatservice.LeaderElectionProposalResponse.accept)
+  return _internal_accept();
+}
+inline void LeaderElectionProposalResponse::_internal_set_accept(bool value) {
+  
+  _impl_.accept_ = value;
+}
+inline void LeaderElectionProposalResponse::set_accept(bool value) {
+  _internal_set_accept(value);
+  // @@protoc_insertion_point(field_set:chatservice.LeaderElectionProposalResponse.accept)
+}
 
 // -------------------------------------------------------------------
 

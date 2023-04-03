@@ -62,7 +62,26 @@ struct ServerServerConnection {
 
         bool proposeLeaderElection() {
             // TODO: call propose leader election for each stub in vector
-            
+            ClientContext context;
+            LeaderElectionProposal message;
+            LeaderElectionProposalResponse reply;
+
+            for (int i = 0; i < connections.size(); i++) {
+                Status status = connections[i]->ProposeLeaderElection(&context, message, &reply);
+                if (status.ok()) {
+                    if (reply.accept()) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    // TODO: might want to throw an exception here instead but we know how
+                    //      much Carolyn loves exceptions
+                    return false;
+                }
+            }
         }
 
         bool leaderElection() {

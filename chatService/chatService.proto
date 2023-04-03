@@ -137,6 +137,7 @@ message LeaderElectionProposal {
 }
 
 message LeaderElectionProposalResponse {
+    bool accept=1;
 }
 
 message CandidateValue {
