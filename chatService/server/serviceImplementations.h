@@ -41,15 +41,30 @@ using chatservice::LeaderElectionResponse;
 
 class ChatServiceImpl final : public chatservice::ChatService::Service {
     private:
-        std::mutex mu_;
         // This might be where we store the conversations open per user or something
         std::ofstream logWriter;
 
+        // For interserver communication
+        std::vector<std::unique_ptr<ChatService::Stub>> connections;
+        std::unordered_map<std::string, int> addressToConnectionIdx;
+        int leaderIdx = -1;
+        std::string myAddress;
+
+        // Commented out the global versions in storage.h
+        std::mutex isLeaderMutex;
+        bool isLeader = false;
+
+        std::mutex leaderElectionValuesMutex;
+        int numberOfCandidatesReceived = 0;
+        int maxLeaderElectionVal = -1;
+        std::string currLeaderCandidateAddr;
+
     public:
-        explicit ChatServiceImpl(std::string fileName) {
+        explicit ChatServiceImpl(std::string fileName, std::string address) {
             // initialize the CSV log
             logWriter.open(fileName);
             logWriter << g_csvFields << std::endl;
+            myAddress = address;
         }
 
         Status CreateAccount(ServerContext* context, const CreateAccountMessage* create_account_message, 
@@ -198,8 +213,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         Status HeartBeat(ServerContext* context, const HeartBeatRequest* request, HeartBeatResponse* reply) {
-            g_isLeaderMutex.lock();
-            if (g_isLeader) {
+            isLeaderMutex.lock();
+            if (isLeader) {
                 return Status::OK;
             }
             g_isLeaderMutex.unlock();
@@ -207,9 +222,109 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status ProposeLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse reply) {
             // TODO: implement leader election proposal RPC
+            // Check if I am the leader or if leaderIdx != -1, otherwise we have no leader
         }
 
         Status LeaderElection(ServerContext* context, const CandidateValue* request, LeaderElectionResponse* reply) {
             // TODO: implement leader election RPC (they basically just send their numbers)
+            // Update leader candidate values
+        }
+
+
+        // For interserver communication stuff
+        void addConnection(std::string server_address) {
+            // TODO: do we want to put this in a loop to keep trying until it works?
+            auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
+            std::unique_ptr<ChatService::Stub> stub_ = ChatService::NewStub(channel);
+            connections.push_back(stub_);
+            addressToConnectionIdx[server_address] = connections.size()-1;
+        }
+
+        bool heartbeat() {
+            if (leaderIdx != -1) {
+                ClientContext context;
+                HeartBeatRequest message;
+                HeartBeatResponse reponse;
+                Status status = connections[leaderIdx]->HeartBeat(&context, message, &reponse);
+
+                if (status.ok()) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+
+        bool proposeLeaderElection() {
+            // TODO: call propose leader election for each stub in vector
+            LeaderElectionProposal message;
+
+            for (int i = 0; i < connections.size(); i++) {
+                ClientContext context;
+                LeaderElectionProposalResponse reply;
+                Status status = connections[i]->ProposeLeaderElection(&context, message, &reply);
+                if (status.ok()) {
+                    if (reply.accept()) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    // TODO: might want to throw an exception here instead but we know how
+                    //      much Carolyn loves exceptions
+                    return false;
+                }
+            }
+        }
+
+        void leaderElection() {
+            int candidateValue = rand();
+            leaderElectionValuesMutex.lock();
+            currLeaderCandidateAddr = myAddress;
+            maxLeaderElectionVal = candidateValue;
+            leaderElectionValuesMutex.unlock();
+
+            CandidateValue message;
+            message.set_number(candidateValue);
+
+            for (int i = 0; i < connections.size(); i++) {
+                ClientContext context;
+                LeaderElectionResponse reply;
+                Status status =  connections[i]->LeaderElection(&context, message, &reply);
+            }
+
+            // wait until we've received leader election values of all other servers
+            bool waitingForLeaderElection = true;
+            while (waitingForLeaderElection) {
+                leaderElectionValuesMutex.lock();
+                if (numberOfCandidatesReceived == g_numberOfServers - 1) {
+                    waitingForLeaderElection = false;
+                    numberOfCandidatesReceived = 0;
+                }
+                leaderElectionValuesMutex.unlock();
+            }
+
+            // select new leader
+            if (currLeaderCandidateAddr == myAddress) {
+                isLeaderMutex.lock();
+                isLeader = true;
+                isLeaderMutex.unlock();
+                leaderIdx = -1;
+            } 
+            else {
+                leaderIdx = addressToConnectionIdx[currLeaderCandidateAddr];
+            }
+
+            // reset necessary values
+            leaderElectionValuesMutex.lock();
+            currLeaderCandidateAddr = "";
+            maxLeaderElectionVal = -1;
+            leaderElectionValuesMutex.unlock();
         }
 };

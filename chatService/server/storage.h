@@ -25,13 +25,13 @@ std::string g_csvFields = "message_type,username1,username2,password,message_con
 
 const int g_numberOfServers = 3;
 
-std::mutex g_isLeaderMutex;
-bool g_isLeader = false;
+// std::mutex g_isLeaderMutex;
+// bool g_isLeader = false;
 
-std::mutex g_leaderElectionValuesMutex;
-int g_numberOfCandidatesReceived = 0;
-int g_maxLeaderElectionVal = -1;
-std::string g_currLeaderCandidateAddr;
+// std::mutex g_leaderElectionValuesMutex;
+// int g_numberOfCandidatesReceived = 0;
+// int g_maxLeaderElectionVal = -1;
+// std::string g_currLeaderCandidateAddr;
 
 struct CurrentConversation {
     std::string username;
