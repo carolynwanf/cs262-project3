@@ -1,6 +1,5 @@
 #include "../chatService.grpc.pb.h"
 #include "storageUpdates.h"
-#include <fstream>
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -199,11 +198,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         Status HeartBeat(ServerContext* context, const HeartBeatRequest* request, HeartBeatResponse* reply) {
-            isLeaderMutex.lock();
+            g_isLeaderMutex.lock();
             if (g_isLeader) {
                 return Status::OK;
             }
-            isLeaderMutex.unlock();
+            g_isLeaderMutex.unlock();
         }
 
         Status ProposeLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse reply) {

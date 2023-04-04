@@ -1,4 +1,5 @@
 #include "storage.h"
+#include <fstream>
 
 // Functions for updating storage structures based on logs
 // No mutexes because these operations are done sequentially
@@ -141,9 +142,59 @@ std::vector<ChatMessage> queryMessages(std::string clientusername, std::string o
 }
 
 void parseLine(std::vector<std::string> line) {
+    std::cout<<line[0]<<std::endl;
     int operation = stoi(line[0]);
+
+    switch (operation) {
+        case CREATE_ACCOUNT:
+            createAccount(line[1], line[3]);
+            break;
+        case LOGIN:
+            login(line[1], line[3]);
+            break;
+        case LOGOUT:
+            logout(line[1]);
+            break;
+        case SEND_MESSAGE:
+            sendMessage(line[1], line[2], line[4]);
+            break;
+        case QUERY_MESSAGES:
+            queryMessages(line[1], line[2]);
+            break;
+        case DELETE_ACCOUNT:
+            deleteAccount(line[1]);
+            break;
+        case MESSAGES_SEEN:
+            std::cout<<line[5]<<std::endl;
+            messagesSeen(line[1], line[2], stoi(line[5]));
+            break; 
+        default:
+            std::cout << "unrecognized operation" << std::endl;
+    }
 
 }
 
+void readFile (std::vector<std::vector<std::string>>* content, std::string historyFile) {
+    std::vector<std::string> row;
+    std::string line, word;
+
+    std::fstream file;
+    file.open(historyFile, std::ios::in);
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            row.clear();
+
+            std::stringstream str(line);
+
+            while (getline(str, word, ',')) {
+                row.push_back(word);
+            }
+            content->push_back(row);
+        }
+    }
+    else {
+        std::cout<<"Could not open the file\n";
+    }
+}
 
 

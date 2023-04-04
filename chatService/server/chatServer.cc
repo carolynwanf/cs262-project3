@@ -60,26 +60,10 @@ int main (int argc, char const* argv[]) {
         // populate data structures using file
         // TODO: handle how we deal with matching fields in CSV file
         std::vector<std::vector<std::string>> content;
-        std::vector<std::string> row;
-        std::string line, word;
-    
-        std::fstream file (historyFile, std::ios::in);
-        if (file.is_open()) {
-            while (getline(file, line)) {
-                row.clear();
-    
-                std::stringstream str(line);
-    
-                while (getline(str, word, ',')) {
-                    row.push_back(word);
-                }
-                content.push_back(row);
-            }
-        }
-        else {
-            std::cout<<"Could not open the file\n";
-        }
- 
+
+        // Read the file into content
+        readFile(&content, historyFile);
+        
         for(int i=0; i < content.size(); i++) {
             parseLine(content[i]);
         }

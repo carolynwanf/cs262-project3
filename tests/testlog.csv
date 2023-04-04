@@ -1,0 +1,10 @@
+message_type,username1,username2,password,message_content,messagesseen,leader
+1,carolyn,NULL,password,NULL,NULL,NULL
+1,victor,NULL,password,NULL,NULL,NULL
+2,carolyn,NULL,password,NULL,NULL,NULL
+2,victor,NULL,password,NULL,NULL,NULL
+5,carolyn,victor,NULL,hello,NULL,NULL
+7,victor,carolyn,NULL,NULL,NULL,NULL
+9,victor,carolyn,NULL,NULL,1,NULL
+3,carolyn,NULL,NULL,NULL,NULL,NULL
+8,carolyn,NULL,NULL,NULL,NULL,NULL

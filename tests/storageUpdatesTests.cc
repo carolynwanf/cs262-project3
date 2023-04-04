@@ -220,6 +220,56 @@ TEST(StorageUpdates, messagesQueried) {
 
 }
 
+TEST(StorageUpdates, ReadingCSV) {
+    std::string historyFile = "../tests/testlog.csv";
+
+    // populate data structures using file
+    std::vector<std::vector<std::string>> content;
+
+    readFile(&content, historyFile);
+
+    // Checking a few random values to check that csv was read properly
+    EXPECT_EQ(content[1][0], "1");
+    EXPECT_EQ(content[1][1], "carolyn");
+    EXPECT_EQ(content[6][0], "7");
+    EXPECT_EQ(content[6][1], "victor");
+}
+
+TEST(StorageUpdates, ParsingLines) {
+    std::string user1 = "carolyn";
+    std::string user2 = "victor";
+
+    std::string historyFile = "../tests/testlog.csv";
+
+    // populate data structures using file
+    std::vector<std::vector<std::string>> content;
+
+    readFile(&content, historyFile);
+
+    for(int i=1; i < content.size(); i++) {
+        parseLine(content[i]);
+    }
+
+
+    // After parsing, data structures should reflect
+    // Carolyn's account doesn't exist
+    EXPECT_EQ(userTrie.userExists(user1), false);
+
+    // Victor's account is active
+    EXPECT_NE(activeUsers.find(user2), activeUsers.end());
+    
+    // Victor's account has password "password"
+    EXPECT_EQ(userTrie.verifyUser(user2, "password"));
+
+    // Carolyn and Victor have a conversation with the read message "hello"
+    UserPair userPair(user1,user2);
+
+    EXPECT_EQ(messagesDictionary[userPair].messageList[0].isRead, true);
+    EXPECT_EQ(messagesDictionary[userPair].messageList[0].messageContent, "hello");
+    EXPECT_EQ(messagesDictionary[userPair].messageList[0].senderUsername, user1);
+
+}
+
 int main(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc,argv);
   return RUN_ALL_TESTS();
