@@ -81,6 +81,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 server_reply->set_createaccountsuccess(false);
             } else {
                 server_reply->set_createaccountsuccess(true);
+                writeToLogs(logWriter, CREATE_ACCOUNT, username, g_nullString, password);
             }
 
             return Status::OK;
@@ -96,6 +97,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             
             if (loginStatus == 0) {
                 server_reply->set_loginsuccess(true);
+                writeToLogs(logWriter, LOGIN, username, g_nullString, password);
             } else {
                 server_reply->set_loginsuccess(false);
                 server_reply->set_errormsg("Incorrect username or password.");
@@ -107,6 +109,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status Logout(ServerContext* context, const LogoutMessage* logout_message, LogoutReply* server_reply) {
             int logoutStatus = logout(logout_message->username());
+            if (logoutStatus == 0) {
+                writeToLogs(logWriter, LOGOUT, logout_message->username());
+            }
+
             return Status::OK;
         }
 
@@ -133,10 +139,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status SendMessage(ServerContext* context, const ChatMessage* msg, SendMessageReply* server_reply) {
-            int sendMessageStatus = sendMessage(msg->senderusername(), msg->recipientusername(), msg->msgcontent());
+            std::string senderUsername = msg->senderusername();
+            std::string recipientUsername = msg->recipientusername();
+            std::string messageContent = msg->msgcontent();
+
+            int sendMessageStatus = sendMessage(senderUsername, recipientUsername, messageContent);
 
             if (sendMessageStatus == 0) {
                 server_reply->set_messagesent(true);
+                writeToLogs(logWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent);
             } else {
                 std::string errormsg = "Tried to send a message to a user that doesn't exist '" + msg->recipientusername() + "'";
                 server_reply->set_errormsg(errormsg);
@@ -173,6 +184,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 writer->Write(message);
             }
 
+            writeToLogs(logWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
+
             return Status::OK;
         }
 
@@ -186,6 +199,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 server_reply->set_deletedaccount(false);
             } else {
                 server_reply->set_deletedaccount(true);
+                writeToLogs(logWriter, DELETE_ACCOUNT, delete_account_message->username());
             }
             
             return Status::OK;
@@ -194,6 +208,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status MessagesSeen(ServerContext* context, const MessagesSeenMessage* msg, MessagesSeenReply* reply) {
             int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
+            
+            writeToLogs(logWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
 
             return Status::OK;
         }

@@ -22,6 +22,7 @@ using chatservice::Notification;
 
 std::string g_logFile = "log.csv";
 std::string g_csvFields = "message_type,username1,username2,password,message_content,messagesseen,leader";
+std::string g_nullString = "NULL";
 
 const int g_numberOfServers = 3;
 

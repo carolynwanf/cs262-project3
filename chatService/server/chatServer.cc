@@ -64,7 +64,7 @@ int main (int argc, char const* argv[]) {
         // Read the file into content
         readFile(&content, historyFile);
         
-        for(int i=0; i < content.size(); i++) {
+        for(int i=1; i < content.size(); i++) {
             parseLine(content[i]);
         }
     }

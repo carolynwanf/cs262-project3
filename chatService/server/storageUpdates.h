@@ -165,11 +165,21 @@ void parseLine(std::vector<std::string> line) {
             deleteAccount(line[1]);
             break;
         case MESSAGES_SEEN:
-            std::cout<<line[5]<<std::endl;
             messagesSeen(line[1], line[2], stoi(line[5]));
             break; 
         default:
             std::cout << "unrecognized operation" << std::endl;
+    }
+
+}
+
+void writeToLogs(std::ofstream& logWriter, int operation, std::string username1 = "NULL", std::string username2= "NULL", std::string password = "NULL", std::string messageContent = "NULL", std::string messagesSeen = "NULL", std::string leader = "NULL") {
+
+    // Check if operation was valid
+    if (operation == CREATE_ACCOUNT || operation == LOGIN || operation == LOGOUT || operation == SEND_MESSAGE || operation == QUERY_MESSAGES || operation == MESSAGES_SEEN || operation == DELETE_ACCOUNT) {
+        logWriter << std::to_string(operation) << "," << username1 << "," << username2 << "," << password << "," << messageContent << "," << messagesSeen << "," << leader << std::endl;
+    } else {
+        std::cout << "unrecognized operation in write to logs" << std::endl;
     }
 
 }

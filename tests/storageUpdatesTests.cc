@@ -259,7 +259,7 @@ TEST(StorageUpdates, ParsingLines) {
     EXPECT_NE(activeUsers.find(user2), activeUsers.end());
     
     // Victor's account has password "password"
-    EXPECT_EQ(userTrie.verifyUser(user2, "password"));
+    EXPECT_EQ(userTrie.verifyUser(user2, "password"), true);
 
     // Carolyn and Victor have a conversation with the read message "hello"
     UserPair userPair(user1,user2);
@@ -267,6 +267,49 @@ TEST(StorageUpdates, ParsingLines) {
     EXPECT_EQ(messagesDictionary[userPair].messageList[0].isRead, true);
     EXPECT_EQ(messagesDictionary[userPair].messageList[0].messageContent, "hello");
     EXPECT_EQ(messagesDictionary[userPair].messageList[0].senderUsername, user1);
+
+}
+
+TEST(StorageUpdates, LogWriting) {
+    std::string testFile = "testWriteLog.csv";
+    std::string username1 = "carolyn";
+    std::string username2 = "victor";
+    std::string password = "password";
+    std::string messageContent = "hello";
+    int messagesSeen = 3;
+    int leader = 1;
+
+    std::ofstream logWriter;
+    logWriter.open(testFile);
+    logWriter << g_csvFields << std::endl;
+
+    // Attempting all valid operations
+    writeToLogs(logWriter, CREATE_ACCOUNT, username1, g_nullString, password);
+    writeToLogs(logWriter, LOGIN, username1, g_nullString, password);
+    writeToLogs(logWriter, LOGOUT, username1);
+    writeToLogs(logWriter, SEND_MESSAGE, username1, username2, g_nullString, messageContent);
+    writeToLogs(logWriter, QUERY_MESSAGES, username1, username2);
+    writeToLogs(logWriter, DELETE_ACCOUNT, username1);
+    writeToLogs(logWriter, MESSAGES_SEEN, username1, username2, g_nullString, g_nullString, std::to_string(messagesSeen));
+    writeToLogs(logWriter, 100);
+
+
+    // populate data structures using file
+    std::vector<std::vector<std::string>> content;
+
+    readFile(&content, testFile);
+
+    // Expect 8 lines, including the header
+    EXPECT_EQ(content.size(), 8);
+
+    // Checking random values
+    EXPECT_EQ(content[1][0], std::to_string(CREATE_ACCOUNT));
+    EXPECT_EQ(content[1][3], password);
+    EXPECT_EQ(content[3][1], username1);
+    EXPECT_EQ(content[7][0], std::to_string(MESSAGES_SEEN));
+    EXPECT_EQ(content[7][1], username1);
+    EXPECT_EQ(content[7][2], username2);
+    EXPECT_EQ(content[7][5], std::to_string(messagesSeen));
 
 }
 
