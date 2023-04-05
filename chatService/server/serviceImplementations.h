@@ -39,6 +39,22 @@ using chatservice::HeartBeatResponse;
 using chatservice::LeaderElectionProposalResponse;
 using chatservice::LeaderElectionResponse;
 
+struct LeaderValues {
+    bool isLeader = false;
+    int leaderidx = -1;
+    std::string leaderAddress = "";
+
+    LeaderValues() {}
+};
+
+struct ElectionValues {
+    int numberOfCandidatesReceived = 0;
+    int maxLeaderElectionVal = -1;
+    std::string currLeaderCandidateAddr;
+
+    ElectionValues() {}
+};
+
 class ChatServiceImpl final : public chatservice::ChatService::Service {
     private:
         // This might be where we store the conversations open per user or something
@@ -47,17 +63,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         // For interserver communication
         std::vector<std::unique_ptr<ChatService::Stub>> connections;
         std::unordered_map<std::string, int> addressToConnectionIdx;
-        int leaderIdx = -1;
         std::string myAddress;
 
         // Commented out the global versions in storage.h
-        std::mutex isLeaderMutex;
-        bool isLeader = false;
+        std::mutex leaderMutex;
+        LeaderValues leaderVals;
 
         std::mutex leaderElectionValuesMutex;
-        int numberOfCandidatesReceived = 0;
-        int maxLeaderElectionVal = -1;
-        std::string currLeaderCandidateAddr;
+        ElectionValues electionVals;
 
     public:
         explicit ChatServiceImpl(std::string fileName, std::string address) {
@@ -229,21 +242,34 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         Status HeartBeat(ServerContext* context, const HeartBeatRequest* request, HeartBeatResponse* reply) {
-            isLeaderMutex.lock();
-            if (isLeader) {
-                return Status::OK;
-            }
-            g_isLeaderMutex.unlock();
+            leaderMutex.lock();
+            reply->set_isleader(isLeader);
+            leaderMutex.unlock();
+            return Status::OK;
         }
 
         Status ProposeLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse reply) {
             // TODO: implement leader election proposal RPC
             // Check if I am the leader or if leaderIdx != -1, otherwise we have no leader
+            leaderMutex.lock();
+            if (leaderIdx != -1 || isLeader) {
+                reply.set_accept(false);
+                reply.set_leader(leaderVals.leaderAddress);
+            }
+            else {
+                reply.set_accept(true);
+            }
+            leaderMutex.unlock();
+
+            return Status::OK;
         }
 
         Status LeaderElection(ServerContext* context, const CandidateValue* request, LeaderElectionResponse* reply) {
             // TODO: implement leader election RPC (they basically just send their numbers)
             // Update leader candidate values
+            leaderElectionValuesMutex.lock();
+            
+            leaderElectionValuesMutex.unlock();
         }
 
 
@@ -257,6 +283,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         bool heartbeat() {
+            leaderMutex.lock();
             if (leaderIdx != -1) {
                 ClientContext context;
                 HeartBeatRequest message;
@@ -273,6 +300,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             else {
                 return false;
             }
+            leaderMutex.unlock();
         }
 
         bool proposeLeaderElection() {
@@ -301,14 +329,16 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         void leaderElection() {
             int candidateValue = rand();
+
             leaderElectionValuesMutex.lock();
-            currLeaderCandidateAddr = myAddress;
-            maxLeaderElectionVal = candidateValue;
+            electionVals.currLeaderCandidateAddr = myAddress;
+            electionVals.maxLeaderElectionVal = candidateValue;
             leaderElectionValuesMutex.unlock();
 
             CandidateValue message;
             message.set_number(candidateValue);
 
+            // send election value to all other servers
             for (int i = 0; i < connections.size(); i++) {
                 ClientContext context;
                 LeaderElectionResponse reply;
@@ -319,28 +349,29 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             bool waitingForLeaderElection = true;
             while (waitingForLeaderElection) {
                 leaderElectionValuesMutex.lock();
-                if (numberOfCandidatesReceived == g_numberOfServers - 1) {
+                if (electionVals.numberOfCandidatesReceived == g_numberOfServers - 1) {
                     waitingForLeaderElection = false;
-                    numberOfCandidatesReceived = 0;
                 }
                 leaderElectionValuesMutex.unlock();
             }
 
             // select new leader
-            if (currLeaderCandidateAddr == myAddress) {
-                isLeaderMutex.lock();
-                isLeader = true;
-                isLeaderMutex.unlock();
-                leaderIdx = -1;
+            leaderMutex.lock();
+            if (electionVals.currLeaderCandidateAddr == myAddress) {
+                leaderVals.isLeader = true;
+                leaderVals.leaderidx = -1;
             } 
             else {
-                leaderIdx = addressToConnectionIdx[currLeaderCandidateAddr];
+                leaderVals.leaderAddress = electionVals.currLeaderCandidateAddr;
+                leaderVals.leaderidx = addressToConnectionIdx[leaderVals.leaderAddress];
+                leaderVals.isLeader = false;
             }
+            leaderMutex.unlock();
 
-            // reset necessary values
             leaderElectionValuesMutex.lock();
-            currLeaderCandidateAddr = "";
-            maxLeaderElectionVal = -1;
+            electionVals.currLeaderCandidateAddr = "";
+            electionVals.maxLeaderElectionVal = -1;
+            electionVals.numberOfCandidatesReceived = 0;
             leaderElectionValuesMutex.unlock();
         }
 };

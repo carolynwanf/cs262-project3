@@ -130,7 +130,10 @@ message RefreshResponse {
 message HeartBeatRequest {
 }
 
+// when heartbeat is sent, the supposed leader responds with boolean indicating
+//      whether or not they are still leader
 message HeartBeatResponse {
+    bool isLeader=1;
 }
 
 message LeaderElectionProposal {
@@ -138,6 +141,7 @@ message LeaderElectionProposal {
 
 message LeaderElectionProposalResponse {
     bool accept=1;
+    string leader=2;
 }
 
 message CandidateValue {

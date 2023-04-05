@@ -3367,9 +3367,10 @@ class HeartBeatRequest final :
 // -------------------------------------------------------------------
 
 class HeartBeatResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.HeartBeatResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chatservice.HeartBeatResponse) */ {
  public:
   inline HeartBeatResponse() : HeartBeatResponse(nullptr) {}
+  ~HeartBeatResponse() override;
   explicit PROTOBUF_CONSTEXPR HeartBeatResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   HeartBeatResponse(const HeartBeatResponse& from);
@@ -3442,15 +3443,29 @@ class HeartBeatResponse final :
   HeartBeatResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<HeartBeatResponse>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const HeartBeatResponse& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const HeartBeatResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const HeartBeatResponse& from) {
+    HeartBeatResponse::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const HeartBeatResponse& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(HeartBeatResponse* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -3471,6 +3486,18 @@ class HeartBeatResponse final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kIsLeaderFieldNumber = 1,
+  };
+  // bool isLeader = 1;
+  void clear_isleader();
+  bool isleader() const;
+  void set_isleader(bool value);
+  private:
+  bool _internal_isleader() const;
+  void _internal_set_isleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.HeartBeatResponse)
  private:
   class _Internal;
@@ -3479,7 +3506,10 @@ class HeartBeatResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    bool isleader_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3723,8 +3753,23 @@ class LeaderElectionProposalResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kLeaderFieldNumber = 2,
     kAcceptFieldNumber = 1,
   };
+  // string leader = 2;
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
+  public:
+
   // bool accept = 1;
   void clear_accept();
   bool accept() const;
@@ -3742,6 +3787,7 @@ class LeaderElectionProposalResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
     bool accept_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -3871,8 +3917,23 @@ class CandidateValue final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kAddressFieldNumber = 2,
     kNumberFieldNumber = 1,
   };
+  // string address = 2;
+  void clear_address();
+  const std::string& address() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_address(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_address();
+  PROTOBUF_NODISCARD std::string* release_address();
+  void set_allocated_address(std::string* address);
+  private:
+  const std::string& _internal_address() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_address(const std::string& value);
+  std::string* _internal_mutable_address();
+  public:
+
   // int32 number = 1;
   void clear_number();
   int32_t number() const;
@@ -3890,6 +3951,7 @@ class CandidateValue final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr address_;
     int32_t number_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -5593,6 +5655,26 @@ RefreshResponse::notifications() const {
 
 // HeartBeatResponse
 
+// bool isLeader = 1;
+inline void HeartBeatResponse::clear_isleader() {
+  _impl_.isleader_ = false;
+}
+inline bool HeartBeatResponse::_internal_isleader() const {
+  return _impl_.isleader_;
+}
+inline bool HeartBeatResponse::isleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.HeartBeatResponse.isLeader)
+  return _internal_isleader();
+}
+inline void HeartBeatResponse::_internal_set_isleader(bool value) {
+  
+  _impl_.isleader_ = value;
+}
+inline void HeartBeatResponse::set_isleader(bool value) {
+  _internal_set_isleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.HeartBeatResponse.isLeader)
+}
+
 // -------------------------------------------------------------------
 
 // LeaderElectionProposal
@@ -5621,6 +5703,56 @@ inline void LeaderElectionProposalResponse::set_accept(bool value) {
   // @@protoc_insertion_point(field_set:chatservice.LeaderElectionProposalResponse.accept)
 }
 
+// string leader = 2;
+inline void LeaderElectionProposalResponse::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+}
+inline const std::string& LeaderElectionProposalResponse::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.LeaderElectionProposalResponse.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LeaderElectionProposalResponse::set_leader(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.LeaderElectionProposalResponse.leader)
+}
+inline std::string* LeaderElectionProposalResponse::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.LeaderElectionProposalResponse.leader)
+  return _s;
+}
+inline const std::string& LeaderElectionProposalResponse::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void LeaderElectionProposalResponse::_internal_set_leader(const std::string& value) {
+  
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* LeaderElectionProposalResponse::_internal_mutable_leader() {
+  
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* LeaderElectionProposalResponse::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.LeaderElectionProposalResponse.leader)
+  return _impl_.leader_.Release();
+}
+inline void LeaderElectionProposalResponse::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.LeaderElectionProposalResponse.leader)
+}
+
 // -------------------------------------------------------------------
 
 // CandidateValue
@@ -5643,6 +5775,56 @@ inline void CandidateValue::_internal_set_number(int32_t value) {
 inline void CandidateValue::set_number(int32_t value) {
   _internal_set_number(value);
   // @@protoc_insertion_point(field_set:chatservice.CandidateValue.number)
+}
+
+// string address = 2;
+inline void CandidateValue::clear_address() {
+  _impl_.address_.ClearToEmpty();
+}
+inline const std::string& CandidateValue::address() const {
+  // @@protoc_insertion_point(field_get:chatservice.CandidateValue.address)
+  return _internal_address();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CandidateValue::set_address(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.address_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.CandidateValue.address)
+}
+inline std::string* CandidateValue::mutable_address() {
+  std::string* _s = _internal_mutable_address();
+  // @@protoc_insertion_point(field_mutable:chatservice.CandidateValue.address)
+  return _s;
+}
+inline const std::string& CandidateValue::_internal_address() const {
+  return _impl_.address_.Get();
+}
+inline void CandidateValue::_internal_set_address(const std::string& value) {
+  
+  _impl_.address_.Set(value, GetArenaForAllocation());
+}
+inline std::string* CandidateValue::_internal_mutable_address() {
+  
+  return _impl_.address_.Mutable(GetArenaForAllocation());
+}
+inline std::string* CandidateValue::release_address() {
+  // @@protoc_insertion_point(field_release:chatservice.CandidateValue.address)
+  return _impl_.address_.Release();
+}
+inline void CandidateValue::set_allocated_address(std::string* address) {
+  if (address != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.address_.SetAllocated(address, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.address_.IsDefault()) {
+    _impl_.address_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.CandidateValue.address)
 }
 
 // -------------------------------------------------------------------
