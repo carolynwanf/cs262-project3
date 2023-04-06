@@ -20,7 +20,8 @@
 using chatservice::ChatMessage;
 using chatservice::Notification;
 
-std::string g_logFile = "log.csv";
+std::string g_pendingLogFile = "pendingLog.csv";
+std::string g_committedLogFile = "committedLog.csv";
 std::string g_csvFields = "message_type,username1,username2,password,message_content,messagesseen,leader";
 std::string g_nullString = "NULL";
 

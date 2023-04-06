@@ -1,4 +1,4 @@
-#include "serviceImplementations.h"
+#include "interServerCommunication.h"
 
 #include <grpc/grpc.h>
 #include <grpcpp/security/server_credentials.h>
@@ -32,6 +32,9 @@ void RunServer(std::string ip_addr, int port) {
         }
         serverAddresses.push_back(other_server);
     }
+
+    // start inter-server communication thread
+    std::thread(serverThread, serverAddresses, server_addr, service);
 
     builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);

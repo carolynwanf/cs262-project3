@@ -58,7 +58,8 @@ struct ElectionValues {
 class ChatServiceImpl final : public chatservice::ChatService::Service {
     private:
         // This might be where we store the conversations open per user or something
-        std::ofstream logWriter;
+        std::ofstream pendingLogWriter;
+        std::ofstream commitLogWriter;
 
         // For interserver communication
         std::vector<std::unique_ptr<ChatService::Stub>> connections;
@@ -73,35 +74,78 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         ElectionValues electionVals;
 
     public:
-        explicit ChatServiceImpl(std::string fileName, std::string address) {
-            // initialize the CSV log
-            logWriter.open(fileName);
-            logWriter << g_csvFields << std::endl;
+        explicit ChatServiceImpl(std::string pendingFileName, std::string commitFileName, std::string address) {
+            // initialize pending CSV log
+            pendingLogWriter.open(pendingFileName);
+            pendingLogWriter << g_csvFields << std::endl;
+
+            // initialize commit CSV log
+            commitLogWriter.open(pendingFileName);
+            commitLogWriter << g_csvFields << std::endl;
+
             myAddress = address;
         }
 
         Status CreateAccount(ServerContext* context, const CreateAccountMessage* create_account_message, 
                             CreateAccountReply* server_reply) {
-            // Mutex lock, check for existing users, add user, etc.
-            std::string username = create_account_message->username();
-            std::string password = create_account_message->password();
-            int createAccountStatus = createAccount(username, password);
+            writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
+            
+             // If master, talk to replicas, if not master just return ok after writing to pending
+            if (leaderVals.isLeader) {
+                int oks = 0;
 
-            // Update error messages and reply based on account creation status
-            if (createAccountStatus == 1) {
-                std::string errorMsg = "Username '" + create_account_message->username() + "' already exists.";
-                server_reply->set_errormsg(errorMsg);
-                server_reply->set_createaccountsuccess(false);
-            } else {
-                server_reply->set_createaccountsuccess(true);
-                writeToLogs(logWriter, CREATE_ACCOUNT, username, g_nullString, password);
-            }
+                // Get consensus 
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CreateAccountReply reply;
+                    Status status = connections[i]->CreateAccount(&context, create_account_message, &reply);
+                    
+                    if (status.ok()) {
+                        oks++;
+                    }
+                }
+
+                // Commit if you get consensus
+                if (oks == connections.size()) {
+                    writeToLogs(commitLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
+
+                    // Tell replicas to commit
+                    for (int i = 0; i < connections.size(); i++) {
+                        ClientContext context;
+                        CommitRequest request;
+                        CommitReply reply;
+                        Status status = connections[i]->Commit(&context, request, &reply);
+                    }
+
+                    // Add to storage
+                    std::string username = create_account_message->username();
+                    std::string password = create_account_message->password();
+                    int createAccountStatus = createAccount(username, password);
+
+                    // Update error messages and reply based on account creation status
+                    if (createAccountStatus == 1) {
+                        std::string errorMsg = "Username '" + create_account_message->username() + "' already exists.";
+                        server_reply->set_errormsg(errorMsg);
+                        server_reply->set_createaccountsuccess(false);
+                    } else {
+                        server_reply->set_createaccountsuccess(true);
+                    }
+
+                } else {
+                    // What do if you don't get consensus?
+                }
+
+            } 
 
             return Status::OK;
         }
 
 
         Status Login(ServerContext* context, const LoginMessage* login_message, LoginReply* server_reply) {
+            writeToLogs(pendingLogWriter, LOGIN, username, g_nullString, password);
+
+            // TODO: check if master, talk to replicas
+
             // Check for existing user and verify password
             std::string username = login_message->username();
             std::string password = login_message->password();
@@ -110,7 +154,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             
             if (loginStatus == 0) {
                 server_reply->set_loginsuccess(true);
-                writeToLogs(logWriter, LOGIN, username, g_nullString, password);
             } else {
                 server_reply->set_loginsuccess(false);
                 server_reply->set_errormsg("Incorrect username or password.");
@@ -121,11 +164,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status Logout(ServerContext* context, const LogoutMessage* logout_message, LogoutReply* server_reply) {
-            int logoutStatus = logout(logout_message->username());
-            if (logoutStatus == 0) {
-                writeToLogs(logWriter, LOGOUT, logout_message->username());
-            }
+            writeToLogs(pendingLogWriter, LOGOUT, logout_message->username());
 
+            // TODO: check if master, talk to replicas
+
+            int logoutStatus = logout(logout_message->username());
             return Status::OK;
         }
 
@@ -152,6 +195,9 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status SendMessage(ServerContext* context, const ChatMessage* msg, SendMessageReply* server_reply) {
+            writeToLogs(pendingLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent); 
+            // TODO: check if master, talk to replicas
+
             std::string senderUsername = msg->senderusername();
             std::string recipientUsername = msg->recipientusername();
             std::string messageContent = msg->msgcontent();
@@ -160,7 +206,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             if (sendMessageStatus == 0) {
                 server_reply->set_messagesent(true);
-                writeToLogs(logWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent);
             } else {
                 std::string errormsg = "Tried to send a message to a user that doesn't exist '" + msg->recipientusername() + "'";
                 server_reply->set_errormsg(errormsg);
@@ -189,6 +234,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status QueryMessages(ServerContext* context, const QueryMessagesMessage* query, 
                             ServerWriter<ChatMessage>* writer) {
+            writeToLogs(pendingLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
+
+            // TODO: check if master, talk to replicas
+            
             std::cout << "Getting messages between '" << query->clientusername() << "' and '"<< query->otherusername() << "'" << std::endl;
 
             std::vector<ChatMessage> queryMessagesMessageList = queryMessages(query->clientusername(), query->otherusername());
@@ -197,13 +246,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 writer->Write(message);
             }
 
-            writeToLogs(logWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
-
             return Status::OK;
         }
 
         Status DeleteAccount(ServerContext* context, const DeleteAccountMessage* delete_account_message,
                             DeleteAccountReply* server_reply) {
+            writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username());
+            
+            // TODO: check if master, talk to replicas
+            
             std::cout << "Deleting account of '" << delete_account_message->username() << "'" << std::endl;
             // Flag user account as deleted in trie
             int deleteAccountStatus = deleteAccount(delete_account_message->username());
@@ -212,7 +263,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 server_reply->set_deletedaccount(false);
             } else {
                 server_reply->set_deletedaccount(true);
-                writeToLogs(logWriter, DELETE_ACCOUNT, delete_account_message->username());
             }
             
             return Status::OK;
@@ -220,9 +270,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status MessagesSeen(ServerContext* context, const MessagesSeenMessage* msg, MessagesSeenReply* reply) {
+            writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
+
+            // TODO: check if master, talk to replicas
+
             int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
-            
-            writeToLogs(logWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
 
             return Status::OK;
         }
@@ -239,6 +291,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 queuedOperationsDictionary.erase(request->clientusername());
             }
             return Status::OK;
+        }
+
+        Status Commit(ServerContext* context, const CommitRequest* request, CommitReply* reply) {
+            // TODO
+            // Add last pending log to committed log
         }
 
         Status HeartBeat(ServerContext* context, const HeartBeatRequest* request, HeartBeatResponse* reply) {
@@ -265,11 +322,24 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         Status LeaderElection(ServerContext* context, const CandidateValue* request, LeaderElectionResponse* reply) {
-            // TODO: implement leader election RPC (they basically just send their numbers)
             // Update leader candidate values
             leaderElectionValuesMutex.lock();
-            
+            electionVals.numberOfCandidatesReceived++;
+            if (request->number() > electionVals.maxLeaderElectionVal) {
+                electionVals.maxLeaderElectionVal = request->number();
+                electionVals.currLeaderCandidateAddr = request->address();
+            }
+            // tie breaker, choose candidate with address that is lexicographically larger
+            else if (request->number() == electionVals.maxLeaderElectionVal) {
+                if (electionVals.currLeaderCandidateAddr.compare(request->address()) < 0) {
+                    return Status::OK;
+                }
+                else {
+                    electionVals.currLeaderCandidateAddr = request->address();
+                }
+            }
             leaderElectionValuesMutex.unlock();
+            return Status::OK;
         }
 
 
