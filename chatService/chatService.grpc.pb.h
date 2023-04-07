@@ -118,12 +118,12 @@ class ChatService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::HeartBeatResponse>> PrepareAsyncHeartBeat(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::HeartBeatResponse>>(PrepareAsyncHeartBeatRaw(context, request, cq));
     }
-    virtual ::grpc::Status ProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::chatservice::LeaderElectionProposalResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>> AsyncProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>>(AsyncProposeLeaderElectionRaw(context, request, cq));
+    virtual ::grpc::Status SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::chatservice::LeaderElectionProposalResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>> AsyncSuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>>(AsyncSuggestLeaderElectionRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>> PrepareAsyncProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>>(PrepareAsyncProposeLeaderElectionRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>> PrepareAsyncSuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>>(PrepareAsyncSuggestLeaderElectionRaw(context, request, cq));
     }
     virtual ::grpc::Status LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::chatservice::LeaderElectionResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>> AsyncLeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) {
@@ -162,8 +162,8 @@ class ChatService final {
       virtual void Commit(::grpc::ClientContext* context, const ::chatservice::CommitRequest* request, ::chatservice::CommitResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void HeartBeat(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest* request, ::chatservice::HeartBeatResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void HeartBeat(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest* request, ::chatservice::HeartBeatResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void ProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void ProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // May not need this anymore?
@@ -199,8 +199,8 @@ class ChatService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::CommitResponse>* PrepareAsyncCommitRaw(::grpc::ClientContext* context, const ::chatservice::CommitRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::HeartBeatResponse>* AsyncHeartBeatRaw(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::HeartBeatResponse>* PrepareAsyncHeartBeatRaw(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>* AsyncProposeLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>* PrepareAsyncProposeLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>* AsyncSuggestLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>* PrepareAsyncSuggestLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>* AsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>* PrepareAsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::MessagesSeenReply>* AsyncMessagesSeenRaw(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) = 0;
@@ -292,12 +292,12 @@ class ChatService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::HeartBeatResponse>> PrepareAsyncHeartBeat(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::HeartBeatResponse>>(PrepareAsyncHeartBeatRaw(context, request, cq));
     }
-    ::grpc::Status ProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::chatservice::LeaderElectionProposalResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>> AsyncProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>>(AsyncProposeLeaderElectionRaw(context, request, cq));
+    ::grpc::Status SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::chatservice::LeaderElectionProposalResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>> AsyncSuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>>(AsyncSuggestLeaderElectionRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>> PrepareAsyncProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>>(PrepareAsyncProposeLeaderElectionRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>> PrepareAsyncSuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>>(PrepareAsyncSuggestLeaderElectionRaw(context, request, cq));
     }
     ::grpc::Status LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::chatservice::LeaderElectionResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>> AsyncLeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) {
@@ -335,8 +335,8 @@ class ChatService final {
       void Commit(::grpc::ClientContext* context, const ::chatservice::CommitRequest* request, ::chatservice::CommitResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void HeartBeat(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest* request, ::chatservice::HeartBeatResponse* response, std::function<void(::grpc::Status)>) override;
       void HeartBeat(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest* request, ::chatservice::HeartBeatResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void ProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, std::function<void(::grpc::Status)>) override;
-      void ProposeLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, std::function<void(::grpc::Status)>) override;
+      void SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, std::function<void(::grpc::Status)>) override;
       void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response, std::function<void(::grpc::Status)>) override;
@@ -377,8 +377,8 @@ class ChatService final {
     ::grpc::ClientAsyncResponseReader< ::chatservice::CommitResponse>* PrepareAsyncCommitRaw(::grpc::ClientContext* context, const ::chatservice::CommitRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::HeartBeatResponse>* AsyncHeartBeatRaw(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::HeartBeatResponse>* PrepareAsyncHeartBeatRaw(::grpc::ClientContext* context, const ::chatservice::HeartBeatRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>* AsyncProposeLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>* PrepareAsyncProposeLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>* AsyncSuggestLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>* PrepareAsyncSuggestLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>* AsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>* PrepareAsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::MessagesSeenReply>* AsyncMessagesSeenRaw(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) override;
@@ -394,7 +394,7 @@ class ChatService final {
     const ::grpc::internal::RpcMethod rpcmethod_RefreshClient_;
     const ::grpc::internal::RpcMethod rpcmethod_Commit_;
     const ::grpc::internal::RpcMethod rpcmethod_HeartBeat_;
-    const ::grpc::internal::RpcMethod rpcmethod_ProposeLeaderElection_;
+    const ::grpc::internal::RpcMethod rpcmethod_SuggestLeaderElection_;
     const ::grpc::internal::RpcMethod rpcmethod_LeaderElection_;
     const ::grpc::internal::RpcMethod rpcmethod_MessagesSeen_;
   };
@@ -415,7 +415,7 @@ class ChatService final {
     virtual ::grpc::Status RefreshClient(::grpc::ServerContext* context, const ::chatservice::RefreshRequest* request, ::chatservice::RefreshResponse* response);
     virtual ::grpc::Status Commit(::grpc::ServerContext* context, const ::chatservice::CommitRequest* request, ::chatservice::CommitResponse* response);
     virtual ::grpc::Status HeartBeat(::grpc::ServerContext* context, const ::chatservice::HeartBeatRequest* request, ::chatservice::HeartBeatResponse* response);
-    virtual ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response);
+    virtual ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response);
     virtual ::grpc::Status LeaderElection(::grpc::ServerContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response);
     // May not need this anymore?
     virtual ::grpc::Status MessagesSeen(::grpc::ServerContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response);
@@ -641,22 +641,22 @@ class ChatService final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_ProposeLeaderElection : public BaseClass {
+  class WithAsyncMethod_SuggestLeaderElection : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_ProposeLeaderElection() {
+    WithAsyncMethod_SuggestLeaderElection() {
       ::grpc::Service::MarkMethodAsync(11);
     }
-    ~WithAsyncMethod_ProposeLeaderElection() override {
+    ~WithAsyncMethod_SuggestLeaderElection() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
+    ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestProposeLeaderElection(::grpc::ServerContext* context, ::chatservice::LeaderElectionProposal* request, ::grpc::ServerAsyncResponseWriter< ::chatservice::LeaderElectionProposalResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestSuggestLeaderElection(::grpc::ServerContext* context, ::chatservice::LeaderElectionProposal* request, ::grpc::ServerAsyncResponseWriter< ::chatservice::LeaderElectionProposalResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -700,7 +700,7 @@ class ChatService final {
       ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_CreateAccount<WithAsyncMethod_Login<WithAsyncMethod_Logout<WithAsyncMethod_ListUsers<WithAsyncMethod_SendMessage<WithAsyncMethod_QueryNotifications<WithAsyncMethod_QueryMessages<WithAsyncMethod_DeleteAccount<WithAsyncMethod_RefreshClient<WithAsyncMethod_Commit<WithAsyncMethod_HeartBeat<WithAsyncMethod_ProposeLeaderElection<WithAsyncMethod_LeaderElection<WithAsyncMethod_MessagesSeen<Service > > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_CreateAccount<WithAsyncMethod_Login<WithAsyncMethod_Logout<WithAsyncMethod_ListUsers<WithAsyncMethod_SendMessage<WithAsyncMethod_QueryNotifications<WithAsyncMethod_QueryMessages<WithAsyncMethod_DeleteAccount<WithAsyncMethod_RefreshClient<WithAsyncMethod_Commit<WithAsyncMethod_HeartBeat<WithAsyncMethod_SuggestLeaderElection<WithAsyncMethod_LeaderElection<WithAsyncMethod_MessagesSeen<Service > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_CreateAccount : public BaseClass {
    private:
@@ -984,30 +984,30 @@ class ChatService final {
       ::grpc::CallbackServerContext* /*context*/, const ::chatservice::HeartBeatRequest* /*request*/, ::chatservice::HeartBeatResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_ProposeLeaderElection : public BaseClass {
+  class WithCallbackMethod_SuggestLeaderElection : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_ProposeLeaderElection() {
+    WithCallbackMethod_SuggestLeaderElection() {
       ::grpc::Service::MarkMethodCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::chatservice::LeaderElectionProposal, ::chatservice::LeaderElectionProposalResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response) { return this->ProposeLeaderElection(context, request, response); }));}
-    void SetMessageAllocatorFor_ProposeLeaderElection(
+                   ::grpc::CallbackServerContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response) { return this->SuggestLeaderElection(context, request, response); }));}
+    void SetMessageAllocatorFor_SuggestLeaderElection(
         ::grpc::MessageAllocator< ::chatservice::LeaderElectionProposal, ::chatservice::LeaderElectionProposalResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::chatservice::LeaderElectionProposal, ::chatservice::LeaderElectionProposalResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_ProposeLeaderElection() override {
+    ~WithCallbackMethod_SuggestLeaderElection() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
+    ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* ProposeLeaderElection(
+    virtual ::grpc::ServerUnaryReactor* SuggestLeaderElection(
       ::grpc::CallbackServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -1064,7 +1064,7 @@ class ChatService final {
     virtual ::grpc::ServerUnaryReactor* MessagesSeen(
       ::grpc::CallbackServerContext* /*context*/, const ::chatservice::MessagesSeenMessage* /*request*/, ::chatservice::MessagesSeenReply* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_CreateAccount<WithCallbackMethod_Login<WithCallbackMethod_Logout<WithCallbackMethod_ListUsers<WithCallbackMethod_SendMessage<WithCallbackMethod_QueryNotifications<WithCallbackMethod_QueryMessages<WithCallbackMethod_DeleteAccount<WithCallbackMethod_RefreshClient<WithCallbackMethod_Commit<WithCallbackMethod_HeartBeat<WithCallbackMethod_ProposeLeaderElection<WithCallbackMethod_LeaderElection<WithCallbackMethod_MessagesSeen<Service > > > > > > > > > > > > > > CallbackService;
+  typedef WithCallbackMethod_CreateAccount<WithCallbackMethod_Login<WithCallbackMethod_Logout<WithCallbackMethod_ListUsers<WithCallbackMethod_SendMessage<WithCallbackMethod_QueryNotifications<WithCallbackMethod_QueryMessages<WithCallbackMethod_DeleteAccount<WithCallbackMethod_RefreshClient<WithCallbackMethod_Commit<WithCallbackMethod_HeartBeat<WithCallbackMethod_SuggestLeaderElection<WithCallbackMethod_LeaderElection<WithCallbackMethod_MessagesSeen<Service > > > > > > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_CreateAccount : public BaseClass {
@@ -1254,18 +1254,18 @@ class ChatService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_ProposeLeaderElection : public BaseClass {
+  class WithGenericMethod_SuggestLeaderElection : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_ProposeLeaderElection() {
+    WithGenericMethod_SuggestLeaderElection() {
       ::grpc::Service::MarkMethodGeneric(11);
     }
-    ~WithGenericMethod_ProposeLeaderElection() override {
+    ~WithGenericMethod_SuggestLeaderElection() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
+    ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1525,22 +1525,22 @@ class ChatService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_ProposeLeaderElection : public BaseClass {
+  class WithRawMethod_SuggestLeaderElection : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_ProposeLeaderElection() {
+    WithRawMethod_SuggestLeaderElection() {
       ::grpc::Service::MarkMethodRaw(11);
     }
-    ~WithRawMethod_ProposeLeaderElection() override {
+    ~WithRawMethod_SuggestLeaderElection() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
+    ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestProposeLeaderElection(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestSuggestLeaderElection(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -1827,25 +1827,25 @@ class ChatService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_ProposeLeaderElection : public BaseClass {
+  class WithRawCallbackMethod_SuggestLeaderElection : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_ProposeLeaderElection() {
+    WithRawCallbackMethod_SuggestLeaderElection() {
       ::grpc::Service::MarkMethodRawCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ProposeLeaderElection(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SuggestLeaderElection(context, request, response); }));
     }
-    ~WithRawCallbackMethod_ProposeLeaderElection() override {
+    ~WithRawCallbackMethod_SuggestLeaderElection() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
+    ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* ProposeLeaderElection(
+    virtual ::grpc::ServerUnaryReactor* SuggestLeaderElection(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -2109,31 +2109,31 @@ class ChatService final {
     virtual ::grpc::Status StreamedHeartBeat(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::HeartBeatRequest,::chatservice::HeartBeatResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_ProposeLeaderElection : public BaseClass {
+  class WithStreamedUnaryMethod_SuggestLeaderElection : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_ProposeLeaderElection() {
+    WithStreamedUnaryMethod_SuggestLeaderElection() {
       ::grpc::Service::MarkMethodStreamed(11,
         new ::grpc::internal::StreamedUnaryHandler<
           ::chatservice::LeaderElectionProposal, ::chatservice::LeaderElectionProposalResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
                      ::chatservice::LeaderElectionProposal, ::chatservice::LeaderElectionProposalResponse>* streamer) {
-                       return this->StreamedProposeLeaderElection(context,
+                       return this->StreamedSuggestLeaderElection(context,
                          streamer);
                   }));
     }
-    ~WithStreamedUnaryMethod_ProposeLeaderElection() override {
+    ~WithStreamedUnaryMethod_SuggestLeaderElection() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status ProposeLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
+    ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* /*context*/, const ::chatservice::LeaderElectionProposal* /*request*/, ::chatservice::LeaderElectionProposalResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedProposeLeaderElection(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::LeaderElectionProposal,::chatservice::LeaderElectionProposalResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedSuggestLeaderElection(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::LeaderElectionProposal,::chatservice::LeaderElectionProposalResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_LeaderElection : public BaseClass {
@@ -2189,7 +2189,7 @@ class ChatService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedMessagesSeen(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::MessagesSeenMessage,::chatservice::MessagesSeenReply>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithStreamedUnaryMethod_SendMessage<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_ProposeLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithStreamedUnaryMethod_SendMessage<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_SuggestLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_ListUsers : public BaseClass {
    private:
@@ -2272,7 +2272,7 @@ class ChatService final {
     virtual ::grpc::Status StreamedQueryMessages(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::chatservice::QueryMessagesMessage,::chatservice::ChatMessage>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_ListUsers<WithSplitStreamingMethod_QueryNotifications<WithSplitStreamingMethod_QueryMessages<Service > > > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithSplitStreamingMethod_ListUsers<WithStreamedUnaryMethod_SendMessage<WithSplitStreamingMethod_QueryNotifications<WithSplitStreamingMethod_QueryMessages<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_ProposeLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithSplitStreamingMethod_ListUsers<WithStreamedUnaryMethod_SendMessage<WithSplitStreamingMethod_QueryNotifications<WithSplitStreamingMethod_QueryMessages<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_SuggestLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace chatservice

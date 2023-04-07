@@ -47,7 +47,6 @@ using chatservice::User;
 using chatservice::SendMessageReply;
 using chatservice::Notification;
 using chatservice::DeleteAccountReply;
-// using chatservice::NewMessageReply;
 using chatservice::RefreshRequest;
 using chatservice::RefreshResponse;
 using chatservice::MessagesSeenReply;
@@ -78,8 +77,9 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         std::ofstream pendingLogWriter;
         std::ofstream commitLogWriter;
 
-        // for reading pending logs
+        // for reading logs
         std::fstream pendingFile;
+        std::fstream commitFile;
 
         // For interserver communication
         std::mutex connectionMutex;
@@ -137,6 +137,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
 
                 // Tell replicas to write to pending
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     CreateAccountReply reply;
@@ -162,6 +163,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     CommitResponse reply;
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
+                connectionMutex.unlock();
 
                 // Add to storage
                 int createAccountStatus = createAccount(username, password);
@@ -177,9 +179,9 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_createaccountsuccess(true);
                 }
 
-
-
-            } 
+            } else {
+                server_reply->set_leader(leaderVals.leaderAddress);
+            }
 
             return Status::OK;
         }
@@ -195,6 +197,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
 
                 // Get consensus 
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     LoginReply reply;
@@ -221,6 +224,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
 
+                connectionMutex.unlock();
+
                 // Add to storage
                 // Check for existing user and verify password
 
@@ -233,7 +238,9 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_errormsg("Incorrect username or password.");
                 }
 
-            } 
+            } else {
+                server_reply->set_leader(leaderVals.leaderAddress);
+            }
 
             return Status::OK;
         }
@@ -248,6 +255,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
 
                 // Get consensus 
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     LogoutReply reply;
@@ -275,32 +283,46 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
 
+                connectionMutex.unlock();
+
                 // Add to storage
                 int logoutStatus = logout(logout_message->username());
 
-            } 
+            } else {
+                server_reply->set_leader(leaderVals.leaderAddress);
+            }
 
             return Status::OK;
         }
 
 
         Status ListUsers(ServerContext* context, const QueryUsersMessage* query, ServerWriter<User>* writer) {
-            std::string prefix = query->username();
-            std::vector<std::string> usernames;
-            userTrie_mutex.lock();
-            try {
-                usernames = userTrie.returnUsersWithPrefix(prefix);
-            } catch (std::runtime_error &e) {
-                std::cout << e.what() << std::endl;
-                usernames = {};
-            }
-            userTrie_mutex.unlock();
+            if (leaderVals.isLeader) {
+                std::string prefix = query->username();
+                std::vector<std::string> usernames;
+                userTrie_mutex.lock();
+                try {
+                    usernames = userTrie.returnUsersWithPrefix(prefix);
+                } catch (std::runtime_error &e) {
+                    std::cout << e.what() << std::endl;
+                    usernames = {};
+                }
+                userTrie_mutex.unlock();
 
-            for (std::string username : usernames) {
+                for (std::string username : usernames) {
+                    User user;
+                    user.set_username(username);
+                    writer->Write(user);
+                }
+            } else {
                 User user;
-                user.set_username(username);
+                user.set_username(query->username());
+                user.set_leader(leaderVals.leaderAddress);
                 writer->Write(user);
+
             }
+
+
             return Status::OK;
         }
 
@@ -318,6 +340,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
 
                 // Get consensus 
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     SendMessageReply reply;
@@ -345,6 +368,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     CommitResponse reply;
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
+                
+                connectionMutex.unlock();
 
                 // Add to storage
                 int sendMessageStatus = sendMessage(senderUsername, recipientUsername, messageContent);
@@ -356,7 +381,9 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_errormsg(errormsg);
                 }
 
-            } 
+            } else {
+                server_reply->set_leader(leaderVals.leaderAddress);
+            }
 
             return Status::OK;
         }
@@ -364,17 +391,24 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status QueryNotifications(ServerContext* context, const QueryNotificationsMessage* query, 
                                 ServerWriter<Notification>* writer) {
-
-            std::string clientUsername = query->user();
-            std::vector<std::pair<char [g_UsernameLimit], char> > notifications = conversationsDictionary.getNotifications(clientUsername);
             
-            for (auto notification : notifications) {
-                std::cout << "Username: " << notification.first << ", " << std::to_string(notification.second) << " notifications" << std::endl;
+            if (leaderVals.isLeader) {
+                std::string clientUsername = query->user();
+                std::vector<std::pair<char [g_UsernameLimit], char> > notifications = conversationsDictionary.getNotifications(clientUsername);
+                
+                for (auto notification : notifications) {
+                    std::cout << "Username: " << notification.first << ", " << std::to_string(notification.second) << " notifications" << std::endl;
+                    Notification note;
+                    note.set_numberofnotifications(notification.second);
+                    note.set_user(notification.first);
+                    writer->Write(note);
+                }
+            } else {
                 Notification note;
-                note.set_numberofnotifications(notification.second);
-                note.set_user(notification.first);
+                note.set_leader(leaderVals.leaderAddress);
                 writer->Write(note);
             }
+
             return Status::OK;
         }
 
@@ -389,6 +423,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
 
                 // Get consensus 
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     std::unique_ptr<ClientReader<ChatMessage>> reader(connections[i]->QueryMessages(&context, *query));
@@ -417,6 +452,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
 
+                connectionMutex.unlock();
+
                 // Add to storage
                 std::cout << "Getting messages between '" << query->clientusername() << "' and '"<< query->otherusername() << "'" << std::endl;
 
@@ -425,7 +462,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 for (auto message : queryMessagesMessageList) {
                     writer->Write(message);
                 }
-            } 
+            } else {
+                ChatMessage message;
+                message.set_leader(leaderVals.leaderAddress);
+                writer->Write(message);
+            }
 
             return Status::OK;
         }
@@ -440,6 +481,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
 
                 // Get consensus 
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     DeleteAccountReply reply;
@@ -466,6 +508,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
 
+                connectionMutex.unlock();
+
                 // Add to storage
                std::cout << "Deleting account of '" << delete_account_message->username() << "'" << std::endl;
                 // Flag user account as deleted in trie
@@ -477,6 +521,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_deletedaccount(true);
                 }
 
+            } else {
+                server_reply->set_leader(leaderVals.leaderAddress);
             }
             
             return Status::OK;
@@ -492,6 +538,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 std::vector<int> droppedConnections;
                 
                 // Get consensus 
+                connectionMutex.lock();
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     MessagesSeenReply reply;
@@ -519,10 +566,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     Status status = connections[i]->Commit(&context, request, &reply);
                 }
 
+                connectionMutex.unlock();
+
                 // Add to storage
                 int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
 
-            } 
+            } else {
+                reply->set_leader(leaderVals.leaderAddress);
+            }
 
             return Status::OK;
         }
@@ -542,12 +593,21 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         Status Commit(ServerContext* context, const CommitRequest* request, CommitResponse* reply) {
-            std::string line;
+            std::vector<std::string> row;
+            std::string line, word;
             
             // Add last pending log to committed log
             getline(pendingFile, line);
 
             commitLogWriter <<  line;
+
+            std::stringstream str(line);
+
+            while (getline(str, word, ',')) {
+                row.push_back(word);
+            }
+
+            parseLine(row);
 
             return Status::OK;
 
@@ -560,16 +620,18 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-        Status ProposeLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse reply) {
+        Status SuggestLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse* reply) {
             // TODO: implement leader election proposal RPC
             // Check if I am the leader or if leaderIdx != -1, otherwise we have no leader
             leaderMutex.lock();
             if (leaderVals.leaderidx != -1 || leaderVals.isLeader) {
-                reply.set_accept(false);
-                reply.set_leader(leaderVals.leaderAddress);
+                std::cout << "We have a leader, reject leader election" << std::endl;
+                reply->set_accept(false);
+                reply->set_leader(leaderVals.leaderAddress);
             }
             else {
-                reply.set_accept(true);
+                std::cout << "Accept leader election" << std::endl;
+                reply->set_accept(true);
             }
             leaderMutex.unlock();
 
@@ -586,10 +648,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
             // tie breaker, choose candidate with address that is lexicographically larger
             else if (request->number() == electionVals.maxLeaderElectionVal) {
-                if (electionVals.currLeaderCandidateAddr.compare(request->address()) < 0) {
-                    return Status::OK;
-                }
-                else {
+                if (electionVals.currLeaderCandidateAddr.compare(request->address()) > 0) {
                     electionVals.currLeaderCandidateAddr = request->address();
                 }
             }
@@ -603,6 +662,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             // TODO: do we want to put this in a loop to keep trying until it works?
             auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
             std::unique_ptr<ChatService::Stub> stub_ = ChatService::NewStub(channel);
+            std::cout << "Adding connection to " << server_address << std::endl;
             connections.push_back(std::move(stub_));
             addressToConnectionIdx[server_address] = connections.size()-1;
         }
@@ -617,33 +677,38 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 Status status = connections[leaderVals.leaderidx]->HeartBeat(&context, message, &reponse);
 
                 if (status.ok()) {
+                    leaderMutex.unlock();
                     return true;
                 }
                 else {
                     // Remove leader from connections vector and from addr_to_idx dict
                     connections.erase(connections.begin()+leaderVals.leaderidx);
                     addressToConnectionIdx.erase(leaderVals.leaderAddress);
+                    leaderVals.leaderidx = -1;
+                    leaderVals.leaderAddress = "";
+                    leaderMutex.unlock();
                     return false;
                 }
             }
             else {
                 std::cout << "No leader index" << std::endl;
+                leaderMutex.unlock();
                 return false;
             }
-            leaderMutex.unlock();
         }
 
         bool proposeLeaderElection() {
-            // TODO: call propose leader election for each stub in vector
             std::cout << "Proposing leader election" << std::endl;
             LeaderElectionProposal message;
 
             for (int i = 0; i < connections.size(); i++) {
                 ClientContext context;
                 LeaderElectionProposalResponse reply;
-                Status status = connections[i]->ProposeLeaderElection(&context, message, &reply);
+                std::cout << "Sending proposal to connection " << std::to_string(i) << std::endl;
+                Status status = connections[i]->SuggestLeaderElection(&context, message, &reply);
                 if (status.ok()) {
                     if (!reply.accept()) {
+                        std::cout << "Election was rejected" << std::endl;
                         return false;
                     }
                 }
@@ -660,8 +725,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         void leaderElection() {
-            std::cout << "Carrying out leader election" << std::endl;
             int candidateValue = rand();
+            std::cout << "Carrying out leader election, my value is " << std::to_string(candidateValue) << std::endl;
 
             leaderElectionValuesMutex.lock();
             electionVals.currLeaderCandidateAddr = myAddress;
@@ -670,6 +735,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             CandidateValue message;
             message.set_number(candidateValue);
+            message.set_address(myAddress);
 
             // send election value to all other servers
             for (int i = 0; i < connections.size(); i++) {
@@ -693,14 +759,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             // select new leader
             leaderMutex.lock();
+            leaderVals.leaderAddress = electionVals.currLeaderCandidateAddr;
             if (electionVals.currLeaderCandidateAddr == myAddress) {
                 leaderVals.isLeader = true;
                 leaderVals.leaderidx = -1;
-            } 
+            }
             else {
-                leaderVals.leaderAddress = electionVals.currLeaderCandidateAddr;
-                leaderVals.leaderidx = addressToConnectionIdx[leaderVals.leaderAddress];
                 leaderVals.isLeader = false;
+                leaderVals.leaderidx = addressToConnectionIdx[leaderVals.leaderAddress];
             }
             leaderMutex.unlock();
 
@@ -711,6 +777,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             electionVals.maxLeaderElectionVal = -1;
             electionVals.numberOfCandidatesReceived = 0;
             leaderElectionValuesMutex.unlock();
+
+            std::cout << "Leader election finished" << std::endl;
         }
 
         bool isLeader() {

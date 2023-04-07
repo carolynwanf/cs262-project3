@@ -140,8 +140,6 @@ using chatservice::ChatService;
 // void serverThread(const std::vector<std::string> serverAddresses, std::string myAddress) {
     // ServerServerConnection serverConnections(myAddress);
 void serverThread(const std::vector<std::string> serverAddresses) {
-    
-    // Sleep before continuing
     for (std::string server_addr : serverAddresses) {
         g_Service.addConnection(server_addr);
     }
@@ -153,11 +151,12 @@ void serverThread(const std::vector<std::string> serverAddresses) {
 
     // TODO: set seed
     while (true) {
-        if (g_Service.isLeader()) {
-            continue;
-        }
         // sleep
         std::this_thread::sleep_for(std::chrono::seconds(1));
+        if (g_Service.isLeader()) {
+            std::cout << "I am the leader" << std::endl;
+            continue;
+        }
 
         // heart beat
         if (!g_Service.heartbeat()) {

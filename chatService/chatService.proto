@@ -14,7 +14,7 @@ service ChatService {
     rpc RefreshClient(RefreshRequest) returns (RefreshResponse);
     rpc Commit(CommitRequest) returns (CommitResponse);
     rpc HeartBeat(HeartBeatRequest) returns (HeartBeatResponse);
-    rpc ProposeLeaderElection(LeaderElectionProposal) returns (LeaderElectionProposalResponse);
+    rpc SuggestLeaderElection(LeaderElectionProposal) returns (LeaderElectionProposalResponse);
     rpc LeaderElection(CandidateValue) returns (LeaderElectionResponse);
 
     // May not need this anymore?
@@ -31,6 +31,7 @@ message CreateAccountMessage {
 message CreateAccountReply {
     bool createAccountSuccess=1;
     optional string errorMsg=2;
+    optional string leader=3;
 }
 
 
@@ -43,6 +44,7 @@ message LoginMessage {
 message LoginReply {
     bool loginSuccess=1;
     optional string errorMsg=2;
+    optional string leader=3;
 }
 
 
@@ -54,6 +56,7 @@ message LogoutMessage {
 message LogoutReply {
     // bool loggedOut=1;
     optional string errorMsg=2;
+    optional string leader=3;
 }
 
 
@@ -64,12 +67,14 @@ message QueryUsersMessage {
 
 message User {
     string username=1;
+    optional string leader=2;
 }
 
 
 message SendMessageReply {
     bool messageSent=1;
     optional string errorMsg=2;
+    optional string leader=3;
 }
 
 
@@ -82,6 +87,7 @@ message QueryNotificationsMessage {
 message Notification {
     string user=1;
     int32 numberOfNotifications=2;
+    optional string leader=3;
 }
 
 
@@ -95,6 +101,7 @@ message ChatMessage {
     string senderUsername=1;
     string recipientUsername=2;
     string msgContent=3;
+    optional string leader=4;
 }
 
 
@@ -107,6 +114,7 @@ message DeleteAccountMessage {
 message DeleteAccountReply {
     bool deletedAccount=1;
     optional string errorMsg=2;
+    optional string leader=3;
 }
 
 
@@ -117,6 +125,7 @@ message MessagesSeenMessage {
 }
 
 message MessagesSeenReply {
+    optional string leader=1;
 }
 
 message RefreshRequest {
@@ -126,6 +135,7 @@ message RefreshRequest {
 message RefreshResponse {
     bool forceLogout=1;
     repeated Notification notifications=2;
+    optional string leader=3;
 }
 
 message CommitRequest {

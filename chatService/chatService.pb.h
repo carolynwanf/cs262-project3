@@ -452,6 +452,7 @@ class CreateAccountReply final :
 
   enum : int {
     kErrorMsgFieldNumber = 2,
+    kLeaderFieldNumber = 3,
     kCreateAccountSuccessFieldNumber = 1,
   };
   // optional string errorMsg = 2;
@@ -470,6 +471,24 @@ class CreateAccountReply final :
   const std::string& _internal_errormsg() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_errormsg(const std::string& value);
   std::string* _internal_mutable_errormsg();
+  public:
+
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
   public:
 
   // bool createAccountSuccess = 1;
@@ -492,6 +511,7 @@ class CreateAccountReply final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errormsg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
     bool createaccountsuccess_;
   };
   union { Impl_ _impl_; };
@@ -790,6 +810,7 @@ class LoginReply final :
 
   enum : int {
     kErrorMsgFieldNumber = 2,
+    kLeaderFieldNumber = 3,
     kLoginSuccessFieldNumber = 1,
   };
   // optional string errorMsg = 2;
@@ -808,6 +829,24 @@ class LoginReply final :
   const std::string& _internal_errormsg() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_errormsg(const std::string& value);
   std::string* _internal_mutable_errormsg();
+  public:
+
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
   public:
 
   // bool loginSuccess = 1;
@@ -830,6 +869,7 @@ class LoginReply final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errormsg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
     bool loginsuccess_;
   };
   union { Impl_ _impl_; };
@@ -1112,6 +1152,7 @@ class LogoutReply final :
 
   enum : int {
     kErrorMsgFieldNumber = 2,
+    kLeaderFieldNumber = 3,
   };
   // optional string errorMsg = 2;
   bool has_errormsg() const;
@@ -1131,6 +1172,24 @@ class LogoutReply final :
   std::string* _internal_mutable_errormsg();
   public:
 
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.LogoutReply)
  private:
   class _Internal;
@@ -1142,6 +1201,7 @@ class LogoutReply final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errormsg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -1428,6 +1488,7 @@ class User final :
 
   enum : int {
     kUsernameFieldNumber = 1,
+    kLeaderFieldNumber = 2,
   };
   // string username = 1;
   void clear_username();
@@ -1443,6 +1504,24 @@ class User final :
   std::string* _internal_mutable_username();
   public:
 
+  // optional string leader = 2;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.User)
  private:
   class _Internal;
@@ -1451,8 +1530,10 @@ class User final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -1581,6 +1662,7 @@ class SendMessageReply final :
 
   enum : int {
     kErrorMsgFieldNumber = 2,
+    kLeaderFieldNumber = 3,
     kMessageSentFieldNumber = 1,
   };
   // optional string errorMsg = 2;
@@ -1599,6 +1681,24 @@ class SendMessageReply final :
   const std::string& _internal_errormsg() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_errormsg(const std::string& value);
   std::string* _internal_mutable_errormsg();
+  public:
+
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
   public:
 
   // bool messageSent = 1;
@@ -1621,6 +1721,7 @@ class SendMessageReply final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errormsg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
     bool messagesent_;
   };
   union { Impl_ _impl_; };
@@ -1903,6 +2004,7 @@ class Notification final :
 
   enum : int {
     kUserFieldNumber = 1,
+    kLeaderFieldNumber = 3,
     kNumberOfNotificationsFieldNumber = 2,
   };
   // string user = 1;
@@ -1917,6 +2019,24 @@ class Notification final :
   const std::string& _internal_user() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_user(const std::string& value);
   std::string* _internal_mutable_user();
+  public:
+
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
   public:
 
   // int32 numberOfNotifications = 2;
@@ -1936,9 +2056,11 @@ class Notification final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_;
-    int32_t numberofnotifications_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
+    int32_t numberofnotifications_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2238,6 +2360,7 @@ class ChatMessage final :
     kSenderUsernameFieldNumber = 1,
     kRecipientUsernameFieldNumber = 2,
     kMsgContentFieldNumber = 3,
+    kLeaderFieldNumber = 4,
   };
   // string senderUsername = 1;
   void clear_senderusername();
@@ -2281,6 +2404,24 @@ class ChatMessage final :
   std::string* _internal_mutable_msgcontent();
   public:
 
+  // optional string leader = 4;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.ChatMessage)
  private:
   class _Internal;
@@ -2289,10 +2430,12 @@ class ChatMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr senderusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr recipientusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msgcontent_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2590,6 +2733,7 @@ class DeleteAccountReply final :
 
   enum : int {
     kErrorMsgFieldNumber = 2,
+    kLeaderFieldNumber = 3,
     kDeletedAccountFieldNumber = 1,
   };
   // optional string errorMsg = 2;
@@ -2608,6 +2752,24 @@ class DeleteAccountReply final :
   const std::string& _internal_errormsg() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_errormsg(const std::string& value);
   std::string* _internal_mutable_errormsg();
+  public:
+
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
   public:
 
   // bool deletedAccount = 1;
@@ -2630,6 +2792,7 @@ class DeleteAccountReply final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errormsg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
     bool deletedaccount_;
   };
   union { Impl_ _impl_; };
@@ -2818,9 +2981,10 @@ class MessagesSeenMessage final :
 // -------------------------------------------------------------------
 
 class MessagesSeenReply final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.MessagesSeenReply) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chatservice.MessagesSeenReply) */ {
  public:
   inline MessagesSeenReply() : MessagesSeenReply(nullptr) {}
+  ~MessagesSeenReply() override;
   explicit PROTOBUF_CONSTEXPR MessagesSeenReply(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   MessagesSeenReply(const MessagesSeenReply& from);
@@ -2893,15 +3057,29 @@ class MessagesSeenReply final :
   MessagesSeenReply* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<MessagesSeenReply>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const MessagesSeenReply& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const MessagesSeenReply& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const MessagesSeenReply& from) {
+    MessagesSeenReply::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const MessagesSeenReply& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(MessagesSeenReply* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -2922,6 +3100,27 @@ class MessagesSeenReply final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kLeaderFieldNumber = 1,
+  };
+  // optional string leader = 1;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.MessagesSeenReply)
  private:
   class _Internal;
@@ -2930,7 +3129,11 @@ class MessagesSeenReply final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3210,6 +3413,7 @@ class RefreshResponse final :
 
   enum : int {
     kNotificationsFieldNumber = 2,
+    kLeaderFieldNumber = 3,
     kForceLogoutFieldNumber = 1,
   };
   // repeated .chatservice.Notification notifications = 2;
@@ -3230,6 +3434,24 @@ class RefreshResponse final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chatservice::Notification >&
       notifications() const;
 
+  // optional string leader = 3;
+  bool has_leader() const;
+  private:
+  bool _internal_has_leader() const;
+  public:
+  void clear_leader();
+  const std::string& leader() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_leader(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_leader();
+  PROTOBUF_NODISCARD std::string* release_leader();
+  void set_allocated_leader(std::string* leader);
+  private:
+  const std::string& _internal_leader() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_leader(const std::string& value);
+  std::string* _internal_mutable_leader();
+  public:
+
   // bool forceLogout = 1;
   void clear_forcelogout();
   bool forcelogout() const;
@@ -3247,9 +3469,11 @@ class RefreshResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chatservice::Notification > notifications_;
-    bool forcelogout_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chatservice::Notification > notifications_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
+    bool forcelogout_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -4523,6 +4747,74 @@ inline void CreateAccountReply::set_allocated_errormsg(std::string* errormsg) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.CreateAccountReply.errorMsg)
 }
 
+// optional string leader = 3;
+inline bool CreateAccountReply::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool CreateAccountReply::has_leader() const {
+  return _internal_has_leader();
+}
+inline void CreateAccountReply::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& CreateAccountReply::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.CreateAccountReply.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CreateAccountReply::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.CreateAccountReply.leader)
+}
+inline std::string* CreateAccountReply::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.CreateAccountReply.leader)
+  return _s;
+}
+inline const std::string& CreateAccountReply::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void CreateAccountReply::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* CreateAccountReply::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* CreateAccountReply::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.CreateAccountReply.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void CreateAccountReply::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.CreateAccountReply.leader)
+}
+
 // -------------------------------------------------------------------
 
 // LoginMessage
@@ -4719,6 +5011,74 @@ inline void LoginReply::set_allocated_errormsg(std::string* errormsg) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.LoginReply.errorMsg)
 }
 
+// optional string leader = 3;
+inline bool LoginReply::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool LoginReply::has_leader() const {
+  return _internal_has_leader();
+}
+inline void LoginReply::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& LoginReply::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.LoginReply.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LoginReply::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.LoginReply.leader)
+}
+inline std::string* LoginReply::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.LoginReply.leader)
+  return _s;
+}
+inline const std::string& LoginReply::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void LoginReply::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* LoginReply::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* LoginReply::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.LoginReply.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void LoginReply::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.LoginReply.leader)
+}
+
 // -------------------------------------------------------------------
 
 // LogoutMessage
@@ -4843,6 +5203,74 @@ inline void LogoutReply::set_allocated_errormsg(std::string* errormsg) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chatservice.LogoutReply.errorMsg)
+}
+
+// optional string leader = 3;
+inline bool LogoutReply::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool LogoutReply::has_leader() const {
+  return _internal_has_leader();
+}
+inline void LogoutReply::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& LogoutReply::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.LogoutReply.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LogoutReply::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.LogoutReply.leader)
+}
+inline std::string* LogoutReply::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.LogoutReply.leader)
+  return _s;
+}
+inline const std::string& LogoutReply::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void LogoutReply::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* LogoutReply::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* LogoutReply::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.LogoutReply.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void LogoutReply::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.LogoutReply.leader)
 }
 
 // -------------------------------------------------------------------
@@ -4971,6 +5399,74 @@ inline void User::set_allocated_username(std::string* username) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.User.username)
 }
 
+// optional string leader = 2;
+inline bool User::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool User::has_leader() const {
+  return _internal_has_leader();
+}
+inline void User::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& User::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.User.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void User::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.User.leader)
+}
+inline std::string* User::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.User.leader)
+  return _s;
+}
+inline const std::string& User::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void User::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* User::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* User::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.User.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void User::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.User.leader)
+}
+
 // -------------------------------------------------------------------
 
 // SendMessageReply
@@ -5061,6 +5557,74 @@ inline void SendMessageReply::set_allocated_errormsg(std::string* errormsg) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chatservice.SendMessageReply.errorMsg)
+}
+
+// optional string leader = 3;
+inline bool SendMessageReply::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool SendMessageReply::has_leader() const {
+  return _internal_has_leader();
+}
+inline void SendMessageReply::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& SendMessageReply::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.SendMessageReply.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void SendMessageReply::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.SendMessageReply.leader)
+}
+inline std::string* SendMessageReply::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.SendMessageReply.leader)
+  return _s;
+}
+inline const std::string& SendMessageReply::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void SendMessageReply::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* SendMessageReply::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* SendMessageReply::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.SendMessageReply.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void SendMessageReply::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.SendMessageReply.leader)
 }
 
 // -------------------------------------------------------------------
@@ -5189,6 +5753,74 @@ inline void Notification::_internal_set_numberofnotifications(int32_t value) {
 inline void Notification::set_numberofnotifications(int32_t value) {
   _internal_set_numberofnotifications(value);
   // @@protoc_insertion_point(field_set:chatservice.Notification.numberOfNotifications)
+}
+
+// optional string leader = 3;
+inline bool Notification::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool Notification::has_leader() const {
+  return _internal_has_leader();
+}
+inline void Notification::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& Notification::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.Notification.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Notification::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.Notification.leader)
+}
+inline std::string* Notification::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.Notification.leader)
+  return _s;
+}
+inline const std::string& Notification::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void Notification::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Notification::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Notification::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.Notification.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void Notification::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.Notification.leader)
 }
 
 // -------------------------------------------------------------------
@@ -5449,6 +6081,74 @@ inline void ChatMessage::set_allocated_msgcontent(std::string* msgcontent) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.ChatMessage.msgContent)
 }
 
+// optional string leader = 4;
+inline bool ChatMessage::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ChatMessage::has_leader() const {
+  return _internal_has_leader();
+}
+inline void ChatMessage::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& ChatMessage::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.ChatMessage.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ChatMessage::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.ChatMessage.leader)
+}
+inline std::string* ChatMessage::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.ChatMessage.leader)
+  return _s;
+}
+inline const std::string& ChatMessage::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void ChatMessage::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ChatMessage::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ChatMessage::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.ChatMessage.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void ChatMessage::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.ChatMessage.leader)
+}
+
 // -------------------------------------------------------------------
 
 // DeleteAccountMessage
@@ -5645,6 +6345,74 @@ inline void DeleteAccountReply::set_allocated_errormsg(std::string* errormsg) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.DeleteAccountReply.errorMsg)
 }
 
+// optional string leader = 3;
+inline bool DeleteAccountReply::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool DeleteAccountReply::has_leader() const {
+  return _internal_has_leader();
+}
+inline void DeleteAccountReply::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& DeleteAccountReply::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.DeleteAccountReply.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void DeleteAccountReply::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.DeleteAccountReply.leader)
+}
+inline std::string* DeleteAccountReply::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.DeleteAccountReply.leader)
+  return _s;
+}
+inline const std::string& DeleteAccountReply::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void DeleteAccountReply::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* DeleteAccountReply::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* DeleteAccountReply::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.DeleteAccountReply.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void DeleteAccountReply::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.DeleteAccountReply.leader)
+}
+
 // -------------------------------------------------------------------
 
 // MessagesSeenMessage
@@ -5773,6 +6541,74 @@ inline void MessagesSeenMessage::set_messagesseen(int32_t value) {
 
 // MessagesSeenReply
 
+// optional string leader = 1;
+inline bool MessagesSeenReply::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool MessagesSeenReply::has_leader() const {
+  return _internal_has_leader();
+}
+inline void MessagesSeenReply::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& MessagesSeenReply::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.MessagesSeenReply.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void MessagesSeenReply::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.MessagesSeenReply.leader)
+}
+inline std::string* MessagesSeenReply::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.MessagesSeenReply.leader)
+  return _s;
+}
+inline const std::string& MessagesSeenReply::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void MessagesSeenReply::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* MessagesSeenReply::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* MessagesSeenReply::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.MessagesSeenReply.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void MessagesSeenReply::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.MessagesSeenReply.leader)
+}
+
 // -------------------------------------------------------------------
 
 // RefreshRequest
@@ -5889,6 +6725,74 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chatservice::Notificat
 RefreshResponse::notifications() const {
   // @@protoc_insertion_point(field_list:chatservice.RefreshResponse.notifications)
   return _impl_.notifications_;
+}
+
+// optional string leader = 3;
+inline bool RefreshResponse::_internal_has_leader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool RefreshResponse::has_leader() const {
+  return _internal_has_leader();
+}
+inline void RefreshResponse::clear_leader() {
+  _impl_.leader_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& RefreshResponse::leader() const {
+  // @@protoc_insertion_point(field_get:chatservice.RefreshResponse.leader)
+  return _internal_leader();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RefreshResponse::set_leader(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.leader_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.RefreshResponse.leader)
+}
+inline std::string* RefreshResponse::mutable_leader() {
+  std::string* _s = _internal_mutable_leader();
+  // @@protoc_insertion_point(field_mutable:chatservice.RefreshResponse.leader)
+  return _s;
+}
+inline const std::string& RefreshResponse::_internal_leader() const {
+  return _impl_.leader_.Get();
+}
+inline void RefreshResponse::_internal_set_leader(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.leader_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefreshResponse::_internal_mutable_leader() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.leader_.Mutable(GetArenaForAllocation());
+}
+inline std::string* RefreshResponse::release_leader() {
+  // @@protoc_insertion_point(field_release:chatservice.RefreshResponse.leader)
+  if (!_internal_has_leader()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.leader_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void RefreshResponse::set_allocated_leader(std::string* leader) {
+  if (leader != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.leader_.SetAllocated(leader, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.leader_.IsDefault()) {
+    _impl_.leader_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.RefreshResponse.leader)
 }
 
 // -------------------------------------------------------------------
