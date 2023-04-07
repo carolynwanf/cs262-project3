@@ -58,7 +58,7 @@ int main (int argc, char const* argv[]) {
         std::string historyFile = argv[1];
         std::string pendingFile = argv[2];
 
-        if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv" || historyFile.substr(pendingFile.find_last_of(".")+1)) {
+        if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv" || pendingFile.substr(pendingFile.find_last_of(".")+1) != "csv") {
             std::cout << "File must be a CSV file" << std::endl;
             return -1;
         }
@@ -87,9 +87,12 @@ int main (int argc, char const* argv[]) {
             g_Service.addFields();
         }
 
-        // If pending longer than commit, do pending operations
+        // What do if 
+    }
 
-        // Add to commit
+    // Add fields if no logs
+    if (argc == 0) {
+        g_Service.addFields();
     }
  
     // For getting host IP address we followed tutorial found here: 

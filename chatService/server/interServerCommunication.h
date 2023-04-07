@@ -146,6 +146,11 @@ void serverThread(const std::vector<std::string> serverAddresses) {
         g_Service.addConnection(server_addr);
     }
 
+    if (g_Service.numberOfConnections() == 0) {
+        std::cout << "Setting as leader as there are no other servers up" << std::endl;
+        g_Service.setAsLeader();
+    }
+
     // TODO: set seed
     while (true) {
         if (g_Service.isLeader()) {

@@ -57,7 +57,7 @@ using chatservice::LeaderElectionResponse;
 using chatservice::CommitResponse;
 
 struct LeaderValues {
-    bool isLeader = true;
+    bool isLeader = false;
     int leaderidx = -1;
     std::string leaderAddress = "";
 
@@ -82,6 +82,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         std::fstream pendingFile;
 
         // For interserver communication
+        std::mutex connectionMutex;
         std::vector<std::unique_ptr<ChatService::Stub>> connections;
         std::unordered_map<std::string, int> addressToConnectionIdx;
         std::string myAddress;
@@ -114,6 +115,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::cout << "My address is " << myAddress << std::endl;
         }
 
+        int numberOfConnections() {
+            int numberOfConnections;
+            connectionMutex.lock();
+            numberOfConnections = connections.size();
+            connectionMutex.unlock();
+
+            return numberOfConnections;            
+        }
+
         Status CreateAccount(ServerContext* context, const CreateAccountMessage* create_account_message, 
                             CreateAccountReply* server_reply) {
 
@@ -123,53 +133,51 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             
              // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
-                int oks = 0;
 
-                // Get consensus 
+                std::vector<int> droppedConnections;
+
+                // Tell replicas to write to pending
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     CreateAccountReply reply;
                     Status status = connections[i]->CreateAccount(&context, *create_account_message, &reply);
                     
-                    if (status.ok()) {
-                        oks++;
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
                     }
                 }
 
-                
-                 std::cout << "oks " << std::to_string(oks) << std::endl;
-                 std::cout << "Connections size: " << std::to_string(connections.size()) << std::endl;
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
+                }
 
-                // Commit if you get consensus
-                if (oks == connections.size()) {
-                    writeToLogs(commitLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
+                // Commit 
+                writeToLogs(commitLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
 
-                    // Tell replicas to commit
-                    for (int i = 0; i < connections.size(); i++) {
-                        ClientContext context;
-                        CommitRequest request;
-                        CommitResponse reply;
-                        Status status = connections[i]->Commit(&context, request, &reply);
-                    }
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
+                }
 
-                    // Add to storage
-                    int createAccountStatus = createAccount(username, password);
+                // Add to storage
+                int createAccountStatus = createAccount(username, password);
 
-                    std::cout << "this is create account status " << std::to_string(createAccountStatus) << std::endl; 
+                std::cout << "this is create account status " << std::to_string(createAccountStatus) << std::endl; 
 
-                    // Update error messages and reply based on account creation status
-                    if (createAccountStatus == 1) {
-                        std::string errorMsg = "Username '" + create_account_message->username() + "' already exists.";
-                        server_reply->set_errormsg(errorMsg);
-                        server_reply->set_createaccountsuccess(false);
-                    } else {
-                        server_reply->set_createaccountsuccess(true);
-                    }
-
+                // Update error messages and reply based on account creation status
+                if (createAccountStatus == 1) {
+                    std::string errorMsg = "Username '" + create_account_message->username() + "' already exists.";
+                    server_reply->set_errormsg(errorMsg);
+                    server_reply->set_createaccountsuccess(false);
                 } else {
-                    // What do if you don't get consensus?
-                    std::cout << "We dIdN't gEt conSeNsUs" << std::endl;
+                    server_reply->set_createaccountsuccess(true);
                 }
+
+
 
             } 
 
@@ -184,7 +192,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
-                int oks = 0;
+                std::vector<int> droppedConnections;
 
                 // Get consensus 
                 for (int i = 0; i < connections.size(); i++) {
@@ -192,37 +200,37 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     LoginReply reply;
                     Status status = connections[i]->Login(&context, *login_message, &reply);
                     
-                    if (status.ok()) {
-                        oks++;
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
                     }
                 }
 
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
+                }
+
                 // Commit if you get consensus
-                if (oks == connections.size()) {
-                    writeToLogs(commitLogWriter, LOGIN, username, g_nullString, password);
+                writeToLogs(commitLogWriter, LOGIN, username, g_nullString, password);
 
-                    // Tell replicas to commit
-                    for (int i = 0; i < connections.size(); i++) {
-                        ClientContext context;
-                        CommitRequest request;
-                        CommitResponse reply;
-                        Status status = connections[i]->Commit(&context, request, &reply);
-                    }
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
+                }
 
-                    // Add to storage
-                    // Check for existing user and verify password
+                // Add to storage
+                // Check for existing user and verify password
 
-                    int loginStatus = login(username, password);
-                    
-                    if (loginStatus == 0) {
-                        server_reply->set_loginsuccess(true);
-                    } else {
-                        server_reply->set_loginsuccess(false);
-                        server_reply->set_errormsg("Incorrect username or password.");
-                    }
-
+                int loginStatus = login(username, password);
+                
+                if (loginStatus == 0) {
+                    server_reply->set_loginsuccess(true);
                 } else {
-                    // What do if you don't get consensus?
+                    server_reply->set_loginsuccess(false);
+                    server_reply->set_errormsg("Incorrect username or password.");
                 }
 
             } 
@@ -236,7 +244,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
-                int oks = 0;
+                
+                std::vector<int> droppedConnections;
 
                 // Get consensus 
                 for (int i = 0; i < connections.size(); i++) {
@@ -244,30 +253,30 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     LogoutReply reply;
                     Status status = connections[i]->Logout(&context, *logout_message, &reply);
                     
-                    if (status.ok()) {
-                        oks++;
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
                     }
+                }
+
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
-                if (oks == connections.size()) {
-                    writeToLogs(commitLogWriter, LOGOUT, logout_message->username());
+                writeToLogs(commitLogWriter, LOGOUT, logout_message->username());
 
 
-                    // Tell replicas to commit
-                    for (int i = 0; i < connections.size(); i++) {
-                        ClientContext context;
-                        CommitRequest request;
-                        CommitResponse reply;
-                        Status status = connections[i]->Commit(&context, request, &reply);
-                    }
-
-                    // Add to storage
-                    int logoutStatus = logout(logout_message->username());
-
-                } else {
-                    // What do if you don't get consensus?
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
                 }
+
+                // Add to storage
+                int logoutStatus = logout(logout_message->username());
 
             } 
 
@@ -305,7 +314,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
              
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
-                int oks = 0;
+
+                std::vector<int> droppedConnections;
 
                 // Get consensus 
                 for (int i = 0; i < connections.size(); i++) {
@@ -313,36 +323,37 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     SendMessageReply reply;
                     Status status = connections[i]->SendMessage(&context, *msg, &reply);
                     
-                    if (status.ok()) {
-                        oks++;
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
                     }
                 }
 
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
+                }
+
                 // Commit if you get consensus
-                if (oks == connections.size()) {
-                    writeToLogs(commitLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent);
+            
+                writeToLogs(commitLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent);
 
 
-                    // Tell replicas to commit
-                    for (int i = 0; i < connections.size(); i++) {
-                        ClientContext context;
-                        CommitRequest request;
-                        CommitResponse reply;
-                        Status status = connections[i]->Commit(&context, request, &reply);
-                    }
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
+                }
 
-                    // Add to storage
-                    int sendMessageStatus = sendMessage(senderUsername, recipientUsername, messageContent);
+                // Add to storage
+                int sendMessageStatus = sendMessage(senderUsername, recipientUsername, messageContent);
 
-                    if (sendMessageStatus == 0) {
-                        server_reply->set_messagesent(true);
-                    } else {
-                        std::string errormsg = "Tried to send a message to a user that doesn't exist '" + msg->recipientusername() + "'";
-                        server_reply->set_errormsg(errormsg);
-                    }
-
+                if (sendMessageStatus == 0) {
+                    server_reply->set_messagesent(true);
                 } else {
-                    // What do if you don't get consensus?
+                    std::string errormsg = "Tried to send a message to a user that doesn't exist '" + msg->recipientusername() + "'";
+                    server_reply->set_errormsg(errormsg);
                 }
 
             } 
@@ -374,45 +385,46 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
-                int oks = 0;
+                
+                std::vector<int> droppedConnections;
 
                 // Get consensus 
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
-                    QueryMessage reply;
-                    Status status = connections[i]->QueryMessages(&context, *query, *writer);
+                    std::unique_ptr<ClientReader<ChatMessage>> reader(connections[i]->QueryMessages(&context, *query));
+                    Status status = reader->Finish();
                     
-                    if (status.ok()) {
-                        oks++;
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
                     }
+                }
+
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
-                if (oks == connections.size()) {
-                    writeToLogs(commitLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
+               
+                writeToLogs(commitLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
 
 
-                    // Tell replicas to commit
-                    for (int i = 0; i < connections.size(); i++) {
-                        ClientContext context;
-                        CommitRequest request;
-                        CommitResponse reply;
-                        Status status = connections[i]->Commit(&context, request, &reply);
-                    }
-
-                    // Add to storage
-                    std::cout << "Getting messages between '" << query->clientusername() << "' and '"<< query->otherusername() << "'" << std::endl;
-
-                    std::vector<ChatMessage> queryMessagesMessageList = queryMessages(query->clientusername(), query->otherusername());
-
-                    for (auto message : queryMessagesMessageList) {
-                        writer->Write(message);
-                    }
-
-                } else {
-                    // What do if you don't get consensus?
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
                 }
 
+                // Add to storage
+                std::cout << "Getting messages between '" << query->clientusername() << "' and '"<< query->otherusername() << "'" << std::endl;
+
+                std::vector<ChatMessage> queryMessagesMessageList = queryMessages(query->clientusername(), query->otherusername());
+
+                for (auto message : queryMessagesMessageList) {
+                    writer->Write(message);
+                }
             } 
 
             return Status::OK;
@@ -422,16 +434,49 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                             DeleteAccountReply* server_reply) {
             writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username());
             
-            // TODO: check if master, talk to replicas
-            
-            std::cout << "Deleting account of '" << delete_account_message->username() << "'" << std::endl;
-            // Flag user account as deleted in trie
-            int deleteAccountStatus = deleteAccount(delete_account_message->username());
+            // check if master, talk to replicas
+            if (leaderVals.isLeader) {
+                
+                std::vector<int> droppedConnections;
 
-            if (deleteAccountStatus == 1) {
-                server_reply->set_deletedaccount(false);
-            } else {
-                server_reply->set_deletedaccount(true);
+                // Get consensus 
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    DeleteAccountReply reply;
+                    Status status = connections[i]->DeleteAccount(&context, *delete_account_message, &reply); 
+                    
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
+                    }
+                }
+
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
+                }
+
+                // Commit if you get consensus
+                writeToLogs(commitLogWriter, DELETE_ACCOUNT, delete_account_message->username());
+
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
+                }
+
+                // Add to storage
+               std::cout << "Deleting account of '" << delete_account_message->username() << "'" << std::endl;
+                // Flag user account as deleted in trie
+                int deleteAccountStatus = deleteAccount(delete_account_message->username());
+
+                if (deleteAccountStatus == 1) {
+                    server_reply->set_deletedaccount(false);
+                } else {
+                    server_reply->set_deletedaccount(true);
+                }
+
             }
             
             return Status::OK;
@@ -443,38 +488,39 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             // TODO: check if master, talk to replicas
             if (leaderVals.isLeader) {
-                int oks = 0;
-
+                
+                std::vector<int> droppedConnections;
+                
                 // Get consensus 
                 for (int i = 0; i < connections.size(); i++) {
                     ClientContext context;
                     MessagesSeenReply reply;
                     Status status = connections[i]->MessagesSeen(&context, *msg, &reply);
                     
-                    if (status.ok()) {
-                        oks++;
+                    if (!status.ok()) {
+                        droppedConnections.push_back(i);
                     }
+                }
+                
+                // Removing dropped connections
+                for (int i = 0; i < droppedConnections.size(); i++) {
+                    connections.erase(connections.begin() + droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
-                if (oks == connections.size()) {
-                    writeToLogs(commitLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
+                writeToLogs(commitLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
 
 
-                    // Tell replicas to commit
-                    for (int i = 0; i < connections.size(); i++) {
-                        ClientContext context;
-                        CommitRequest request;
-                        CommitResponse reply;
-                        Status status = connections[i]->Commit(&context, request, &reply);
-                    }
-
-                    // Add to storage
-                    int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
-
-                } else {
-                    // What do if you don't get consensus?
+                // Tell replicas to commit
+                for (int i = 0; i < connections.size(); i++) {
+                    ClientContext context;
+                    CommitRequest request;
+                    CommitResponse reply;
+                    Status status = connections[i]->Commit(&context, request, &reply);
                 }
+
+                // Add to storage
+                int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
 
             } 
 
@@ -499,7 +545,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string line;
             
             // Add last pending log to committed log
-            getline(pendingFile, line)
+            getline(pendingFile, line);
 
             commitLogWriter <<  line;
 
@@ -540,7 +586,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
             // tie breaker, choose candidate with address that is lexicographically larger
             else if (request->number() == electionVals.maxLeaderElectionVal) {
-                if (electionVals.currLeaderCandidateAddr.come(request->address()) < 0) {
+                if (electionVals.currLeaderCandidateAddr.compare(request->address()) < 0) {
                     return Status::OK;
                 }
                 else {
@@ -561,9 +607,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             addressToConnectionIdx[server_address] = connections.size()-1;
         }
 
-
-        // TODO: if heartbeat fails, remove connection?
         bool heartbeat() {
+            std::cout << "Sending heartbeat" << std::endl;
             leaderMutex.lock();
             if (leaderVals.leaderidx != -1) {
                 ClientContext context;
@@ -575,10 +620,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     return true;
                 }
                 else {
+                    // Remove leader from connections vector and from addr_to_idx dict
+                    connections.erase(connections.begin()+leaderVals.leaderidx);
+                    addressToConnectionIdx.erase(leaderVals.leaderAddress);
                     return false;
                 }
             }
             else {
+                std::cout << "No leader index" << std::endl;
                 return false;
             }
             leaderMutex.unlock();
@@ -586,6 +635,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         bool proposeLeaderElection() {
             // TODO: call propose leader election for each stub in vector
+            std::cout << "Proposing leader election" << std::endl;
             LeaderElectionProposal message;
 
             for (int i = 0; i < connections.size(); i++) {
@@ -593,10 +643,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 LeaderElectionProposalResponse reply;
                 Status status = connections[i]->ProposeLeaderElection(&context, message, &reply);
                 if (status.ok()) {
-                    if (reply.accept()) {
-                        return true;
-                    }
-                    else {
+                    if (!reply.accept()) {
                         return false;
                     }
                 }
@@ -607,10 +654,13 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 }
             }
 
-            return false;
+            std::cout << "Leader eletion proposal accepted" << std::endl;
+
+            return true;
         }
 
         void leaderElection() {
+            std::cout << "Carrying out leader election" << std::endl;
             int candidateValue = rand();
 
             leaderElectionValuesMutex.lock();
@@ -635,7 +685,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             bool waitingForLeaderElection = true;
             while (waitingForLeaderElection) {
                 leaderElectionValuesMutex.lock();
-                if (electionVals.numberOfCandidatesReceived == connections.size() - 1) {
+                if (electionVals.numberOfCandidatesReceived >= connections.size()) {
                     waitingForLeaderElection = false;
                 }
                 leaderElectionValuesMutex.unlock();
@@ -654,6 +704,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
             leaderMutex.unlock();
 
+            std::cout << "New leader is " << leaderVals.leaderAddress << std::endl;
+
             leaderElectionValuesMutex.lock();
             electionVals.currLeaderCandidateAddr = "";
             electionVals.maxLeaderElectionVal = -1;
@@ -667,6 +719,18 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             leaderMutex.unlock();
             
             return toReturn;
+        }
+
+        void setAsLeader() {
+            leaderMutex.lock();
+            leaderVals.isLeader = true;
+            leaderMutex.unlock();
+        }
+
+        void setNotLeader() {
+            leaderMutex.lock();
+            leaderVals.isLeader = false;
+            leaderMutex.unlock();
         }
 };
 
