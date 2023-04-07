@@ -52,6 +52,12 @@ extern CandidateValueDefaultTypeInternal _CandidateValue_default_instance_;
 class ChatMessage;
 struct ChatMessageDefaultTypeInternal;
 extern ChatMessageDefaultTypeInternal _ChatMessage_default_instance_;
+class CommitRequest;
+struct CommitRequestDefaultTypeInternal;
+extern CommitRequestDefaultTypeInternal _CommitRequest_default_instance_;
+class CommitResponse;
+struct CommitResponseDefaultTypeInternal;
+extern CommitResponseDefaultTypeInternal _CommitResponse_default_instance_;
 class CreateAccountMessage;
 struct CreateAccountMessageDefaultTypeInternal;
 extern CreateAccountMessageDefaultTypeInternal _CreateAccountMessage_default_instance_;
@@ -125,6 +131,8 @@ extern UserDefaultTypeInternal _User_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::chatservice::CandidateValue* Arena::CreateMaybeMessage<::chatservice::CandidateValue>(Arena*);
 template<> ::chatservice::ChatMessage* Arena::CreateMaybeMessage<::chatservice::ChatMessage>(Arena*);
+template<> ::chatservice::CommitRequest* Arena::CreateMaybeMessage<::chatservice::CommitRequest>(Arena*);
+template<> ::chatservice::CommitResponse* Arena::CreateMaybeMessage<::chatservice::CommitResponse>(Arena*);
 template<> ::chatservice::CreateAccountMessage* Arena::CreateMaybeMessage<::chatservice::CreateAccountMessage>(Arena*);
 template<> ::chatservice::CreateAccountReply* Arena::CreateMaybeMessage<::chatservice::CreateAccountReply>(Arena*);
 template<> ::chatservice::DeleteAccountMessage* Arena::CreateMaybeMessage<::chatservice::DeleteAccountMessage>(Arena*);
@@ -3248,6 +3256,242 @@ class RefreshResponse final :
 };
 // -------------------------------------------------------------------
 
+class CommitRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.CommitRequest) */ {
+ public:
+  inline CommitRequest() : CommitRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR CommitRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CommitRequest(const CommitRequest& from);
+  CommitRequest(CommitRequest&& from) noexcept
+    : CommitRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline CommitRequest& operator=(const CommitRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CommitRequest& operator=(CommitRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CommitRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CommitRequest* internal_default_instance() {
+    return reinterpret_cast<const CommitRequest*>(
+               &_CommitRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    19;
+
+  friend void swap(CommitRequest& a, CommitRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CommitRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CommitRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CommitRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CommitRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const CommitRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const CommitRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.CommitRequest";
+  }
+  protected:
+  explicit CommitRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.CommitRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CommitResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.CommitResponse) */ {
+ public:
+  inline CommitResponse() : CommitResponse(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR CommitResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CommitResponse(const CommitResponse& from);
+  CommitResponse(CommitResponse&& from) noexcept
+    : CommitResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline CommitResponse& operator=(const CommitResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CommitResponse& operator=(CommitResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CommitResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CommitResponse* internal_default_instance() {
+    return reinterpret_cast<const CommitResponse*>(
+               &_CommitResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    20;
+
+  friend void swap(CommitResponse& a, CommitResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CommitResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CommitResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CommitResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CommitResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const CommitResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const CommitResponse& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.CommitResponse";
+  }
+  protected:
+  explicit CommitResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.CommitResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
 class HeartBeatRequest final :
     public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.HeartBeatRequest) */ {
  public:
@@ -3295,7 +3539,7 @@ class HeartBeatRequest final :
                &_HeartBeatRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    21;
 
   friend void swap(HeartBeatRequest& a, HeartBeatRequest& b) {
     a.Swap(&b);
@@ -3414,7 +3658,7 @@ class HeartBeatResponse final :
                &_HeartBeatResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    22;
 
   friend void swap(HeartBeatResponse& a, HeartBeatResponse& b) {
     a.Swap(&b);
@@ -3561,7 +3805,7 @@ class LeaderElectionProposal final :
                &_LeaderElectionProposal_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    23;
 
   friend void swap(LeaderElectionProposal& a, LeaderElectionProposal& b) {
     a.Swap(&b);
@@ -3680,7 +3924,7 @@ class LeaderElectionProposalResponse final :
                &_LeaderElectionProposalResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    24;
 
   friend void swap(LeaderElectionProposalResponse& a, LeaderElectionProposalResponse& b) {
     a.Swap(&b);
@@ -3844,7 +4088,7 @@ class CandidateValue final :
                &_CandidateValue_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    25;
 
   friend void swap(CandidateValue& a, CandidateValue& b) {
     a.Swap(&b);
@@ -4007,7 +4251,7 @@ class LeaderElectionResponse final :
                &_LeaderElectionResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    26;
 
   friend void swap(LeaderElectionResponse& a, LeaderElectionResponse& b) {
     a.Swap(&b);
@@ -5649,6 +5893,14 @@ RefreshResponse::notifications() const {
 
 // -------------------------------------------------------------------
 
+// CommitRequest
+
+// -------------------------------------------------------------------
+
+// CommitResponse
+
+// -------------------------------------------------------------------
+
 // HeartBeatRequest
 
 // -------------------------------------------------------------------
@@ -5834,6 +6086,10 @@ inline void CandidateValue::set_allocated_address(std::string* address) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

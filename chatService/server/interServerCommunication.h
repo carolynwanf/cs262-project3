@@ -139,17 +139,29 @@ using chatservice::ChatService;
 
 // void serverThread(const std::vector<std::string> serverAddresses, std::string myAddress) {
     // ServerServerConnection serverConnections(myAddress);
-void serverThread(const std::vector<std::string> serverAddresses, std::string myAddress, ChatServiceImpl& chatServer) {
+void serverThread(const std::vector<std::string> serverAddresses) {
     
     // Sleep before continuing
     for (std::string server_addr : serverAddresses) {
-        chatServer.addConnection(server_addr);
+        g_Service.addConnection(server_addr);
     }
 
-    // Testing what happens if stub connection is not up
-    chatServer.proposeLeaderElection();
     // TODO: set seed
+    while (true) {
+        if (g_Service.isLeader()) {
+            continue;
+        }
+        // sleep
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    // TODO: implement main loop thing
+        // heart beat
+        if (!g_Service.heartbeat()) {
+            // if heartbeat fails
+            //      propose / execute leader election
+            if (g_Service.proposeLeaderElection()) {
+                g_Service.leaderElection();
+            }
+        }
 
+    }
 }

@@ -31,6 +31,7 @@ static const char* ChatService_method_names[] = {
   "/chatservice.ChatService/QueryMessages",
   "/chatservice.ChatService/DeleteAccount",
   "/chatservice.ChatService/RefreshClient",
+  "/chatservice.ChatService/Commit",
   "/chatservice.ChatService/HeartBeat",
   "/chatservice.ChatService/ProposeLeaderElection",
   "/chatservice.ChatService/LeaderElection",
@@ -53,10 +54,11 @@ ChatService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channe
   , rpcmethod_QueryMessages_(ChatService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   , rpcmethod_DeleteAccount_(ChatService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_RefreshClient_(ChatService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_HeartBeat_(ChatService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ProposeLeaderElection_(ChatService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_LeaderElection_(ChatService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_MessagesSeen_(ChatService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Commit_(ChatService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_HeartBeat_(ChatService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ProposeLeaderElection_(ChatService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_LeaderElection_(ChatService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_MessagesSeen_(ChatService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status ChatService::Stub::CreateAccount(::grpc::ClientContext* context, const ::chatservice::CreateAccountMessage& request, ::chatservice::CreateAccountReply* response) {
@@ -241,6 +243,29 @@ void ChatService::Stub::async::RefreshClient(::grpc::ClientContext* context, con
 ::grpc::ClientAsyncResponseReader< ::chatservice::RefreshResponse>* ChatService::Stub::AsyncRefreshClientRaw(::grpc::ClientContext* context, const ::chatservice::RefreshRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncRefreshClientRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ChatService::Stub::Commit(::grpc::ClientContext* context, const ::chatservice::CommitRequest& request, ::chatservice::CommitResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::chatservice::CommitRequest, ::chatservice::CommitResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Commit_, context, request, response);
+}
+
+void ChatService::Stub::async::Commit(::grpc::ClientContext* context, const ::chatservice::CommitRequest* request, ::chatservice::CommitResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::chatservice::CommitRequest, ::chatservice::CommitResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Commit_, context, request, response, std::move(f));
+}
+
+void ChatService::Stub::async::Commit(::grpc::ClientContext* context, const ::chatservice::CommitRequest* request, ::chatservice::CommitResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Commit_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::chatservice::CommitResponse>* ChatService::Stub::PrepareAsyncCommitRaw(::grpc::ClientContext* context, const ::chatservice::CommitRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::chatservice::CommitResponse, ::chatservice::CommitRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Commit_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::chatservice::CommitResponse>* ChatService::Stub::AsyncCommitRaw(::grpc::ClientContext* context, const ::chatservice::CommitRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncCommitRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -431,6 +456,16 @@ ChatService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ChatService_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::CommitRequest, ::chatservice::CommitResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ChatService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::chatservice::CommitRequest* req,
+             ::chatservice::CommitResponse* resp) {
+               return service->Commit(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ChatService_method_names[10],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::HeartBeatRequest, ::chatservice::HeartBeatResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ChatService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -439,7 +474,7 @@ ChatService::Service::Service() {
                return service->HeartBeat(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ChatService_method_names[10],
+      ChatService_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::LeaderElectionProposal, ::chatservice::LeaderElectionProposalResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ChatService::Service* service,
@@ -449,7 +484,7 @@ ChatService::Service::Service() {
                return service->ProposeLeaderElection(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ChatService_method_names[11],
+      ChatService_method_names[12],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::CandidateValue, ::chatservice::LeaderElectionResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ChatService::Service* service,
@@ -459,7 +494,7 @@ ChatService::Service::Service() {
                return service->LeaderElection(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ChatService_method_names[12],
+      ChatService_method_names[13],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ChatService::Service* service,
@@ -530,6 +565,13 @@ ChatService::Service::~Service() {
 }
 
 ::grpc::Status ChatService::Service::RefreshClient(::grpc::ServerContext* context, const ::chatservice::RefreshRequest* request, ::chatservice::RefreshResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ChatService::Service::Commit(::grpc::ServerContext* context, const ::chatservice::CommitRequest* request, ::chatservice::CommitResponse* response) {
   (void) context;
   (void) request;
   (void) response;

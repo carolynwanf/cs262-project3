@@ -12,7 +12,7 @@ service ChatService {
     rpc QueryMessages(QueryMessagesMessage) returns (stream ChatMessage);
     rpc DeleteAccount(DeleteAccountMessage) returns (DeleteAccountReply);
     rpc RefreshClient(RefreshRequest) returns (RefreshResponse);
-    rpc Commit(CommitRequest) returns (CommitResponse)
+    rpc Commit(CommitRequest) returns (CommitResponse);
     rpc HeartBeat(HeartBeatRequest) returns (HeartBeatResponse);
     rpc ProposeLeaderElection(LeaderElectionProposal) returns (LeaderElectionProposalResponse);
     rpc LeaderElection(CandidateValue) returns (LeaderElectionResponse);

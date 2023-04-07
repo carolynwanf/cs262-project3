@@ -80,6 +80,7 @@ struct ChatServiceClient {
                     USER_LOGGED_IN = true;
                     clientUsername = username;
                 } else {
+                    std::cout << "Create account returned, but failed" << std::endl;
                     std::cout << reply.errormsg() << std::endl;
                 }
             } else {

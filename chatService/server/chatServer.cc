@@ -15,31 +15,32 @@ const int g_backlogSize = 50;
 std::vector<std::string> serverAddresses;
 
 void RunServer(std::string ip_addr, int port) {
-    // open log file for server
-    ChatServiceImpl service(g_logFile);
 
     ServerBuilder builder;
     std::string server_addr = ip_addr+":"+std::to_string(port);
-    // serverAddresses.push_back(server_addr);
+    std::cout << "Server listening on " << server_addr << std::endl;
+    g_Service.addMyAddress(server_addr);
 
-    bool inputtingServers = true;
-    while (inputtingServers) {
+
+    while (true) {
         std::string other_server;
         std::cout << "Input address of a server, or input 'y' to finish: ";
         std::cin >> other_server;
         if (other_server == "y") {
-            inputtingServers = false;
+            break;
         }
         serverAddresses.push_back(other_server);
     }
 
     // start inter-server communication thread
-    std::thread(serverThread, serverAddresses, server_addr, service);
+    std::thread serverCommunicationThread(serverThread, serverAddresses);
+    serverCommunicationThread.detach();
+
+    std::cout << "We've spawned the thread?" << std::endl;
 
     builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service);
+    builder.RegisterService(&g_Service);
     std::unique_ptr<Server> server(builder.BuildAndStart());
-    std::cout << "Server listening on " << server_addr << std::endl;
 
     // Before waiting for requests, start thread that connects to other servers
     server->Wait();
@@ -47,29 +48,48 @@ void RunServer(std::string ip_addr, int port) {
 }
 
 int main (int argc, char const* argv[]) {
-    if (argc > 2) {
-        std::cout << "The only optional argument is a CSV file with information to start the server with." << std::endl;
+    if (argc > 3) {
+        std::cout << "The only optional arguments are two CSV files (commit and pending) with information to start the server with." << std::endl;
         return -1;
     }
 
-    if (argc == 2) {
+    if (argc == 3) {
         // verify valid CSV file
         std::string historyFile = argv[1];
-        if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv") {
+        std::string pendingFile = argv[2];
+
+        if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv" || historyFile.substr(pendingFile.find_last_of(".")+1)) {
             std::cout << "File must be a CSV file" << std::endl;
             return -1;
         }
 
         // populate data structures using file
         // TODO: handle how we deal with matching fields in CSV file
-        std::vector<std::vector<std::string>> content;
+        std::vector<std::vector<std::string>> commitContent;
 
         // Read the file into content
-        readFile(&content, historyFile);
+        readFile(&commitContent, historyFile);
         
-        for(int i=1; i < content.size(); i++) {
-            parseLine(content[i]);
+        for(int i=1; i < commitContent.size(); i++) {
+            parseLine(commitContent[i]);
         }
+
+        std::vector<std::vector<std::string>> pendingContent;
+
+        // Read the file into content
+        readFile(&pendingContent, pendingFile);
+        
+        for(int i=1; i < pendingContent.size(); i++) {
+            parseLine(pendingContent[i]);
+        }
+
+        if (commitContent.size() == 0) {
+            g_Service.addFields();
+        }
+
+        // If pending longer than commit, do pending operations
+
+        // Add to commit
     }
  
     // For getting host IP address we followed tutorial found here: 

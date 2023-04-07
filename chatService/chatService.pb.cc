@@ -286,6 +286,28 @@ struct RefreshResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RefreshResponseDefaultTypeInternal _RefreshResponse_default_instance_;
+PROTOBUF_CONSTEXPR CommitRequest::CommitRequest(
+    ::_pbi::ConstantInitialized) {}
+struct CommitRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CommitRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CommitRequestDefaultTypeInternal() {}
+  union {
+    CommitRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CommitRequestDefaultTypeInternal _CommitRequest_default_instance_;
+PROTOBUF_CONSTEXPR CommitResponse::CommitResponse(
+    ::_pbi::ConstantInitialized) {}
+struct CommitResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CommitResponseDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CommitResponseDefaultTypeInternal() {}
+  union {
+    CommitResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CommitResponseDefaultTypeInternal _CommitResponse_default_instance_;
 PROTOBUF_CONSTEXPR HeartBeatRequest::HeartBeatRequest(
     ::_pbi::ConstantInitialized) {}
 struct HeartBeatRequestDefaultTypeInternal {
@@ -361,7 +383,7 @@ struct LeaderElectionResponseDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LeaderElectionResponseDefaultTypeInternal _LeaderElectionResponse_default_instance_;
 }  // namespace chatservice
-static ::_pb::Metadata file_level_metadata_chatService_2eproto[25];
+static ::_pb::Metadata file_level_metadata_chatService_2eproto[27];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_chatService_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_chatService_2eproto = nullptr;
 
@@ -523,6 +545,18 @@ const uint32_t TableStruct_chatService_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   PROTOBUF_FIELD_OFFSET(::chatservice::RefreshResponse, _impl_.forcelogout_),
   PROTOBUF_FIELD_OFFSET(::chatservice::RefreshResponse, _impl_.notifications_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chatservice::CommitRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chatservice::CommitResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chatservice::HeartBeatRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -584,12 +618,14 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 135, -1, -1, sizeof(::chatservice::MessagesSeenReply)},
   { 141, -1, -1, sizeof(::chatservice::RefreshRequest)},
   { 148, -1, -1, sizeof(::chatservice::RefreshResponse)},
-  { 156, -1, -1, sizeof(::chatservice::HeartBeatRequest)},
-  { 162, -1, -1, sizeof(::chatservice::HeartBeatResponse)},
-  { 169, -1, -1, sizeof(::chatservice::LeaderElectionProposal)},
-  { 175, -1, -1, sizeof(::chatservice::LeaderElectionProposalResponse)},
-  { 183, -1, -1, sizeof(::chatservice::CandidateValue)},
-  { 191, -1, -1, sizeof(::chatservice::LeaderElectionResponse)},
+  { 156, -1, -1, sizeof(::chatservice::CommitRequest)},
+  { 162, -1, -1, sizeof(::chatservice::CommitResponse)},
+  { 168, -1, -1, sizeof(::chatservice::HeartBeatRequest)},
+  { 174, -1, -1, sizeof(::chatservice::HeartBeatResponse)},
+  { 181, -1, -1, sizeof(::chatservice::LeaderElectionProposal)},
+  { 187, -1, -1, sizeof(::chatservice::LeaderElectionProposalResponse)},
+  { 195, -1, -1, sizeof(::chatservice::CandidateValue)},
+  { 203, -1, -1, sizeof(::chatservice::LeaderElectionResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -612,6 +648,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chatservice::_MessagesSeenReply_default_instance_._instance,
   &::chatservice::_RefreshRequest_default_instance_._instance,
   &::chatservice::_RefreshResponse_default_instance_._instance,
+  &::chatservice::_CommitRequest_default_instance_._instance,
+  &::chatservice::_CommitResponse_default_instance_._instance,
   &::chatservice::_HeartBeatRequest_default_instance_._instance,
   &::chatservice::_HeartBeatResponse_default_instance_._instance,
   &::chatservice::_LeaderElectionProposal_default_instance_._instance,
@@ -650,45 +688,48 @@ const char descriptor_table_protodef_chatService_2eproto[] PROTOBUF_SECTION_VARI
   "\003 \001(\005\"\023\n\021MessagesSeenReply\"(\n\016RefreshReq"
   "uest\022\026\n\016clientusername\030\001 \001(\t\"X\n\017RefreshR"
   "esponse\022\023\n\013forceLogout\030\001 \001(\010\0220\n\rnotifica"
-  "tions\030\002 \003(\0132\031.chatservice.Notification\"\022"
-  "\n\020HeartBeatRequest\"%\n\021HeartBeatResponse\022"
-  "\020\n\010isLeader\030\001 \001(\010\"\030\n\026LeaderElectionPropo"
-  "sal\"@\n\036LeaderElectionProposalResponse\022\016\n"
-  "\006accept\030\001 \001(\010\022\016\n\006leader\030\002 \001(\t\"1\n\016Candida"
-  "teValue\022\016\n\006number\030\001 \001(\005\022\017\n\007address\030\002 \001(\t"
-  "\"\030\n\026LeaderElectionResponse2\222\010\n\013ChatServi"
-  "ce\022S\n\rCreateAccount\022!.chatservice.Create"
-  "AccountMessage\032\037.chatservice.CreateAccou"
-  "ntReply\022;\n\005Login\022\031.chatservice.LoginMess"
-  "age\032\027.chatservice.LoginReply\022>\n\006Logout\022\032"
-  ".chatservice.LogoutMessage\032\030.chatservice"
-  ".LogoutReply\022@\n\tListUsers\022\036.chatservice."
-  "QueryUsersMessage\032\021.chatservice.User0\001\022F"
-  "\n\013SendMessage\022\030.chatservice.ChatMessage\032"
-  "\035.chatservice.SendMessageReply\022Y\n\022QueryN"
-  "otifications\022&.chatservice.QueryNotifica"
-  "tionsMessage\032\031.chatservice.Notification0"
-  "\001\022N\n\rQueryMessages\022!.chatservice.QueryMe"
-  "ssagesMessage\032\030.chatservice.ChatMessage0"
-  "\001\022S\n\rDeleteAccount\022!.chatservice.DeleteA"
-  "ccountMessage\032\037.chatservice.DeleteAccoun"
-  "tReply\022J\n\rRefreshClient\022\033.chatservice.Re"
-  "freshRequest\032\034.chatservice.RefreshRespon"
-  "se\022J\n\tHeartBeat\022\035.chatservice.HeartBeatR"
-  "equest\032\036.chatservice.HeartBeatResponse\022i"
-  "\n\025ProposeLeaderElection\022#.chatservice.Le"
-  "aderElectionProposal\032+.chatservice.Leade"
-  "rElectionProposalResponse\022R\n\016LeaderElect"
-  "ion\022\033.chatservice.CandidateValue\032#.chats"
-  "ervice.LeaderElectionResponse\022P\n\014Message"
-  "sSeen\022 .chatservice.MessagesSeenMessage\032"
-  "\036.chatservice.MessagesSeenReplyb\006proto3"
+  "tions\030\002 \003(\0132\031.chatservice.Notification\"\017"
+  "\n\rCommitRequest\"\020\n\016CommitResponse\"\022\n\020Hea"
+  "rtBeatRequest\"%\n\021HeartBeatResponse\022\020\n\010is"
+  "Leader\030\001 \001(\010\"\030\n\026LeaderElectionProposal\"@"
+  "\n\036LeaderElectionProposalResponse\022\016\n\006acce"
+  "pt\030\001 \001(\010\022\016\n\006leader\030\002 \001(\t\"1\n\016CandidateVal"
+  "ue\022\016\n\006number\030\001 \001(\005\022\017\n\007address\030\002 \001(\t\"\030\n\026L"
+  "eaderElectionResponse2\325\010\n\013ChatService\022S\n"
+  "\rCreateAccount\022!.chatservice.CreateAccou"
+  "ntMessage\032\037.chatservice.CreateAccountRep"
+  "ly\022;\n\005Login\022\031.chatservice.LoginMessage\032\027"
+  ".chatservice.LoginReply\022>\n\006Logout\022\032.chat"
+  "service.LogoutMessage\032\030.chatservice.Logo"
+  "utReply\022@\n\tListUsers\022\036.chatservice.Query"
+  "UsersMessage\032\021.chatservice.User0\001\022F\n\013Sen"
+  "dMessage\022\030.chatservice.ChatMessage\032\035.cha"
+  "tservice.SendMessageReply\022Y\n\022QueryNotifi"
+  "cations\022&.chatservice.QueryNotifications"
+  "Message\032\031.chatservice.Notification0\001\022N\n\r"
+  "QueryMessages\022!.chatservice.QueryMessage"
+  "sMessage\032\030.chatservice.ChatMessage0\001\022S\n\r"
+  "DeleteAccount\022!.chatservice.DeleteAccoun"
+  "tMessage\032\037.chatservice.DeleteAccountRepl"
+  "y\022J\n\rRefreshClient\022\033.chatservice.Refresh"
+  "Request\032\034.chatservice.RefreshResponse\022A\n"
+  "\006Commit\022\032.chatservice.CommitRequest\032\033.ch"
+  "atservice.CommitResponse\022J\n\tHeartBeat\022\035."
+  "chatservice.HeartBeatRequest\032\036.chatservi"
+  "ce.HeartBeatResponse\022i\n\025ProposeLeaderEle"
+  "ction\022#.chatservice.LeaderElectionPropos"
+  "al\032+.chatservice.LeaderElectionProposalR"
+  "esponse\022R\n\016LeaderElection\022\033.chatservice."
+  "CandidateValue\032#.chatservice.LeaderElect"
+  "ionResponse\022P\n\014MessagesSeen\022 .chatservic"
+  "e.MessagesSeenMessage\032\036.chatservice.Mess"
+  "agesSeenReplyb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_chatService_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_chatService_2eproto = {
-    false, false, 2479, descriptor_table_protodef_chatService_2eproto,
+    false, false, 2581, descriptor_table_protodef_chatService_2eproto,
     "chatService.proto",
-    &descriptor_table_chatService_2eproto_once, nullptr, 0, 25,
+    &descriptor_table_chatService_2eproto_once, nullptr, 0, 27,
     schemas, file_default_instances, TableStruct_chatService_2eproto::offsets,
     file_level_metadata_chatService_2eproto, file_level_enum_descriptors_chatService_2eproto,
     file_level_service_descriptors_chatService_2eproto,
@@ -5002,6 +5043,86 @@ void RefreshResponse::InternalSwap(RefreshResponse* other) {
 
 // ===================================================================
 
+class CommitRequest::_Internal {
+ public:
+};
+
+CommitRequest::CommitRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:chatservice.CommitRequest)
+}
+CommitRequest::CommitRequest(const CommitRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  CommitRequest* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:chatservice.CommitRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CommitRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CommitRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata CommitRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
+      file_level_metadata_chatService_2eproto[19]);
+}
+
+// ===================================================================
+
+class CommitResponse::_Internal {
+ public:
+};
+
+CommitResponse::CommitResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:chatservice.CommitResponse)
+}
+CommitResponse::CommitResponse(const CommitResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  CommitResponse* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:chatservice.CommitResponse)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CommitResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CommitResponse::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata CommitResponse::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
+      file_level_metadata_chatService_2eproto[20]);
+}
+
+// ===================================================================
+
 class HeartBeatRequest::_Internal {
  public:
 };
@@ -5037,7 +5158,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*HeartBeatRequest::GetClassData
 ::PROTOBUF_NAMESPACE_ID::Metadata HeartBeatRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
-      file_level_metadata_chatService_2eproto[19]);
+      file_level_metadata_chatService_2eproto[21]);
 }
 
 // ===================================================================
@@ -5215,7 +5336,7 @@ void HeartBeatResponse::InternalSwap(HeartBeatResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata HeartBeatResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
-      file_level_metadata_chatService_2eproto[20]);
+      file_level_metadata_chatService_2eproto[22]);
 }
 
 // ===================================================================
@@ -5255,7 +5376,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LeaderElectionProposal::GetCla
 ::PROTOBUF_NAMESPACE_ID::Metadata LeaderElectionProposal::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
-      file_level_metadata_chatService_2eproto[21]);
+      file_level_metadata_chatService_2eproto[23]);
 }
 
 // ===================================================================
@@ -5485,7 +5606,7 @@ void LeaderElectionProposalResponse::InternalSwap(LeaderElectionProposalResponse
 ::PROTOBUF_NAMESPACE_ID::Metadata LeaderElectionProposalResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
-      file_level_metadata_chatService_2eproto[22]);
+      file_level_metadata_chatService_2eproto[24]);
 }
 
 // ===================================================================
@@ -5715,7 +5836,7 @@ void CandidateValue::InternalSwap(CandidateValue* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata CandidateValue::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
-      file_level_metadata_chatService_2eproto[23]);
+      file_level_metadata_chatService_2eproto[25]);
 }
 
 // ===================================================================
@@ -5755,7 +5876,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LeaderElectionResponse::GetCla
 ::PROTOBUF_NAMESPACE_ID::Metadata LeaderElectionResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
-      file_level_metadata_chatService_2eproto[24]);
+      file_level_metadata_chatService_2eproto[26]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -5836,6 +5957,14 @@ Arena::CreateMaybeMessage< ::chatservice::RefreshRequest >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::chatservice::RefreshResponse*
 Arena::CreateMaybeMessage< ::chatservice::RefreshResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chatservice::RefreshResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chatservice::CommitRequest*
+Arena::CreateMaybeMessage< ::chatservice::CommitRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chatservice::CommitRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chatservice::CommitResponse*
+Arena::CreateMaybeMessage< ::chatservice::CommitResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chatservice::CommitResponse >(arena);
 }
 template<> PROTOBUF_NOINLINE ::chatservice::HeartBeatRequest*
 Arena::CreateMaybeMessage< ::chatservice::HeartBeatRequest >(Arena* arena) {
