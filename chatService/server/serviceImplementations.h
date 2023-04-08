@@ -238,8 +238,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_errormsg("Incorrect username or password.");
                 }
 
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 server_reply->set_leader(leaderVals.leaderAddress);
+            } else {
+                // if there is no leader, election is going on
+                server_reply->set_leader(g_ElectionString);
             }
 
             return Status::OK;
@@ -288,8 +292,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 // Add to storage
                 int logoutStatus = logout(logout_message->username());
 
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 server_reply->set_leader(leaderVals.leaderAddress);
+            } else {
+                // if there is no leader, election is going on
+                server_reply->set_leader(g_ElectionString);
             }
 
             return Status::OK;
@@ -314,12 +322,16 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     user.set_username(username);
                     writer->Write(user);
                 }
-            } else {
+            }  else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 User user;
-                user.set_username(query->username());
                 user.set_leader(leaderVals.leaderAddress);
                 writer->Write(user);
-
+            } else {
+                // if there is no leader, election is going on
+                User user;
+                user.set_leader(g_ElectionString);
+                writer->Write(user);
             }
 
 
@@ -381,8 +393,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_errormsg(errormsg);
                 }
 
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 server_reply->set_leader(leaderVals.leaderAddress);
+            } else {
+                // if there is no leader, election is going on
+                server_reply->set_leader(g_ElectionString);
             }
 
             return Status::OK;
@@ -403,9 +419,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     note.set_user(notification.first);
                     writer->Write(note);
                 }
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 Notification note;
                 note.set_leader(leaderVals.leaderAddress);
+                writer->Write(note);
+            } else {
+                // if there is no leader, election is going on
+                Notification note;
+                note.set_leader(g_ElectionString);
                 writer->Write(note);
             }
 
@@ -462,9 +484,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 for (auto message : queryMessagesMessageList) {
                     writer->Write(message);
                 }
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 ChatMessage message;
                 message.set_leader(leaderVals.leaderAddress);
+                writer->Write(message);
+            } else {
+                // if there is no leader, election is going on
+                ChatMessage message;
+                message.set_leader(g_ElectionString);
                 writer->Write(message);
             }
 
@@ -521,8 +549,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     server_reply->set_deletedaccount(true);
                 }
 
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 server_reply->set_leader(leaderVals.leaderAddress);
+            } else {
+                // if there is no leader, election is going on
+                server_reply->set_leader(g_ElectionString);
             }
             
             return Status::OK;
@@ -571,8 +603,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 // Add to storage
                 int messagesSeenStatus = messagesSeen(msg->clientusername(), msg->otherusername(), msg->messagesseen());
 
-            } else {
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
                 reply->set_leader(leaderVals.leaderAddress);
+            } else {
+                // if there is no leader, election is going on
+                reply->set_leader(g_ElectionString);
             }
 
             return Status::OK;
@@ -580,14 +616,22 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status RefreshClient(ServerContext* context, const RefreshRequest* request, RefreshResponse* reply) {
             std::cout << "Refreshing for " << request->clientusername() << std::endl;
-            if (queuedOperationsDictionary.find(request->clientusername()) != queuedOperationsDictionary.end()) {
-                std::cout << "Running queued operations for '" << request->clientusername() << "'" << std::endl;
-                for (Notification note : queuedOperationsDictionary[request->clientusername()]) {
-                    Notification* n = reply->add_notifications();
-                    n->set_user(note.user());
-                }
+            if (leaderVals.isLeader) {
+                if (queuedOperationsDictionary.find(request->clientusername()) != queuedOperationsDictionary.end()) {
+                    std::cout << "Running queued operations for '" << request->clientusername() << "'" << std::endl;
+                    for (Notification note : queuedOperationsDictionary[request->clientusername()]) {
+                        Notification* n = reply->add_notifications();
+                        n->set_user(note.user());
+                    }
 
-                queuedOperationsDictionary.erase(request->clientusername());
+                    queuedOperationsDictionary.erase(request->clientusername());
+                }
+            } else if (leaderVals.leaderidx != -1) {
+                // If there is a leader, but it's not me
+                server_reply->set_leader(leaderVals.leaderAddress);
+            } else {
+                // if there is no leader, election is going on
+                server_reply->set_leader(g_ElectionString);
             }
             return Status::OK;
         }
@@ -642,6 +686,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             // Update leader candidate values
             leaderElectionValuesMutex.lock();
             electionVals.numberOfCandidatesReceived++;
+            std::cout << "Current winning value: " << std::to_string(electionVals.maxLeaderElectionVal) << std::endl;
+            std::cout << "New value:" << std::to_string(request->number()) << std::endl;
             if (request->number() > electionVals.maxLeaderElectionVal) {
                 electionVals.maxLeaderElectionVal = request->number();
                 electionVals.currLeaderCandidateAddr = request->address();
@@ -715,6 +761,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 else {
                     // TODO: might want to throw an exception here instead but we know how
                     //      much Carolyn loves exceptions
+                    std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                    connections.erase(connections.begin()+i);
                     return false;
                 }
             }
@@ -726,11 +774,17 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         void leaderElection() {
             int candidateValue = rand();
-            std::cout << "Carrying out leader election, my value is " << std::to_string(candidateValue) << std::endl;
 
             leaderElectionValuesMutex.lock();
-            electionVals.currLeaderCandidateAddr = myAddress;
-            electionVals.maxLeaderElectionVal = candidateValue;
+            if (candidateValue > electionVals.maxLeaderElectionVal) {
+                electionVals.currLeaderCandidateAddr = myAddress;
+                electionVals.maxLeaderElectionVal = candidateValue;
+            }
+            else if (candidateValue == electionVals.maxLeaderElectionVal) {
+                if (electionVals.currLeaderCandidateAddr.compare(myAddress) > 0) {
+                    electionVals.currLeaderCandidateAddr = myAddress;
+                }
+            }
             leaderElectionValuesMutex.unlock();
 
             CandidateValue message;
@@ -742,6 +796,13 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 ClientContext context;
                 LeaderElectionResponse reply;
                 Status status =  connections[i]->LeaderElection(&context, message, &reply);
+                if (status.ok()) {
+                    continue;
+                }
+                else {
+                    std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                    connections.erase(connections.begin()+i);
+                }
             }
 
             // wait until we've received leader election values of all other servers

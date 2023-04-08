@@ -5,11 +5,16 @@
 
 int main (void) {
     std::string server_addr;
-    std::cout << "Input Address of Server (IP_ADDR:PORT_NUMBER): ";
-    std::cin >> server_addr;
-
-    auto channel = grpc::CreateChannel(server_addr, grpc::InsecureChannelCredentials());
-    ChatServiceClient client(channel);
+    ChatServiceClient client;
+    while (true) {
+        std::cout << "Input Address of Server (IP_ADDR:PORT_NUMBER): ";
+        std::cin >> server_addr;
+        if (server_addr == "y") {
+            break;
+        }
+        client.addServerAddress(server_addr);
+        client.changeStub(server_addr);
+    }
 
     // Main loop for user
     char userInput[g_InputLimit];
