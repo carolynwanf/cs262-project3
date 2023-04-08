@@ -25,6 +25,7 @@ service ChatService {
 message CreateAccountMessage {
     string username=1;
     string password=2;
+    optional bool fromLeader=3;
 }
 
 
@@ -38,6 +39,7 @@ message CreateAccountReply {
 message LoginMessage {
     string username=1;
     string password=2;
+    optional bool fromLeader=3;
 }
 
 
@@ -50,6 +52,7 @@ message LoginReply {
 
 message LogoutMessage {
     string username=1;
+    optional bool fromLeader=2;
 }
 
 
@@ -62,6 +65,7 @@ message LogoutReply {
 
 message QueryUsersMessage {
     optional string username=1;
+    optional bool fromLeader=2;
 }
 
 
@@ -81,6 +85,7 @@ message SendMessageReply {
 message QueryNotificationsMessage {
     // bool queryingNotifications=1;
     string user=1;
+    optional bool fromLeader=2;
 }
 
 
@@ -94,6 +99,7 @@ message Notification {
 message QueryMessagesMessage {
     string clientUsername=1;
     string otherUsername=2;
+    optional bool fromLeader=3;
 }
 
 
@@ -102,12 +108,14 @@ message ChatMessage {
     string recipientUsername=2;
     string msgContent=3;
     optional string leader=4;
+    optional bool fromLeader=5;
 }
 
 
 message DeleteAccountMessage {
     string username=1;
     string password=2;
+    optional bool fromLeader=3;
 }
 
 
@@ -122,6 +130,7 @@ message MessagesSeenMessage {
     string clientUsername=1;
     string otherUsername=2;
     int32 messagesSeen=3;
+    optional bool fromLeader=4;
 }
 
 message MessagesSeenReply {
@@ -130,6 +139,7 @@ message MessagesSeenReply {
 
 message RefreshRequest {
     string clientusername=1;
+    optional bool fromLeader=2;
 }
 
 message RefreshResponse {

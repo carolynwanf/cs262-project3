@@ -1,0 +1,12 @@
+message_type,username1,username2,password,message_content,messagesseen,leader
+1,victor,NULL,p,NULL,NULL,NULL
+3,victor,NULL,NULL,NULL,NULL,NULL
+message_type,username1,username2,password,message_content,messagesseen,leader
+message_type,username1,username2,password,message_content,messagesseen,leader
+1,caro,NULL,p,NULL,NULL,NULL
+3,caro,NULL,NULL,NULL,NULL,NULL
+1,victor,NULL,p,NULL,NULL,NULL
+3,victor,NULL,NULL,NULL,NULL,NULL
+2,caro,NULL,p,NULL,NULL,NULL
+5,caro,victor,NULL,fuck you,NULL,NULL
+1,victor,NULL,p,NULL,NULL,NULL

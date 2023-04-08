@@ -14,13 +14,40 @@ const int g_backlogSize = 50;
 
 std::vector<std::string> serverAddresses;
 
-void RunServer(std::string ip_addr, int port) {
-
+void RunServer(std::string server_addr) {
     ServerBuilder builder;
-    std::string server_addr = ip_addr+":"+std::to_string(port);
-    std::cout << "Server listening on " << server_addr << std::endl;
-    g_Service.addMyAddress(server_addr);
+    builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
+    builder.RegisterService(&g_Service);
+    std::unique_ptr<Server> server(builder.BuildAndStart());
 
+    // Before waiting for requests, start thread that connects to other servers
+    server->Wait();
+}
+
+int main (int argc, char const* argv[]) {
+ 
+    // For getting host IP address we followed tutorial found here: 
+    //      https://www.tutorialspoint.com/how-to-get-the-ip-address-of-local-computer-using-c-cplusplus
+    char host[256];
+    char *IP;
+    hostent *host_entry;
+    int hostname;
+    hostname = gethostname(host, sizeof(host)); //find the host name
+    host_entry = gethostbyname(host); //find host information
+    IP = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0])); //Convert into IP string
+    int port;
+    bool noPort = true;
+    while (noPort) {
+        std::cout << "Please input port number (8080, 8081 or 8082) for server to use: ";
+        std::cin >> port;
+        if (port >= 8080 && port <= 8082) {
+            noPort = false;
+        }
+    }
+
+    std::string server_addr = std::string(IP)+":"+std::to_string(port);
+    std::cout << "Server listening on " << server_addr << std::endl;
+    g_Service.initialize(server_addr);
 
     while (true) {
         std::string other_server;
@@ -32,22 +59,7 @@ void RunServer(std::string ip_addr, int port) {
         serverAddresses.push_back(other_server);
     }
 
-    // start inter-server communication thread
-    std::thread serverCommunicationThread(serverThread, serverAddresses);
-    serverCommunicationThread.detach();
-
-    std::cout << "We've spawned the thread?" << std::endl;
-
-    builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
-    builder.RegisterService(&g_Service);
-    std::unique_ptr<Server> server(builder.BuildAndStart());
-
-    // Before waiting for requests, start thread that connects to other servers
-    server->Wait();
-    std::cout << "Wait finished?" << std::endl;
-}
-
-int main (int argc, char const* argv[]) {
+    // read input from CSV files
     if (argc > 3) {
         std::cout << "The only optional arguments are two CSV files (commit and pending) with information to start the server with." << std::endl;
         return -1;
@@ -83,37 +95,18 @@ int main (int argc, char const* argv[]) {
             parseLine(pendingContent[i]);
         }
 
-        if (commitContent.size() == 0) {
-            g_Service.addFields();
-        }
+        // if (commitContent.size() == 0) {
+        //     g_Service.addFields();
+        // }
 
         // What do if 
     }
 
-    // Add fields if no logs
-    if (argc == 0) {
-        g_Service.addFields();
-    }
- 
-    // For getting host IP address we followed tutorial found here: 
-    //      https://www.tutorialspoint.com/how-to-get-the-ip-address-of-local-computer-using-c-cplusplus
-    char host[256];
-    char *IP;
-    hostent *host_entry;
-    int hostname;
-    hostname = gethostname(host, sizeof(host)); //find the host name
-    host_entry = gethostbyname(host); //find host information
-    IP = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0])); //Convert into IP string
-    int port;
-    bool noPort = true;
-    while (noPort) {
-        std::cout << "Please input port number (8080, 8081 or 8082) for server to use: ";
-        std::cin >> port;
-        if (port >= 8080 && port <= 8082) {
-            noPort = false;
-        }
-    }
-    RunServer(IP, port);
+    // start inter-server communication thread
+    std::thread serverCommunicationThread(serverThread, serverAddresses);
+    serverCommunicationThread.detach();
+
+    RunServer(server_addr);
 
     return 0;
 }

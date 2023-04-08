@@ -20,22 +20,16 @@
 using chatservice::ChatMessage;
 using chatservice::Notification;
 
-std::string g_pendingLogFile = "pendingLog.csv";
-std::string g_committedLogFile = "committedLog.csv";
+// TODO: change file name
+// TODO: make it so that client tries to connect to others when it receives a not ok message
+std::string g_pendingLogFile = "pendingLog";
+std::string g_committedLogFile = "committedLog";
 std::string g_csvFields = "message_type,username1,username2,password,message_content,messagesseen,leader";
 std::string g_nullString = "NULL";
 std::string g_ElectionString = "olive";
 
 
 const int g_numberOfServers = 3;
-
-// std::mutex g_isLeaderMutex;
-// bool g_isLeader = false;
-
-// std::mutex g_leaderElectionValuesMutex;
-// int g_numberOfCandidatesReceived = 0;
-// int g_maxLeaderElectionVal = -1;
-// std::string g_currLeaderCandidateAddr;
 
 struct CurrentConversation {
     std::string username;

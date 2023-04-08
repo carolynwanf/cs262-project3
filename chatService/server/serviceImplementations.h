@@ -55,6 +55,8 @@ using chatservice::LeaderElectionProposalResponse;
 using chatservice::LeaderElectionResponse;
 using chatservice::CommitResponse;
 
+bool g_startingUp = true;
+
 struct LeaderValues {
     bool isLeader = false;
     int leaderidx = -1;
@@ -78,13 +80,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         std::ofstream commitLogWriter;
 
         // for reading logs
-        std::fstream pendingFile;
-        std::fstream commitFile;
+        std::ifstream pendingLogReader;
 
         // For interserver communication
         std::mutex connectionMutex;
-        std::vector<std::unique_ptr<ChatService::Stub>> connections;
-        std::unordered_map<std::string, int> addressToConnectionIdx;
+        std::unordered_map<std::string, std::unique_ptr<ChatService::Stub>> addressToStub;
         std::string myAddress;
 
         // Commented out the global versions in storage.h
@@ -95,13 +95,28 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         ElectionValues electionVals;
 
     public:
-        explicit ChatServiceImpl(std::string pendingFileName, std::string commitFileName) {
+        explicit ChatServiceImpl() {}
+
+        void initialize(std::string addr) {
+            myAddress = addr;
+            std::cout << "My address is " << myAddress << std::endl;
+
+            std::string pendingFilename = g_pendingLogFile + addr;
+            std::string commitFilename = g_committedLogFile + addr;
+            
             // open CSV files in append mode
-            pendingLogWriter.open(pendingFileName, std::fstream::app);
-            commitLogWriter.open(commitFileName, std::fstream::app);
+            pendingLogWriter.open(pendingFilename, std::fstream::app);
+            commitLogWriter.open(commitFilename, std::fstream::app);
 
             // open pendingLogFile in read mode
-            pendingFile.open(pendingFileName, std::ios::in);
+            pendingLogReader.open(pendingFilename, std::fstream::in);
+
+            // get to the end of the file
+            pendingLogReader.seekg(0, pendingLogReader.end);
+            if (pendingLogReader.tellg() == 0) {
+                addFields();
+            }
+
         }
 
         // Called when CSV file was found to be empty (i.e. a new log file) so we define the CSV fields
@@ -110,15 +125,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             commitLogWriter << g_csvFields << std::endl;
         }
 
-        void addMyAddress(std::string addr) {
-            myAddress = addr;
-            std::cout << "My address is " << myAddress << std::endl;
-        }
-
         int numberOfConnections() {
             int numberOfConnections;
             connectionMutex.lock();
-            numberOfConnections = connections.size();
+            numberOfConnections = addressToStub.size();
             connectionMutex.unlock();
 
             return numberOfConnections;            
@@ -129,39 +139,49 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             std::string username = create_account_message->username();
             std::string password = create_account_message->password();
-            writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
+
+            // If the message is from the leader or I am the leader, write to pending
+            if (create_account_message->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
+            } 
+
+            //TODO: change all messages to have an optional from leader field
             
              // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
 
-                std::vector<int> droppedConnections;
+                // std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
 
                 // Tell replicas to write to pending
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CreateAccountReply reply;
-                    Status status = connections[i]->CreateAccount(&context, *create_account_message, &reply);
+                    CreateAccountMessage new_msg;
+                    new_msg.set_fromleader(true);
+                    new_msg.set_password(create_account_message->password());
+                    new_msg.set_username(create_account_message->username());
+                    Status status = it->second->CreateAccount(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
 
-                // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
 
                 // Commit 
                 writeToLogs(commitLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
                 connectionMutex.unlock();
 
@@ -190,38 +210,47 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         Status Login(ServerContext* context, const LoginMessage* login_message, LoginReply* server_reply) {
             std::string username = login_message->username();
             std::string password = login_message->password();
-            writeToLogs(pendingLogWriter, LOGIN, username, g_nullString, password);
+
+            // If the message is from the leader or I am the leader, write to pending
+            if (login_message->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, LOGIN, username, g_nullString, password);
+            }
 
             // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
-                std::vector<int> droppedConnections;
+                // std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
 
                 // Get consensus 
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     LoginReply reply;
-                    Status status = connections[i]->Login(&context, *login_message, &reply);
+                    LoginMessage new_msg;
+                    new_msg.set_fromleader(true);
+                    new_msg.set_password(login_message->password());
+                    new_msg.set_username(login_message->username());
+                    Status status = it->second->Login(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
                 writeToLogs(commitLogWriter, LOGIN, username, g_nullString, password);
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
 
                 connectionMutex.unlock();
@@ -251,28 +280,35 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status Logout(ServerContext* context, const LogoutMessage* logout_message, LogoutReply* server_reply) {
-            writeToLogs(pendingLogWriter, LOGOUT, logout_message->username());
-
+            // If the message is from the leader or I am the leader, write to pending
+            if (logout_message->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, LOGOUT, logout_message->username());
+            }
+            
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 
-                std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
+                // std::vector<int> droppedConnections;
 
                 // Get consensus 
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     LogoutReply reply;
-                    Status status = connections[i]->Logout(&context, *logout_message, &reply);
+                    LogoutMessage new_msg;
+                    new_msg.set_fromleader(true);
+                    new_msg.set_username(logout_message->username());
+                    Status status = it->second->Logout(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
@@ -280,11 +316,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
 
                 connectionMutex.unlock();
@@ -344,28 +380,37 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string recipientUsername = msg->recipientusername();
             std::string messageContent = msg->msgcontent();
 
-            writeToLogs(pendingLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent);
+            if (msg->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent);
+            }
              
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
 
-                std::vector<int> droppedConnections;
+                // std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
 
                 // Get consensus 
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     SendMessageReply reply;
-                    Status status = connections[i]->SendMessage(&context, *msg, &reply);
+                    ChatMessage new_msg;
+                    new_msg.set_msgcontent(msg->msgcontent());
+                    new_msg.set_senderusername(msg->senderusername());
+                    new_msg.set_recipientusername(msg->recipientusername());
+                    new_msg.set_leader(msg->leader());
+                    new_msg.set_fromleader(true);
+                    Status status = it->second->SendMessage(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
@@ -374,11 +419,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
                 
                 connectionMutex.unlock();
@@ -437,41 +482,46 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status QueryMessages(ServerContext* context, const QueryMessagesMessage* query, 
                             ServerWriter<ChatMessage>* writer) {
-            writeToLogs(pendingLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
+            if (query->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
+            }
 
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 
-                std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
+                // std::vector<int> droppedConnections;
 
                 // Get consensus 
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
-                    std::unique_ptr<ClientReader<ChatMessage>> reader(connections[i]->QueryMessages(&context, *query));
+                    QueryMessagesMessage new_msg;
+                    new_msg.set_clientusername(query->clientusername());
+                    new_msg.set_otherusername(query->otherusername());
+                    new_msg.set_fromleader(true);
+                    std::unique_ptr<ClientReader<ChatMessage>> reader(it->second->QueryMessages(&context, new_msg));
                     Status status = reader->Finish();
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
-
-                // Commit if you get consensus
                
                 writeToLogs(commitLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername());
 
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
 
                 connectionMutex.unlock();
@@ -501,39 +551,48 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status DeleteAccount(ServerContext* context, const DeleteAccountMessage* delete_account_message,
                             DeleteAccountReply* server_reply) {
-            writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username());
+            if (delete_account_message->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username());
+            }
             
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 
-                std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
+                // std::vector<int> droppedConnections;
 
                 // Get consensus 
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     DeleteAccountReply reply;
-                    Status status = connections[i]->DeleteAccount(&context, *delete_account_message, &reply); 
+                    
+                    DeleteAccountMessage new_msg;
+                    new_msg.set_username(delete_account_message->username());
+                    new_msg.set_password(delete_account_message->password());
+                    new_msg.set_fromleader(true);
+                    
+                    Status status = it->second->DeleteAccount(&context, new_msg, &reply); 
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
                 writeToLogs(commitLogWriter, DELETE_ACCOUNT, delete_account_message->username());
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
 
                 connectionMutex.unlock();
@@ -562,28 +621,38 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status MessagesSeen(ServerContext* context, const MessagesSeenMessage* msg, MessagesSeenReply* reply) {
-            writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
+            if (msg->fromleader() || leaderVals.isLeader) {
+                writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()));
+            }
 
             // TODO: check if master, talk to replicas
             if (leaderVals.isLeader) {
                 
-                std::vector<int> droppedConnections;
+                std::vector<std::string> droppedConnections;
+                // std::vector<int> droppedConnections;
                 
                 // Get consensus 
                 connectionMutex.lock();
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     MessagesSeenReply reply;
-                    Status status = connections[i]->MessagesSeen(&context, *msg, &reply);
+
+                    MessagesSeenMessage new_msg;
+                    new_msg.set_clientusername(msg->clientusername());
+                    new_msg.set_otherusername(msg->otherusername());
+                    new_msg.set_messagesseen(msg->messagesseen());
+                    new_msg.set_fromleader(true);  
+                             
+                    Status status = it->second->MessagesSeen(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
-                        droppedConnections.push_back(i);
+                        droppedConnections.push_back(it->first);
                     }
                 }
                 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
-                    connections.erase(connections.begin() + droppedConnections[i]);
+                    addressToStub.erase(droppedConnections[i]);
                 }
 
                 // Commit if you get consensus
@@ -591,11 +660,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
                 // Tell replicas to commit
-                for (int i = 0; i < connections.size(); i++) {
+                for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
                     CommitRequest request;
                     CommitResponse reply;
-                    Status status = connections[i]->Commit(&context, request, &reply);
+                    Status status = it->second->Commit(&context, request, &reply);
                 }
 
                 connectionMutex.unlock();
@@ -628,10 +697,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 }
             } else if (leaderVals.leaderidx != -1) {
                 // If there is a leader, but it's not me
-                server_reply->set_leader(leaderVals.leaderAddress);
+                reply->set_leader(leaderVals.leaderAddress);
             } else {
                 // if there is no leader, election is going on
-                server_reply->set_leader(g_ElectionString);
+                reply->set_leader(g_ElectionString);
             }
             return Status::OK;
         }
@@ -641,17 +710,37 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string line, word;
             
             // Add last pending log to committed log
-            getline(pendingFile, line);
+            // if (getline(pendingLogReader, line)) {
+            //     std::cout << "Committing line: " << line <<std::endl;
 
-            commitLogWriter <<  line;
+            //     std::stringstream str(line);
 
+            //     while (getline(str, word, ',')) {
+            //         row.push_back(word);
+            //         std::cout << "Word: " << word <<std::endl;
+            //         commitLogWriter << word << ",";
+            //     }
+
+            //     commitLogWriter << std::endl;
+
+            //     parseLine(row);
+
+            // }
+            getline(pendingLogReader, line);
+            std::cout << "Position of reader: " << std::to_string(pendingLogReader.tellg()) << std::endl;
+            commitLogWriter << line << std::endl;
             std::stringstream str(line);
 
             while (getline(str, word, ',')) {
                 row.push_back(word);
+                std::cout << "Word: " << word <<std::endl;
             }
 
-            parseLine(row);
+            std::cout << "going to parse that fucking line" << std::endl;
+            
+            if (row.size() > 0) {
+                parseLine(row);
+            }
 
             return Status::OK;
 
@@ -709,18 +798,16 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
             std::unique_ptr<ChatService::Stub> stub_ = ChatService::NewStub(channel);
             std::cout << "Adding connection to " << server_address << std::endl;
-            connections.push_back(std::move(stub_));
-            addressToConnectionIdx[server_address] = connections.size()-1;
+            addressToStub[server_address] = std::move(stub_);
         }
 
         bool heartbeat() {
-            std::cout << "Sending heartbeat" << std::endl;
             leaderMutex.lock();
             if (leaderVals.leaderidx != -1) {
                 ClientContext context;
                 HeartBeatRequest message;
                 HeartBeatResponse reponse;
-                Status status = connections[leaderVals.leaderidx]->HeartBeat(&context, message, &reponse);
+                Status status = addressToStub[leaderVals.leaderAddress]->HeartBeat(&context, message, &reponse);
 
                 if (status.ok()) {
                     leaderMutex.unlock();
@@ -728,8 +815,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 }
                 else {
                     // Remove leader from connections vector and from addr_to_idx dict
-                    connections.erase(connections.begin()+leaderVals.leaderidx);
-                    addressToConnectionIdx.erase(leaderVals.leaderAddress);
+                    addressToStub.erase(leaderVals.leaderAddress);
                     leaderVals.leaderidx = -1;
                     leaderVals.leaderAddress = "";
                     leaderMutex.unlock();
@@ -747,11 +833,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::cout << "Proposing leader election" << std::endl;
             LeaderElectionProposal message;
 
-            for (int i = 0; i < connections.size(); i++) {
+            for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                 ClientContext context;
                 LeaderElectionProposalResponse reply;
-                std::cout << "Sending proposal to connection " << std::to_string(i) << std::endl;
-                Status status = connections[i]->SuggestLeaderElection(&context, message, &reply);
+                std::cout << "Sending proposal to connection " << it->first << std::endl;
+                Status status = it->second->SuggestLeaderElection(&context, message, &reply);
                 if (status.ok()) {
                     if (!reply.accept()) {
                         std::cout << "Election was rejected" << std::endl;
@@ -761,8 +847,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 else {
                     // TODO: might want to throw an exception here instead but we know how
                     //      much Carolyn loves exceptions
-                    std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-                    connections.erase(connections.begin()+i);
+                    if (!g_startingUp) {
+                        std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                        addressToStub.erase(it->first);
+                    }
                     return false;
                 }
             }
@@ -792,16 +880,16 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             message.set_address(myAddress);
 
             // send election value to all other servers
-            for (int i = 0; i < connections.size(); i++) {
+            for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                 ClientContext context;
                 LeaderElectionResponse reply;
-                Status status =  connections[i]->LeaderElection(&context, message, &reply);
+                Status status =  it->second->LeaderElection(&context, message, &reply);
                 if (status.ok()) {
                     continue;
                 }
                 else {
                     std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-                    connections.erase(connections.begin()+i);
+                    addressToStub.erase(it->first);
                 }
             }
 
@@ -812,9 +900,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             bool waitingForLeaderElection = true;
             while (waitingForLeaderElection) {
                 leaderElectionValuesMutex.lock();
-                if (electionVals.numberOfCandidatesReceived >= connections.size()) {
+                if (electionVals.numberOfCandidatesReceived >= addressToStub.size()) {
                     waitingForLeaderElection = false;
                 }
+
                 leaderElectionValuesMutex.unlock();
             }
 
@@ -827,7 +916,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
             else {
                 leaderVals.isLeader = false;
-                leaderVals.leaderidx = addressToConnectionIdx[leaderVals.leaderAddress];
+                leaderVals.leaderidx = 1;
             }
             leaderMutex.unlock();
 
@@ -840,6 +929,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             leaderElectionValuesMutex.unlock();
 
             std::cout << "Leader election finished" << std::endl;
+            g_startingUp = false;
         }
 
         bool isLeader() {
@@ -865,4 +955,4 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
 // open log file for server
-ChatServiceImpl g_Service(g_pendingLogFile, g_committedLogFile);
+ChatServiceImpl g_Service;

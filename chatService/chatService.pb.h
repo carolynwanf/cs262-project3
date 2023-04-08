@@ -284,6 +284,7 @@ class CreateAccountMessage final :
   enum : int {
     kUsernameFieldNumber = 1,
     kPasswordFieldNumber = 2,
+    kFromLeaderFieldNumber = 3,
   };
   // string username = 1;
   void clear_username();
@@ -313,6 +314,19 @@ class CreateAccountMessage final :
   std::string* _internal_mutable_password();
   public:
 
+  // optional bool fromLeader = 3;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.CreateAccountMessage)
  private:
   class _Internal;
@@ -321,9 +335,11 @@ class CreateAccountMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -642,6 +658,7 @@ class LoginMessage final :
   enum : int {
     kUsernameFieldNumber = 1,
     kPasswordFieldNumber = 2,
+    kFromLeaderFieldNumber = 3,
   };
   // string username = 1;
   void clear_username();
@@ -671,6 +688,19 @@ class LoginMessage final :
   std::string* _internal_mutable_password();
   public:
 
+  // optional bool fromLeader = 3;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.LoginMessage)
  private:
   class _Internal;
@@ -679,9 +709,11 @@ class LoginMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -999,6 +1031,7 @@ class LogoutMessage final :
 
   enum : int {
     kUsernameFieldNumber = 1,
+    kFromLeaderFieldNumber = 2,
   };
   // string username = 1;
   void clear_username();
@@ -1014,6 +1047,19 @@ class LogoutMessage final :
   std::string* _internal_mutable_username();
   public:
 
+  // optional bool fromLeader = 2;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.LogoutMessage)
  private:
   class _Internal;
@@ -1022,8 +1068,10 @@ class LogoutMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -1330,6 +1378,7 @@ class QueryUsersMessage final :
 
   enum : int {
     kUsernameFieldNumber = 1,
+    kFromLeaderFieldNumber = 2,
   };
   // optional string username = 1;
   bool has_username() const;
@@ -1349,6 +1398,19 @@ class QueryUsersMessage final :
   std::string* _internal_mutable_username();
   public:
 
+  // optional bool fromLeader = 2;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.QueryUsersMessage)
  private:
   class _Internal;
@@ -1360,6 +1422,7 @@ class QueryUsersMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -1851,6 +1914,7 @@ class QueryNotificationsMessage final :
 
   enum : int {
     kUserFieldNumber = 1,
+    kFromLeaderFieldNumber = 2,
   };
   // string user = 1;
   void clear_user();
@@ -1866,6 +1930,19 @@ class QueryNotificationsMessage final :
   std::string* _internal_mutable_user();
   public:
 
+  // optional bool fromLeader = 2;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.QueryNotificationsMessage)
  private:
   class _Internal;
@@ -1874,8 +1951,10 @@ class QueryNotificationsMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2190,6 +2269,7 @@ class QueryMessagesMessage final :
   enum : int {
     kClientUsernameFieldNumber = 1,
     kOtherUsernameFieldNumber = 2,
+    kFromLeaderFieldNumber = 3,
   };
   // string clientUsername = 1;
   void clear_clientusername();
@@ -2219,6 +2299,19 @@ class QueryMessagesMessage final :
   std::string* _internal_mutable_otherusername();
   public:
 
+  // optional bool fromLeader = 3;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.QueryMessagesMessage)
  private:
   class _Internal;
@@ -2227,9 +2320,11 @@ class QueryMessagesMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr otherusername_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2361,6 +2456,7 @@ class ChatMessage final :
     kRecipientUsernameFieldNumber = 2,
     kMsgContentFieldNumber = 3,
     kLeaderFieldNumber = 4,
+    kFromLeaderFieldNumber = 5,
   };
   // string senderUsername = 1;
   void clear_senderusername();
@@ -2422,6 +2518,19 @@ class ChatMessage final :
   std::string* _internal_mutable_leader();
   public:
 
+  // optional bool fromLeader = 5;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.ChatMessage)
  private:
   class _Internal;
@@ -2436,6 +2545,7 @@ class ChatMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr recipientusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msgcontent_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2565,6 +2675,7 @@ class DeleteAccountMessage final :
   enum : int {
     kUsernameFieldNumber = 1,
     kPasswordFieldNumber = 2,
+    kFromLeaderFieldNumber = 3,
   };
   // string username = 1;
   void clear_username();
@@ -2594,6 +2705,19 @@ class DeleteAccountMessage final :
   std::string* _internal_mutable_password();
   public:
 
+  // optional bool fromLeader = 3;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.DeleteAccountMessage)
  private:
   class _Internal;
@@ -2602,9 +2726,11 @@ class DeleteAccountMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2924,6 +3050,7 @@ class MessagesSeenMessage final :
     kClientUsernameFieldNumber = 1,
     kOtherUsernameFieldNumber = 2,
     kMessagesSeenFieldNumber = 3,
+    kFromLeaderFieldNumber = 4,
   };
   // string clientUsername = 1;
   void clear_clientusername();
@@ -2962,6 +3089,19 @@ class MessagesSeenMessage final :
   void _internal_set_messagesseen(int32_t value);
   public:
 
+  // optional bool fromLeader = 4;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.MessagesSeenMessage)
  private:
   class _Internal;
@@ -2970,10 +3110,12 @@ class MessagesSeenMessage final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr otherusername_;
     int32_t messagesseen_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -3260,6 +3402,7 @@ class RefreshRequest final :
 
   enum : int {
     kClientusernameFieldNumber = 1,
+    kFromLeaderFieldNumber = 2,
   };
   // string clientusername = 1;
   void clear_clientusername();
@@ -3275,6 +3418,19 @@ class RefreshRequest final :
   std::string* _internal_mutable_clientusername();
   public:
 
+  // optional bool fromLeader = 2;
+  bool has_fromleader() const;
+  private:
+  bool _internal_has_fromleader() const;
+  public:
+  void clear_fromleader();
+  bool fromleader() const;
+  void set_fromleader(bool value);
+  private:
+  bool _internal_fromleader() const;
+  void _internal_set_fromleader(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.RefreshRequest)
  private:
   class _Internal;
@@ -3283,8 +3439,10 @@ class RefreshRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientusername_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientusername_;
+    bool fromleader_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -4655,6 +4813,34 @@ inline void CreateAccountMessage::set_allocated_password(std::string* password) 
   // @@protoc_insertion_point(field_set_allocated:chatservice.CreateAccountMessage.password)
 }
 
+// optional bool fromLeader = 3;
+inline bool CreateAccountMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool CreateAccountMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void CreateAccountMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool CreateAccountMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool CreateAccountMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.CreateAccountMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void CreateAccountMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void CreateAccountMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.CreateAccountMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // CreateAccountReply
@@ -4919,6 +5105,34 @@ inline void LoginMessage::set_allocated_password(std::string* password) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.LoginMessage.password)
 }
 
+// optional bool fromLeader = 3;
+inline bool LoginMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool LoginMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void LoginMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool LoginMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool LoginMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.LoginMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void LoginMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void LoginMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.LoginMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // LoginReply
@@ -5133,6 +5347,34 @@ inline void LogoutMessage::set_allocated_username(std::string* username) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.LogoutMessage.username)
 }
 
+// optional bool fromLeader = 2;
+inline bool LogoutMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool LogoutMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void LogoutMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool LogoutMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool LogoutMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.LogoutMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void LogoutMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void LogoutMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.LogoutMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // LogoutReply
@@ -5343,6 +5585,34 @@ inline void QueryUsersMessage::set_allocated_username(std::string* username) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chatservice.QueryUsersMessage.username)
+}
+
+// optional bool fromLeader = 2;
+inline bool QueryUsersMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool QueryUsersMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void QueryUsersMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline bool QueryUsersMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool QueryUsersMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.QueryUsersMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void QueryUsersMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.fromleader_ = value;
+}
+inline void QueryUsersMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.QueryUsersMessage.fromLeader)
 }
 
 // -------------------------------------------------------------------
@@ -5681,6 +5951,34 @@ inline void QueryNotificationsMessage::set_allocated_user(std::string* user) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.QueryNotificationsMessage.user)
 }
 
+// optional bool fromLeader = 2;
+inline bool QueryNotificationsMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool QueryNotificationsMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void QueryNotificationsMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool QueryNotificationsMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool QueryNotificationsMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.QueryNotificationsMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void QueryNotificationsMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void QueryNotificationsMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.QueryNotificationsMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // Notification
@@ -5927,6 +6225,34 @@ inline void QueryMessagesMessage::set_allocated_otherusername(std::string* other
   // @@protoc_insertion_point(field_set_allocated:chatservice.QueryMessagesMessage.otherUsername)
 }
 
+// optional bool fromLeader = 3;
+inline bool QueryMessagesMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool QueryMessagesMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void QueryMessagesMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool QueryMessagesMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool QueryMessagesMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.QueryMessagesMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void QueryMessagesMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void QueryMessagesMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.QueryMessagesMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // ChatMessage
@@ -6149,6 +6475,34 @@ inline void ChatMessage::set_allocated_leader(std::string* leader) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.ChatMessage.leader)
 }
 
+// optional bool fromLeader = 5;
+inline bool ChatMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool ChatMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void ChatMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline bool ChatMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool ChatMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.ChatMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void ChatMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.fromleader_ = value;
+}
+inline void ChatMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.ChatMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // DeleteAccountMessage
@@ -6251,6 +6605,34 @@ inline void DeleteAccountMessage::set_allocated_password(std::string* password) 
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chatservice.DeleteAccountMessage.password)
+}
+
+// optional bool fromLeader = 3;
+inline bool DeleteAccountMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool DeleteAccountMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void DeleteAccountMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool DeleteAccountMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool DeleteAccountMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.DeleteAccountMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void DeleteAccountMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void DeleteAccountMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.DeleteAccountMessage.fromLeader)
 }
 
 // -------------------------------------------------------------------
@@ -6537,6 +6919,34 @@ inline void MessagesSeenMessage::set_messagesseen(int32_t value) {
   // @@protoc_insertion_point(field_set:chatservice.MessagesSeenMessage.messagesSeen)
 }
 
+// optional bool fromLeader = 4;
+inline bool MessagesSeenMessage::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool MessagesSeenMessage::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void MessagesSeenMessage::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool MessagesSeenMessage::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool MessagesSeenMessage::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.MessagesSeenMessage.fromLeader)
+  return _internal_fromleader();
+}
+inline void MessagesSeenMessage::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void MessagesSeenMessage::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.MessagesSeenMessage.fromLeader)
+}
+
 // -------------------------------------------------------------------
 
 // MessagesSeenReply
@@ -6661,6 +7071,34 @@ inline void RefreshRequest::set_allocated_clientusername(std::string* clientuser
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chatservice.RefreshRequest.clientusername)
+}
+
+// optional bool fromLeader = 2;
+inline bool RefreshRequest::_internal_has_fromleader() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool RefreshRequest::has_fromleader() const {
+  return _internal_has_fromleader();
+}
+inline void RefreshRequest::clear_fromleader() {
+  _impl_.fromleader_ = false;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline bool RefreshRequest::_internal_fromleader() const {
+  return _impl_.fromleader_;
+}
+inline bool RefreshRequest::fromleader() const {
+  // @@protoc_insertion_point(field_get:chatservice.RefreshRequest.fromLeader)
+  return _internal_fromleader();
+}
+inline void RefreshRequest::_internal_set_fromleader(bool value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.fromleader_ = value;
+}
+inline void RefreshRequest::set_fromleader(bool value) {
+  _internal_set_fromleader(value);
+  // @@protoc_insertion_point(field_set:chatservice.RefreshRequest.fromLeader)
 }
 
 // -------------------------------------------------------------------

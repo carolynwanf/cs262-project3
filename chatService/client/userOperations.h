@@ -57,6 +57,8 @@ struct ChatServiceClient {
         bool USER_LOGGED_IN = false;
         std::string clientUsername;
 
+        std::string currentIP;
+
         std::vector<std::string> serverAddresses;
 
     public:
@@ -70,6 +72,7 @@ struct ChatServiceClient {
             auto channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
 
             stub_ = ChatService::NewStub(channel);
+            currentIP = address;
         }
 
         void createAccount(std::string username, std::string password) {
@@ -106,6 +109,23 @@ struct ChatServiceClient {
                 }
             } else {
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    createAccount(username, password);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
             }
         }
 
@@ -139,8 +159,25 @@ struct ChatServiceClient {
                     login(username, password);
                     return;
                 
-            }else {
+            } else {
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    login(username, password);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
             }
 
         }
@@ -159,6 +196,7 @@ struct ChatServiceClient {
             Status status = stub_->Logout(&context, message, &reply);
             if (status.ok() && !reply.has_leader()) {
                 std::cout << "Goodbye!" << std::endl;
+                USER_LOGGED_IN = false;
             } else if (reply.has_leader()) {
                     // If we contacted a replica and it's not in the middle of an election, change stub 
                     if (reply.leader() != g_ElectionString) {
@@ -170,9 +208,24 @@ struct ChatServiceClient {
                     return;
             } else {
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            }
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
 
-            USER_LOGGED_IN = false;
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    logout();
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
         }
 
         void listUsers(std::string prefix) {
@@ -203,11 +256,28 @@ struct ChatServiceClient {
                     std::cout << user.username() << std::endl;
                 }
             }
+
             Status status = reader->Finish();
-            if (!status.ok()) {
-                std::cout << "list_users failed." << std::endl;
+            if (!status.ok()) { 
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            }
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    listUsers(prefix);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
         }
 
         void sendMessage(std::string recipient, std::string message_content) {
@@ -241,7 +311,24 @@ struct ChatServiceClient {
                 
             } else {
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            }
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    sendMessage(recipient, message_content);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
         }
 
         void queryNotifications() {
@@ -271,9 +358,27 @@ struct ChatServiceClient {
                 }
             }
             Status status = reader->Finish();
+
             if (!status.ok()) {
-                std::cout << "query_notifications failed." << std::endl;
-            }
+                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    queryNotifications();
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
         }
 
 
@@ -305,10 +410,27 @@ struct ChatServiceClient {
                 messagesRead++;
             }
             Status status = reader->Finish();
+
             if (!status.ok()) {
-                std::cout << "query_messages failed." << std::endl;
-                // return;
-            }
+                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    queryMessages(username);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
 
             ClientContext context2;
             MessagesSeenMessage message2;
@@ -317,9 +439,27 @@ struct ChatServiceClient {
             message2.set_otherusername(username);
             MessagesSeenReply server_reply;
             status = stub_->MessagesSeen(&context2, message2, &server_reply);
+
             if (!status.ok()) {
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            }
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    stub_->MessagesSeen(&context2, message2, &server_reply);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
         }
 
 
@@ -352,9 +492,26 @@ struct ChatServiceClient {
                     deleteAccount(username, password);
                     return;
                 
-            } else {
+            }  else {
                 std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            }
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    deleteAccount(username, password);
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
+            } 
         }
 
         // handle server messages
@@ -383,6 +540,25 @@ struct ChatServiceClient {
                     refresh();
                     return;
                 
+            } else if (!status.ok()) {
+                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                // delete current IP address from vector
+                std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
+                if (it != serverAddresses.end()) {
+                    serverAddresses.erase(it);
+                }
+
+                // reset stub to IP address at first index if it exists
+                if (serverAddresses.size() > 0) {
+                    changeStub(serverAddresses[0]);
+                    std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
+                    refresh();
+                    return;
+                } else {
+                    // All servers are down rip
+                    std::cout << "All servers are down, try again later" << std::endl;
+                }
+
             } else {
                 if (reply.forcelogout()) {
                     std::cout << "Logged in on another device. Ending session here." << std::endl;

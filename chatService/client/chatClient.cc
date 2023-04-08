@@ -7,14 +7,16 @@ int main (void) {
     std::string server_addr;
     ChatServiceClient client;
     while (true) {
-        std::cout << "Input Address of Server (IP_ADDR:PORT_NUMBER): ";
+        std::cout << "Input Address of Server (IP_ADDR:PORT_NUMBER), if done enter 'y'\n";
         std::cin >> server_addr;
         if (server_addr == "y") {
             break;
         }
         client.addServerAddress(server_addr);
+        // Creates connection to last address added
         client.changeStub(server_addr);
     }
+
 
     // Main loop for user
     char userInput[g_InputLimit];
