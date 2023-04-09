@@ -112,6 +112,9 @@ extern NotificationDefaultTypeInternal _Notification_default_instance_;
 class Operation;
 struct OperationDefaultTypeInternal;
 extern OperationDefaultTypeInternal _Operation_default_instance_;
+class PendingLogRequest;
+struct PendingLogRequestDefaultTypeInternal;
+extern PendingLogRequestDefaultTypeInternal _PendingLogRequest_default_instance_;
 class QueryMessagesMessage;
 struct QueryMessagesMessageDefaultTypeInternal;
 extern QueryMessagesMessageDefaultTypeInternal _QueryMessagesMessage_default_instance_;
@@ -157,6 +160,7 @@ template<> ::chatservice::MessagesSeenMessage* Arena::CreateMaybeMessage<::chats
 template<> ::chatservice::MessagesSeenReply* Arena::CreateMaybeMessage<::chatservice::MessagesSeenReply>(Arena*);
 template<> ::chatservice::Notification* Arena::CreateMaybeMessage<::chatservice::Notification>(Arena*);
 template<> ::chatservice::Operation* Arena::CreateMaybeMessage<::chatservice::Operation>(Arena*);
+template<> ::chatservice::PendingLogRequest* Arena::CreateMaybeMessage<::chatservice::PendingLogRequest>(Arena*);
 template<> ::chatservice::QueryMessagesMessage* Arena::CreateMaybeMessage<::chatservice::QueryMessagesMessage>(Arena*);
 template<> ::chatservice::QueryNotificationsMessage* Arena::CreateMaybeMessage<::chatservice::QueryNotificationsMessage>(Arena*);
 template<> ::chatservice::QueryUsersMessage* Arena::CreateMaybeMessage<::chatservice::QueryUsersMessage>(Arena*);
@@ -4840,6 +4844,7 @@ class Operation final :
     kMessageContentFieldNumber = 5,
     kMessagesseenFieldNumber = 6,
     kLeaderFieldNumber = 7,
+    kClockValFieldNumber = 8,
   };
   // string message_type = 1;
   void clear_message_type();
@@ -4939,6 +4944,20 @@ class Operation final :
   std::string* _internal_mutable_leader();
   public:
 
+  // string clockVal = 8;
+  void clear_clockval();
+  const std::string& clockval() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_clockval(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_clockval();
+  PROTOBUF_NODISCARD std::string* release_clockval();
+  void set_allocated_clockval(std::string* clockval);
+  private:
+  const std::string& _internal_clockval() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_clockval(const std::string& value);
+  std::string* _internal_mutable_clockval();
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.Operation)
  private:
   class _Internal;
@@ -4954,6 +4973,7 @@ class Operation final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_content_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr messagesseen_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clockval_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -5067,6 +5087,124 @@ class AddToPendingResponse final :
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:chatservice.AddToPendingResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_chatService_2eproto;
+};
+// -------------------------------------------------------------------
+
+class PendingLogRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:chatservice.PendingLogRequest) */ {
+ public:
+  inline PendingLogRequest() : PendingLogRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR PendingLogRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PendingLogRequest(const PendingLogRequest& from);
+  PendingLogRequest(PendingLogRequest&& from) noexcept
+    : PendingLogRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline PendingLogRequest& operator=(const PendingLogRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PendingLogRequest& operator=(PendingLogRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PendingLogRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PendingLogRequest* internal_default_instance() {
+    return reinterpret_cast<const PendingLogRequest*>(
+               &_PendingLogRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    29;
+
+  friend void swap(PendingLogRequest& a, PendingLogRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PendingLogRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PendingLogRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  PendingLogRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<PendingLogRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const PendingLogRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const PendingLogRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chatservice.PendingLogRequest";
+  }
+  protected:
+  explicit PendingLogRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:chatservice.PendingLogRequest)
  private:
   class _Internal;
 
@@ -8154,13 +8292,69 @@ inline void Operation::set_allocated_leader(std::string* leader) {
   // @@protoc_insertion_point(field_set_allocated:chatservice.Operation.leader)
 }
 
+// string clockVal = 8;
+inline void Operation::clear_clockval() {
+  _impl_.clockval_.ClearToEmpty();
+}
+inline const std::string& Operation::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.Operation.clockVal)
+  return _internal_clockval();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Operation::set_clockval(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.clockval_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chatservice.Operation.clockVal)
+}
+inline std::string* Operation::mutable_clockval() {
+  std::string* _s = _internal_mutable_clockval();
+  // @@protoc_insertion_point(field_mutable:chatservice.Operation.clockVal)
+  return _s;
+}
+inline const std::string& Operation::_internal_clockval() const {
+  return _impl_.clockval_.Get();
+}
+inline void Operation::_internal_set_clockval(const std::string& value) {
+  
+  _impl_.clockval_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Operation::_internal_mutable_clockval() {
+  
+  return _impl_.clockval_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Operation::release_clockval() {
+  // @@protoc_insertion_point(field_release:chatservice.Operation.clockVal)
+  return _impl_.clockval_.Release();
+}
+inline void Operation::set_allocated_clockval(std::string* clockval) {
+  if (clockval != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.clockval_.SetAllocated(clockval, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.clockval_.IsDefault()) {
+    _impl_.clockval_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chatservice.Operation.clockVal)
+}
+
 // -------------------------------------------------------------------
 
 // AddToPendingResponse
 
+// -------------------------------------------------------------------
+
+// PendingLogRequest
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

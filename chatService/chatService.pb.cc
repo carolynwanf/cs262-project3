@@ -425,6 +425,7 @@ PROTOBUF_CONSTEXPR Operation::Operation(
   , /*decltype(_impl_.message_content_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.messagesseen_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.leader_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.clockval_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct OperationDefaultTypeInternal {
   PROTOBUF_CONSTEXPR OperationDefaultTypeInternal()
@@ -446,8 +447,19 @@ struct AddToPendingResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AddToPendingResponseDefaultTypeInternal _AddToPendingResponse_default_instance_;
+PROTOBUF_CONSTEXPR PendingLogRequest::PendingLogRequest(
+    ::_pbi::ConstantInitialized) {}
+struct PendingLogRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR PendingLogRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~PendingLogRequestDefaultTypeInternal() {}
+  union {
+    PendingLogRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PendingLogRequestDefaultTypeInternal _PendingLogRequest_default_instance_;
 }  // namespace chatservice
-static ::_pb::Metadata file_level_metadata_chatService_2eproto[29];
+static ::_pb::Metadata file_level_metadata_chatService_2eproto[30];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_chatService_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_chatService_2eproto = nullptr;
 
@@ -736,8 +748,15 @@ const uint32_t TableStruct_chatService_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   PROTOBUF_FIELD_OFFSET(::chatservice::Operation, _impl_.message_content_),
   PROTOBUF_FIELD_OFFSET(::chatservice::Operation, _impl_.messagesseen_),
   PROTOBUF_FIELD_OFFSET(::chatservice::Operation, _impl_.leader_),
+  PROTOBUF_FIELD_OFFSET(::chatservice::Operation, _impl_.clockval_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chatservice::AddToPendingResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chatservice::PendingLogRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
@@ -772,7 +791,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 257, -1, -1, sizeof(::chatservice::CandidateValue)},
   { 265, -1, -1, sizeof(::chatservice::LeaderElectionResponse)},
   { 271, -1, -1, sizeof(::chatservice::Operation)},
-  { 284, -1, -1, sizeof(::chatservice::AddToPendingResponse)},
+  { 285, -1, -1, sizeof(::chatservice::AddToPendingResponse)},
+  { 291, -1, -1, sizeof(::chatservice::PendingLogRequest)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -805,6 +825,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chatservice::_LeaderElectionResponse_default_instance_._instance,
   &::chatservice::_Operation_default_instance_._instance,
   &::chatservice::_AddToPendingResponse_default_instance_._instance,
+  &::chatservice::_PendingLogRequest_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_chatService_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -862,47 +883,50 @@ const char descriptor_table_protodef_chatService_2eproto[] PROTOBUF_SECTION_VARI
   "\"@\n\036LeaderElectionProposalResponse\022\016\n\006ac"
   "cept\030\001 \001(\010\022\016\n\006leader\030\002 \001(\t\"1\n\016CandidateV"
   "alue\022\016\n\006number\030\001 \001(\005\022\017\n\007address\030\002 \001(\t\"\030\n"
-  "\026LeaderElectionResponse\"\230\001\n\tOperation\022\024\n"
+  "\026LeaderElectionResponse\"\252\001\n\tOperation\022\024\n"
   "\014message_type\030\001 \001(\t\022\021\n\tusername1\030\002 \001(\t\022\021"
   "\n\tusername2\030\003 \001(\t\022\020\n\010password\030\004 \001(\t\022\027\n\017m"
   "essage_content\030\005 \001(\t\022\024\n\014messagesseen\030\006 \001"
-  "(\t\022\016\n\006leader\030\007 \001(\t\"\026\n\024AddToPendingRespon"
-  "se2\240\t\n\013ChatService\022S\n\rCreateAccount\022!.ch"
-  "atservice.CreateAccountMessage\032\037.chatser"
-  "vice.CreateAccountReply\022;\n\005Login\022\031.chats"
-  "ervice.LoginMessage\032\027.chatservice.LoginR"
-  "eply\022>\n\006Logout\022\032.chatservice.LogoutMessa"
-  "ge\032\030.chatservice.LogoutReply\022@\n\tListUser"
-  "s\022\036.chatservice.QueryUsersMessage\032\021.chat"
-  "service.User0\001\022F\n\013SendMessage\022\030.chatserv"
-  "ice.ChatMessage\032\035.chatservice.SendMessag"
-  "eReply\022Y\n\022QueryNotifications\022&.chatservi"
-  "ce.QueryNotificationsMessage\032\031.chatservi"
-  "ce.Notification0\001\022N\n\rQueryMessages\022!.cha"
-  "tservice.QueryMessagesMessage\032\030.chatserv"
-  "ice.ChatMessage0\001\022S\n\rDeleteAccount\022!.cha"
-  "tservice.DeleteAccountMessage\032\037.chatserv"
-  "ice.DeleteAccountReply\022J\n\rRefreshClient\022"
-  "\033.chatservice.RefreshRequest\032\034.chatservi"
-  "ce.RefreshResponse\022A\n\006Commit\022\032.chatservi"
-  "ce.CommitRequest\032\033.chatservice.CommitRes"
-  "ponse\022J\n\tHeartBeat\022\035.chatservice.HeartBe"
-  "atRequest\032\036.chatservice.HeartBeatRespons"
-  "e\022i\n\025SuggestLeaderElection\022#.chatservice"
-  ".LeaderElectionProposal\032+.chatservice.Le"
-  "aderElectionProposalResponse\022R\n\016LeaderEl"
-  "ection\022\033.chatservice.CandidateValue\032#.ch"
-  "atservice.LeaderElectionResponse\022I\n\014AddT"
-  "oPending\022\026.chatservice.Operation\032!.chats"
-  "ervice.AddToPendingResponse\022P\n\014MessagesS"
+  "(\t\022\016\n\006leader\030\007 \001(\t\022\020\n\010clockVal\030\010 \001(\t\"\026\n\024"
+  "AddToPendingResponse\"\023\n\021PendingLogReques"
+  "t2\361\t\n\013ChatService\022S\n\rCreateAccount\022!.cha"
+  "tservice.CreateAccountMessage\032\037.chatserv"
+  "ice.CreateAccountReply\022;\n\005Login\022\031.chatse"
+  "rvice.LoginMessage\032\027.chatservice.LoginRe"
+  "ply\022>\n\006Logout\022\032.chatservice.LogoutMessag"
+  "e\032\030.chatservice.LogoutReply\022@\n\tListUsers"
+  "\022\036.chatservice.QueryUsersMessage\032\021.chats"
+  "ervice.User0\001\022F\n\013SendMessage\022\030.chatservi"
+  "ce.ChatMessage\032\035.chatservice.SendMessage"
+  "Reply\022Y\n\022QueryNotifications\022&.chatservic"
+  "e.QueryNotificationsMessage\032\031.chatservic"
+  "e.Notification0\001\022N\n\rQueryMessages\022!.chat"
+  "service.QueryMessagesMessage\032\030.chatservi"
+  "ce.ChatMessage0\001\022S\n\rDeleteAccount\022!.chat"
+  "service.DeleteAccountMessage\032\037.chatservi"
+  "ce.DeleteAccountReply\022J\n\rRefreshClient\022\033"
+  ".chatservice.RefreshRequest\032\034.chatservic"
+  "e.RefreshResponse\022A\n\006Commit\022\032.chatservic"
+  "e.CommitRequest\032\033.chatservice.CommitResp"
+  "onse\022J\n\tHeartBeat\022\035.chatservice.HeartBea"
+  "tRequest\032\036.chatservice.HeartBeatResponse"
+  "\022i\n\025SuggestLeaderElection\022#.chatservice."
+  "LeaderElectionProposal\032+.chatservice.Lea"
+  "derElectionProposalResponse\022R\n\016LeaderEle"
+  "ction\022\033.chatservice.CandidateValue\032#.cha"
+  "tservice.LeaderElectionResponse\022K\n\014AddTo"
+  "Pending\022\026.chatservice.Operation\032!.chatse"
+  "rvice.AddToPendingResponse(\001\022M\n\021RequestP"
+  "endingLog\022\036.chatservice.PendingLogReques"
+  "t\032\026.chatservice.Operation0\001\022P\n\014MessagesS"
   "een\022 .chatservice.MessagesSeenMessage\032\036."
   "chatservice.MessagesSeenReplyb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_chatService_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_chatService_2eproto = {
-    false, false, 3557, descriptor_table_protodef_chatService_2eproto,
+    false, false, 3677, descriptor_table_protodef_chatService_2eproto,
     "chatService.proto",
-    &descriptor_table_chatService_2eproto_once, nullptr, 0, 29,
+    &descriptor_table_chatService_2eproto_once, nullptr, 0, 30,
     schemas, file_default_instances, TableStruct_chatService_2eproto::offsets,
     file_level_metadata_chatService_2eproto, file_level_enum_descriptors_chatService_2eproto,
     file_level_service_descriptors_chatService_2eproto,
@@ -7211,6 +7235,7 @@ Operation::Operation(const Operation& from)
     , decltype(_impl_.message_content_){}
     , decltype(_impl_.messagesseen_){}
     , decltype(_impl_.leader_){}
+    , decltype(_impl_.clockval_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -7270,6 +7295,14 @@ Operation::Operation(const Operation& from)
     _this->_impl_.leader_.Set(from._internal_leader(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.clockval_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.clockval_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_clockval().empty()) {
+    _this->_impl_.clockval_.Set(from._internal_clockval(), 
+      _this->GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:chatservice.Operation)
 }
 
@@ -7285,6 +7318,7 @@ inline void Operation::SharedCtor(
     , decltype(_impl_.message_content_){}
     , decltype(_impl_.messagesseen_){}
     , decltype(_impl_.leader_){}
+    , decltype(_impl_.clockval_){}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.message_type_.InitDefault();
@@ -7315,6 +7349,10 @@ inline void Operation::SharedCtor(
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.leader_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.clockval_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.clockval_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 Operation::~Operation() {
@@ -7335,6 +7373,7 @@ inline void Operation::SharedDtor() {
   _impl_.message_content_.Destroy();
   _impl_.messagesseen_.Destroy();
   _impl_.leader_.Destroy();
+  _impl_.clockval_.Destroy();
 }
 
 void Operation::SetCachedSize(int size) const {
@@ -7354,6 +7393,7 @@ void Operation::Clear() {
   _impl_.message_content_.ClearToEmpty();
   _impl_.messagesseen_.ClearToEmpty();
   _impl_.leader_.ClearToEmpty();
+  _impl_.clockval_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -7430,6 +7470,16 @@ const char* Operation::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "chatservice.Operation.leader"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string clockVal = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          auto str = _internal_mutable_clockval();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chatservice.Operation.clockVal"));
         } else
           goto handle_unusual;
         continue;
@@ -7532,6 +7582,16 @@ uint8_t* Operation::_InternalSerialize(
         7, this->_internal_leader(), target);
   }
 
+  // string clockVal = 8;
+  if (!this->_internal_clockval().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_clockval().data(), static_cast<int>(this->_internal_clockval().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chatservice.Operation.clockVal");
+    target = stream->WriteStringMaybeAliased(
+        8, this->_internal_clockval(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -7597,6 +7657,13 @@ size_t Operation::ByteSizeLong() const {
         this->_internal_leader());
   }
 
+  // string clockVal = 8;
+  if (!this->_internal_clockval().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_clockval());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -7635,6 +7702,9 @@ void Operation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROT
   }
   if (!from._internal_leader().empty()) {
     _this->_internal_set_leader(from._internal_leader());
+  }
+  if (!from._internal_clockval().empty()) {
+    _this->_internal_set_clockval(from._internal_clockval());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -7683,6 +7753,10 @@ void Operation::InternalSwap(Operation* other) {
       &_impl_.leader_, lhs_arena,
       &other->_impl_.leader_, rhs_arena
   );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.clockval_, lhs_arena,
+      &other->_impl_.clockval_, rhs_arena
+  );
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Operation::GetMetadata() const {
@@ -7729,6 +7803,46 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*AddToPendingResponse::GetClass
   return ::_pbi::AssignDescriptors(
       &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
       file_level_metadata_chatService_2eproto[28]);
+}
+
+// ===================================================================
+
+class PendingLogRequest::_Internal {
+ public:
+};
+
+PendingLogRequest::PendingLogRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:chatservice.PendingLogRequest)
+}
+PendingLogRequest::PendingLogRequest(const PendingLogRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  PendingLogRequest* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:chatservice.PendingLogRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData PendingLogRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PendingLogRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata PendingLogRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_chatService_2eproto_getter, &descriptor_table_chatService_2eproto_once,
+      file_level_metadata_chatService_2eproto[29]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -7849,6 +7963,10 @@ Arena::CreateMaybeMessage< ::chatservice::Operation >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::chatservice::AddToPendingResponse*
 Arena::CreateMaybeMessage< ::chatservice::AddToPendingResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chatservice::AddToPendingResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chatservice::PendingLogRequest*
+Arena::CreateMaybeMessage< ::chatservice::PendingLogRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chatservice::PendingLogRequest >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

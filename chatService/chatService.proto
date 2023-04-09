@@ -16,7 +16,8 @@ service ChatService {
     rpc HeartBeat(HeartBeatRequest) returns (HeartBeatResponse);
     rpc SuggestLeaderElection(LeaderElectionProposal) returns (LeaderElectionProposalResponse);
     rpc LeaderElection(CandidateValue) returns (LeaderElectionResponse);
-    rpc AddToPending(Operation) returns (AddToPendingResponse);
+    rpc AddToPending(stream Operation) returns (AddToPendingResponse);
+    rpc RequestPendingLog(PendingLogRequest) returns (stream Operation);
 
     // May not need this anymore?
     rpc MessagesSeen(MessagesSeenMessage) returns (MessagesSeenReply);
@@ -192,4 +193,7 @@ message Operation {
 }
 
 message AddToPendingResponse {
+}
+
+message PendingLogRequest {
 }

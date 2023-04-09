@@ -39,6 +39,7 @@ using chatservice::HeartBeatRequest;
 using chatservice::LeaderElectionProposal;
 using chatservice::CandidateValue;
 using chatservice::CommitRequest;
+using chatservice::PendingLogRequest;
 using chatservice::Operation;
 // Replies
 using chatservice::CreateAccountReply;
@@ -127,6 +128,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             clockVal = 0;
 
+        }
+
+        std::string getPendingFilename() {
+            return pendingFilename;
+        }
+
+        std::string getCommitFilename() {
+            return commitFilename;
         }
 
         // Called when CSV file was found to be empty (i.e. a new log file) so we define the CSV fields
@@ -762,11 +771,39 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+        // Write stream of operations to logs
+        Status AddToPending(ServerContext* context, ServerReader<Operation>* reader) {
+            // delete your own commit logs
+            std::ofstream commitLogOverWriter;
+            commitLogOverWriter.open(commitFilename, std::fstream::trunc);
+            commitLogOverWriter.close();
 
-        Status AddToPending(ServerContext* context, const Operation* op, AddToPendingResponse* response) {
-            writeToLogs(pendingLogWriter, std::stoi(op->message_type()), op->username1(), op->username2(),
-                        op->password(), op->message_content(), op->messagesseen(), op->leader(), clockVal);
+            Operation op;
+            while (reader->Read(&op)) {
+                writeToLogs(commitLogWriter, std::stoi(op.message_type()), op.username1(), op.username2(),
+                        op.password(), op.message_content(), op.messagesseen(), op.leader(), clockVal);
+            }
+            
+            return Status::OK;
+        }
 
+        Status RequestPendingLog(ServerContext* context, const PendingLogRequest* request, 
+                                ServerWriter<Operation>* writer) {
+            std::vector<std::vector<std::string>> vectorizedLines;
+            readFile(&vectorizedLines, pendingFilename);
+            for (std::vector<std::string> line : vectorizedLines) {
+                Operation op;
+                op.set_clockval(line[7]);
+                op.set_message_type(line[0]);
+                op.set_username1(line[1]);
+                op.set_username2(line[2]);
+                op.set_password(line[3]);
+                op.set_message_content(line[4]);
+                op.set_messagesseen(line[5]);
+                op.set_leader(line[6]);
+                writer->Write(op);
+            }
+            
             return Status::OK;
         }
 
@@ -913,29 +950,50 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::cout << "Leader election finished" << std::endl;
             g_startingUp = false;
         }
-
-        void sendPendingToLeader() {
-            // Read pending content
+        
+        // For leader to send commit logs
+        void sendLogs(std::string filename) {
+            ClientContext context;
+        
+            // Read committed content
             std::vector<std::vector<std::string>> content;
-            readFile(&content, pendingFilename);
+            readFile(&content, filename);
 
-            // Send to leader
-            for (int i = 1; i < content.size(); i++ ) {
-                Operation op;
+            // Send to other connections
 
-                op.set_message_type(content[i][0]);
-                op.set_username1(content[i][1]);
-                op.set_username2(content[i][2]);
-                op.set_password(content[i][3]);
-                op.set_message_content(content[i][4]);
-                op.set_messagesseen(content[i][5]);
-                op.set_leader(content[i][6]);
-                op.set_clockVal(content[i][7]);
+            for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
+                if (it->first != leaderVals.leaderAddress) {
+                    AddToPendingResponse response;
+                    auto stream = it->second->AddToPending(&context, &response);
 
-                
+                    for (int i = 0; i < content.size(); i++) {
+                        Operation op;
 
+                        op.set_message_type(content[i][0]);
+                        op.set_username1(content[i][1]);
+                        op.set_username2(content[i][2]);
+                        op.set_password(content[i][3]);
+                        op.set_message_content(content[i][4]);
+                        op.set_messagesseen(content[i][5]);
+                        op.set_leader(content[i][6]);
+                        op.set_clockval(content[i][7]);
+
+                        stream->Write(op);
+                    }
+
+                    stream->WritesDone();
+
+                    Status status = stream->Finish();
+                    
+                    if (status.ok()) {
+                        std::cout << "RPC succeeded." << std::endl;
+                    } else {
+                        std::cout << "RPC failed with error code: " << status.error_code() << ", message: " << status.error_message() << std::endl;
+                    }
+                }
             }
         }
+            
 
         bool isLeader() {
             leaderMutex.lock();
@@ -956,6 +1014,69 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             leaderMutex.lock();
             leaderVals.isLeader = false;
             leaderMutex.unlock();
+        }
+
+        void requestLogs(std::vector<OperationClass>& operations) {
+            for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
+                ClientContext context;
+                PendingLogRequest request;
+                Operation op;
+                std::unique_ptr<ClientReader<Operation>> reader(it->second->RequestPendingLog(&context, request));
+                while (reader->Read(&op)) {
+                    OperationClass newOp;
+                    newOp.clockVal = std::stoi(op.clockval());
+                    newOp.opCode = std::stoi(op.message_type());
+                    newOp.username1 = op.username1();
+                    newOp.username2 = op.username2();
+                    newOp.password = op.password();
+                    newOp.message_content = op.message_content();
+                    newOp.messagesseen = op.messagesseen();
+                    newOp.leader = op.leader();
+                    operations.push_back(newOp);
+                }
+
+                Status status = reader->Finish();
+                if (!status.ok()) {
+                    addressToStub.erase(it->first);
+                }
+            }
+        }
+
+        void writePendingOperations(std::vector<OperationClass> operations) {
+            for (OperationClass op : operations) {
+                writeToLogs(pendingLogWriter, op.opCode, op.username1, op.username2, op.password,
+                            op.message_content, op.messagesseen, op.leader, op.clockVal);
+            }
+        }
+
+        void moveAllPendingToCommit() {
+            std::vector<std::string> rows;
+            std::string line;
+
+            // Read pending file
+            std::fstream file;
+            file.open(pendingFilename, std::ios::in);
+            file.seekg(0, file.beg);
+
+            if (file.is_open()) {
+                while (getline(file, line)) {
+                    rows.push_back(line);
+                }
+            }
+            else {
+                std::cout<<"Could not open " << pendingFilename << std::endl;
+            }
+
+            // Write to commit file
+            for (int i = 0; i < rows.size(); i++) {
+                commitLogWriter << rows[i] << std::endl;
+            }
+
+            // Clear pending log, write first line back
+            std::ofstream pendingLogOverWriter;
+            pendingLogOverWriter.open(pendingFilename, std::fstream::trunc);
+
+            pendingLogOverWriter << g_csvFields << std::endl;
         }
 };
 
