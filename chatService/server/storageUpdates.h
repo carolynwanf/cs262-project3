@@ -142,7 +142,7 @@ std::vector<ChatMessage> queryMessages(std::string clientusername, std::string o
 }
 
 void parseLine(std::vector<std::string> line) {
-    std::cout<<line[0]<<std::endl;
+    // std::cout<<line[0]<<std::endl;
     int operation = stoi(line[0]);
 
     switch (operation) {
@@ -190,6 +190,7 @@ void readFile (std::vector<std::vector<std::string>>* content, std::string histo
 
     std::fstream file;
     file.open(historyFile, std::ios::in);
+    file.seekg(0, file.beg);
     if (file.is_open()) {
         while (getline(file, line)) {
             row.clear();
@@ -203,8 +204,38 @@ void readFile (std::vector<std::vector<std::string>>* content, std::string histo
         }
     }
     else {
-        std::cout<<"Could not open the file\n";
+        std::cout<<"Could not open " << historyFile << std::endl;
     }
+
+    file.close();
+}
+
+void moveToCommit(std::string filename, std::ofstream& writer) {
+    std::vector<std::vector<std::string>> content;
+
+    // Read everything out of pending file
+    readFile(&content, filename);
+
+    std::ofstream pendingLogOverWriter;
+
+    // write everything back except the last line
+    pendingLogOverWriter.open(filename, std::fstream::trunc);
+
+    pendingLogOverWriter << g_csvFields << std::endl;
+
+    for (int i=1; i<content.size()-1; i++) {
+        writeToLogs(pendingLogOverWriter, stoi(content[i][0]), content[i][1], content[i][2], content[i][3], content[i][4], content[i][5], content[i][6]);
+    }
+
+    // Commit last line
+    int lastIdx = content.size() - 1;
+    writeToLogs(writer, stoi(content[lastIdx][0]), content[lastIdx][1], content[lastIdx][2], content[lastIdx][3], content[lastIdx][4], content[lastIdx][5], content[lastIdx][6]);
+
+    // Updating storage
+    parseLine(content[lastIdx]);
+
+    pendingLogOverWriter.close();
+
 }
 
 

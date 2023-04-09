@@ -35,6 +35,7 @@ static const char* ChatService_method_names[] = {
   "/chatservice.ChatService/HeartBeat",
   "/chatservice.ChatService/SuggestLeaderElection",
   "/chatservice.ChatService/LeaderElection",
+  "/chatservice.ChatService/AddToPending",
   "/chatservice.ChatService/MessagesSeen",
 };
 
@@ -58,7 +59,8 @@ ChatService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channe
   , rpcmethod_HeartBeat_(ChatService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_SuggestLeaderElection_(ChatService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_LeaderElection_(ChatService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_MessagesSeen_(ChatService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_AddToPending_(ChatService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_MessagesSeen_(ChatService_method_names[14], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status ChatService::Stub::CreateAccount(::grpc::ClientContext* context, const ::chatservice::CreateAccountMessage& request, ::chatservice::CreateAccountReply* response) {
@@ -339,6 +341,29 @@ void ChatService::Stub::async::LeaderElection(::grpc::ClientContext* context, co
   return result;
 }
 
+::grpc::Status ChatService::Stub::AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::chatservice::AddToPendingResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::chatservice::Operation, ::chatservice::AddToPendingResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AddToPending_, context, request, response);
+}
+
+void ChatService::Stub::async::AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::chatservice::Operation, ::chatservice::AddToPendingResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AddToPending_, context, request, response, std::move(f));
+}
+
+void ChatService::Stub::async::AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AddToPending_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>* ChatService::Stub::PrepareAsyncAddToPendingRaw(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::chatservice::AddToPendingResponse, ::chatservice::Operation, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AddToPending_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>* ChatService::Stub::AsyncAddToPendingRaw(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAddToPendingRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 ::grpc::Status ChatService::Stub::MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::chatservice::MessagesSeenReply* response) {
   return ::grpc::internal::BlockingUnaryCall< ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_MessagesSeen_, context, request, response);
 }
@@ -496,6 +521,16 @@ ChatService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ChatService_method_names[13],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::Operation, ::chatservice::AddToPendingResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ChatService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::chatservice::Operation* req,
+             ::chatservice::AddToPendingResponse* resp) {
+               return service->AddToPending(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ChatService_method_names[14],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ChatService::Service, ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ChatService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -593,6 +628,13 @@ ChatService::Service::~Service() {
 }
 
 ::grpc::Status ChatService::Service::LeaderElection(::grpc::ServerContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ChatService::Service::AddToPending(::grpc::ServerContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response) {
   (void) context;
   (void) request;
   (void) response;

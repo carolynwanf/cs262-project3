@@ -16,6 +16,7 @@ service ChatService {
     rpc HeartBeat(HeartBeatRequest) returns (HeartBeatResponse);
     rpc SuggestLeaderElection(LeaderElectionProposal) returns (LeaderElectionProposalResponse);
     rpc LeaderElection(CandidateValue) returns (LeaderElectionResponse);
+    rpc AddToPending(Operation) returns (AddToPendingResponse);
 
     // May not need this anymore?
     rpc MessagesSeen(MessagesSeenMessage) returns (MessagesSeenReply);
@@ -177,4 +178,17 @@ message CandidateValue {
 }
 
 message LeaderElectionResponse {
+}
+
+message Operation {
+    string message_type=1;
+    string username1=2;
+    string username2=3;
+    string password=4;
+    string message_content=5;
+    string messagesseen=6;
+    string leader=7;
+}
+
+message AddToPendingResponse {
 }

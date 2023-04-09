@@ -132,6 +132,13 @@ class ChatService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>> PrepareAsyncLeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>>(PrepareAsyncLeaderElectionRaw(context, request, cq));
     }
+    virtual ::grpc::Status AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::chatservice::AddToPendingResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::AddToPendingResponse>> AsyncAddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::AddToPendingResponse>>(AsyncAddToPendingRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::AddToPendingResponse>> PrepareAsyncAddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::AddToPendingResponse>>(PrepareAsyncAddToPendingRaw(context, request, cq));
+    }
     // May not need this anymore?
     virtual ::grpc::Status MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::chatservice::MessagesSeenReply* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::MessagesSeenReply>> AsyncMessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) {
@@ -166,6 +173,8 @@ class ChatService final {
       virtual void SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // May not need this anymore?
       virtual void MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response, std::function<void(::grpc::Status)>) = 0;
       virtual void MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response, ::grpc::ClientUnaryReactor* reactor) = 0;
@@ -203,6 +212,8 @@ class ChatService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionProposalResponse>* PrepareAsyncSuggestLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>* AsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::LeaderElectionResponse>* PrepareAsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::AddToPendingResponse>* AsyncAddToPendingRaw(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::AddToPendingResponse>* PrepareAsyncAddToPendingRaw(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::MessagesSeenReply>* AsyncMessagesSeenRaw(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chatservice::MessagesSeenReply>* PrepareAsyncMessagesSeenRaw(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) = 0;
   };
@@ -306,6 +317,13 @@ class ChatService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>> PrepareAsyncLeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>>(PrepareAsyncLeaderElectionRaw(context, request, cq));
     }
+    ::grpc::Status AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::chatservice::AddToPendingResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>> AsyncAddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>>(AsyncAddToPendingRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>> PrepareAsyncAddToPending(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>>(PrepareAsyncAddToPendingRaw(context, request, cq));
+    }
     ::grpc::Status MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::chatservice::MessagesSeenReply* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::MessagesSeenReply>> AsyncMessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chatservice::MessagesSeenReply>>(AsyncMessagesSeenRaw(context, request, cq));
@@ -339,6 +357,8 @@ class ChatService final {
       void SuggestLeaderElection(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, std::function<void(::grpc::Status)>) override;
       void LeaderElection(::grpc::ClientContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response, std::function<void(::grpc::Status)>) override;
+      void AddToPending(::grpc::ClientContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response, std::function<void(::grpc::Status)>) override;
       void MessagesSeen(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
@@ -381,6 +401,8 @@ class ChatService final {
     ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionProposalResponse>* PrepareAsyncSuggestLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::LeaderElectionProposal& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>* AsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::LeaderElectionResponse>* PrepareAsyncLeaderElectionRaw(::grpc::ClientContext* context, const ::chatservice::CandidateValue& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>* AsyncAddToPendingRaw(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::chatservice::AddToPendingResponse>* PrepareAsyncAddToPendingRaw(::grpc::ClientContext* context, const ::chatservice::Operation& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::MessagesSeenReply>* AsyncMessagesSeenRaw(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chatservice::MessagesSeenReply>* PrepareAsyncMessagesSeenRaw(::grpc::ClientContext* context, const ::chatservice::MessagesSeenMessage& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_CreateAccount_;
@@ -396,6 +418,7 @@ class ChatService final {
     const ::grpc::internal::RpcMethod rpcmethod_HeartBeat_;
     const ::grpc::internal::RpcMethod rpcmethod_SuggestLeaderElection_;
     const ::grpc::internal::RpcMethod rpcmethod_LeaderElection_;
+    const ::grpc::internal::RpcMethod rpcmethod_AddToPending_;
     const ::grpc::internal::RpcMethod rpcmethod_MessagesSeen_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -417,6 +440,7 @@ class ChatService final {
     virtual ::grpc::Status HeartBeat(::grpc::ServerContext* context, const ::chatservice::HeartBeatRequest* request, ::chatservice::HeartBeatResponse* response);
     virtual ::grpc::Status SuggestLeaderElection(::grpc::ServerContext* context, const ::chatservice::LeaderElectionProposal* request, ::chatservice::LeaderElectionProposalResponse* response);
     virtual ::grpc::Status LeaderElection(::grpc::ServerContext* context, const ::chatservice::CandidateValue* request, ::chatservice::LeaderElectionResponse* response);
+    virtual ::grpc::Status AddToPending(::grpc::ServerContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response);
     // May not need this anymore?
     virtual ::grpc::Status MessagesSeen(::grpc::ServerContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response);
   };
@@ -681,12 +705,32 @@ class ChatService final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_AddToPending : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_AddToPending() {
+      ::grpc::Service::MarkMethodAsync(13);
+    }
+    ~WithAsyncMethod_AddToPending() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AddToPending(::grpc::ServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAddToPending(::grpc::ServerContext* context, ::chatservice::Operation* request, ::grpc::ServerAsyncResponseWriter< ::chatservice::AddToPendingResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_MessagesSeen : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_MessagesSeen() {
-      ::grpc::Service::MarkMethodAsync(13);
+      ::grpc::Service::MarkMethodAsync(14);
     }
     ~WithAsyncMethod_MessagesSeen() override {
       BaseClassMustBeDerivedFromService(this);
@@ -697,10 +741,10 @@ class ChatService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestMessagesSeen(::grpc::ServerContext* context, ::chatservice::MessagesSeenMessage* request, ::grpc::ServerAsyncResponseWriter< ::chatservice::MessagesSeenReply>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_CreateAccount<WithAsyncMethod_Login<WithAsyncMethod_Logout<WithAsyncMethod_ListUsers<WithAsyncMethod_SendMessage<WithAsyncMethod_QueryNotifications<WithAsyncMethod_QueryMessages<WithAsyncMethod_DeleteAccount<WithAsyncMethod_RefreshClient<WithAsyncMethod_Commit<WithAsyncMethod_HeartBeat<WithAsyncMethod_SuggestLeaderElection<WithAsyncMethod_LeaderElection<WithAsyncMethod_MessagesSeen<Service > > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_CreateAccount<WithAsyncMethod_Login<WithAsyncMethod_Logout<WithAsyncMethod_ListUsers<WithAsyncMethod_SendMessage<WithAsyncMethod_QueryNotifications<WithAsyncMethod_QueryMessages<WithAsyncMethod_DeleteAccount<WithAsyncMethod_RefreshClient<WithAsyncMethod_Commit<WithAsyncMethod_HeartBeat<WithAsyncMethod_SuggestLeaderElection<WithAsyncMethod_LeaderElection<WithAsyncMethod_AddToPending<WithAsyncMethod_MessagesSeen<Service > > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_CreateAccount : public BaseClass {
    private:
@@ -1038,18 +1082,45 @@ class ChatService final {
       ::grpc::CallbackServerContext* /*context*/, const ::chatservice::CandidateValue* /*request*/, ::chatservice::LeaderElectionResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_AddToPending : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_AddToPending() {
+      ::grpc::Service::MarkMethodCallback(13,
+          new ::grpc::internal::CallbackUnaryHandler< ::chatservice::Operation, ::chatservice::AddToPendingResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::chatservice::Operation* request, ::chatservice::AddToPendingResponse* response) { return this->AddToPending(context, request, response); }));}
+    void SetMessageAllocatorFor_AddToPending(
+        ::grpc::MessageAllocator< ::chatservice::Operation, ::chatservice::AddToPendingResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::chatservice::Operation, ::chatservice::AddToPendingResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_AddToPending() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AddToPending(::grpc::ServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AddToPending(
+      ::grpc::CallbackServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_MessagesSeen : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_MessagesSeen() {
-      ::grpc::Service::MarkMethodCallback(13,
+      ::grpc::Service::MarkMethodCallback(14,
           new ::grpc::internal::CallbackUnaryHandler< ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::chatservice::MessagesSeenMessage* request, ::chatservice::MessagesSeenReply* response) { return this->MessagesSeen(context, request, response); }));}
     void SetMessageAllocatorFor_MessagesSeen(
         ::grpc::MessageAllocator< ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1064,7 +1135,7 @@ class ChatService final {
     virtual ::grpc::ServerUnaryReactor* MessagesSeen(
       ::grpc::CallbackServerContext* /*context*/, const ::chatservice::MessagesSeenMessage* /*request*/, ::chatservice::MessagesSeenReply* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_CreateAccount<WithCallbackMethod_Login<WithCallbackMethod_Logout<WithCallbackMethod_ListUsers<WithCallbackMethod_SendMessage<WithCallbackMethod_QueryNotifications<WithCallbackMethod_QueryMessages<WithCallbackMethod_DeleteAccount<WithCallbackMethod_RefreshClient<WithCallbackMethod_Commit<WithCallbackMethod_HeartBeat<WithCallbackMethod_SuggestLeaderElection<WithCallbackMethod_LeaderElection<WithCallbackMethod_MessagesSeen<Service > > > > > > > > > > > > > > CallbackService;
+  typedef WithCallbackMethod_CreateAccount<WithCallbackMethod_Login<WithCallbackMethod_Logout<WithCallbackMethod_ListUsers<WithCallbackMethod_SendMessage<WithCallbackMethod_QueryNotifications<WithCallbackMethod_QueryMessages<WithCallbackMethod_DeleteAccount<WithCallbackMethod_RefreshClient<WithCallbackMethod_Commit<WithCallbackMethod_HeartBeat<WithCallbackMethod_SuggestLeaderElection<WithCallbackMethod_LeaderElection<WithCallbackMethod_AddToPending<WithCallbackMethod_MessagesSeen<Service > > > > > > > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_CreateAccount : public BaseClass {
@@ -1288,12 +1359,29 @@ class ChatService final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_AddToPending : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_AddToPending() {
+      ::grpc::Service::MarkMethodGeneric(13);
+    }
+    ~WithGenericMethod_AddToPending() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AddToPending(::grpc::ServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_MessagesSeen : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_MessagesSeen() {
-      ::grpc::Service::MarkMethodGeneric(13);
+      ::grpc::Service::MarkMethodGeneric(14);
     }
     ~WithGenericMethod_MessagesSeen() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1565,12 +1653,32 @@ class ChatService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_AddToPending : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_AddToPending() {
+      ::grpc::Service::MarkMethodRaw(13);
+    }
+    ~WithRawMethod_AddToPending() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AddToPending(::grpc::ServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAddToPending(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_MessagesSeen : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_MessagesSeen() {
-      ::grpc::Service::MarkMethodRaw(13);
+      ::grpc::Service::MarkMethodRaw(14);
     }
     ~WithRawMethod_MessagesSeen() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1581,7 +1689,7 @@ class ChatService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestMessagesSeen(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1871,12 +1979,34 @@ class ChatService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_AddToPending : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_AddToPending() {
+      ::grpc::Service::MarkMethodRawCallback(13,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AddToPending(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_AddToPending() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AddToPending(::grpc::ServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AddToPending(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_MessagesSeen : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_MessagesSeen() {
-      ::grpc::Service::MarkMethodRawCallback(13,
+      ::grpc::Service::MarkMethodRawCallback(14,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->MessagesSeen(context, request, response); }));
@@ -2163,12 +2293,39 @@ class ChatService final {
     virtual ::grpc::Status StreamedLeaderElection(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::CandidateValue,::chatservice::LeaderElectionResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_AddToPending : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_AddToPending() {
+      ::grpc::Service::MarkMethodStreamed(13,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::chatservice::Operation, ::chatservice::AddToPendingResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::chatservice::Operation, ::chatservice::AddToPendingResponse>* streamer) {
+                       return this->StreamedAddToPending(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_AddToPending() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status AddToPending(::grpc::ServerContext* /*context*/, const ::chatservice::Operation* /*request*/, ::chatservice::AddToPendingResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedAddToPending(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::Operation,::chatservice::AddToPendingResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_MessagesSeen : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_MessagesSeen() {
-      ::grpc::Service::MarkMethodStreamed(13,
+      ::grpc::Service::MarkMethodStreamed(14,
         new ::grpc::internal::StreamedUnaryHandler<
           ::chatservice::MessagesSeenMessage, ::chatservice::MessagesSeenReply>(
             [this](::grpc::ServerContext* context,
@@ -2189,7 +2346,7 @@ class ChatService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedMessagesSeen(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::chatservice::MessagesSeenMessage,::chatservice::MessagesSeenReply>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithStreamedUnaryMethod_SendMessage<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_SuggestLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithStreamedUnaryMethod_SendMessage<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_SuggestLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_AddToPending<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_ListUsers : public BaseClass {
    private:
@@ -2272,7 +2429,7 @@ class ChatService final {
     virtual ::grpc::Status StreamedQueryMessages(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::chatservice::QueryMessagesMessage,::chatservice::ChatMessage>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_ListUsers<WithSplitStreamingMethod_QueryNotifications<WithSplitStreamingMethod_QueryMessages<Service > > > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithSplitStreamingMethod_ListUsers<WithStreamedUnaryMethod_SendMessage<WithSplitStreamingMethod_QueryNotifications<WithSplitStreamingMethod_QueryMessages<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_SuggestLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_CreateAccount<WithStreamedUnaryMethod_Login<WithStreamedUnaryMethod_Logout<WithSplitStreamingMethod_ListUsers<WithStreamedUnaryMethod_SendMessage<WithSplitStreamingMethod_QueryNotifications<WithSplitStreamingMethod_QueryMessages<WithStreamedUnaryMethod_DeleteAccount<WithStreamedUnaryMethod_RefreshClient<WithStreamedUnaryMethod_Commit<WithStreamedUnaryMethod_HeartBeat<WithStreamedUnaryMethod_SuggestLeaderElection<WithStreamedUnaryMethod_LeaderElection<WithStreamedUnaryMethod_AddToPending<WithStreamedUnaryMethod_MessagesSeen<Service > > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace chatservice

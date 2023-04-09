@@ -39,6 +39,7 @@ using chatservice::HeartBeatRequest;
 using chatservice::LeaderElectionProposal;
 using chatservice::CandidateValue;
 using chatservice::CommitRequest;
+using chatservice::Operation;
 // Replies
 using chatservice::CreateAccountReply;
 using chatservice::LoginReply;
@@ -54,6 +55,7 @@ using chatservice::HeartBeatResponse;
 using chatservice::LeaderElectionProposalResponse;
 using chatservice::LeaderElectionResponse;
 using chatservice::CommitResponse;
+using chatservice::AddToPendingResponse;
 
 bool g_startingUp = true;
 
@@ -78,6 +80,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         // This might be where we store the conversations open per user or something
         std::ofstream pendingLogWriter;
         std::ofstream commitLogWriter;
+        std::string pendingFilename;
+        std::string commitFilename;
 
         // for reading logs
         std::ifstream pendingLogReader;
@@ -101,8 +105,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             myAddress = addr;
             std::cout << "My address is " << myAddress << std::endl;
 
-            std::string pendingFilename = g_pendingLogFile + addr;
-            std::string commitFilename = g_committedLogFile + addr;
+            pendingFilename = g_pendingLogFile + addr + ".csv";
+            commitFilename = g_committedLogFile + addr + ".csv";
             
             // open CSV files in append mode
             pendingLogWriter.open(pendingFilename, std::fstream::app);
@@ -144,8 +148,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             if (create_account_message->fromleader() || leaderVals.isLeader) {
                 writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password);
             } 
-
-            //TODO: change all messages to have an optional from leader field
             
              // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
@@ -706,41 +708,24 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         Status Commit(ServerContext* context, const CommitRequest* request, CommitResponse* reply) {
-            std::vector<std::string> row;
-            std::string line, word;
+            // std::vector<std::string> row;
+            // std::string line, word;
+
+            moveToCommit(pendingFilename, commitLogWriter);
             
-            // Add last pending log to committed log
-            // if (getline(pendingLogReader, line)) {
-            //     std::cout << "Committing line: " << line <<std::endl;
+            // getline(pendingLogReader, line);
+            // std::cout << "Position of reader: " << std::to_string(pendingLogReader.tellg()) << std::endl;
+            // commitLogWriter << line << std::endl;
+            // std::stringstream str(line);
 
-            //     std::stringstream str(line);
-
-            //     while (getline(str, word, ',')) {
-            //         row.push_back(word);
-            //         std::cout << "Word: " << word <<std::endl;
-            //         commitLogWriter << word << ",";
-            //     }
-
-            //     commitLogWriter << std::endl;
-
-            //     parseLine(row);
-
+            // while (getline(str, word, ',')) {
+            //     row.push_back(word);
+            //     std::cout << "Word: " << word <<std::endl;
             // }
-            getline(pendingLogReader, line);
-            std::cout << "Position of reader: " << std::to_string(pendingLogReader.tellg()) << std::endl;
-            commitLogWriter << line << std::endl;
-            std::stringstream str(line);
-
-            while (getline(str, word, ',')) {
-                row.push_back(word);
-                std::cout << "Word: " << word <<std::endl;
-            }
-
-            std::cout << "going to parse that fucking line" << std::endl;
             
-            if (row.size() > 0) {
-                parseLine(row);
-            }
+            // if (row.size() > 0) {
+            //     parseLine(row);
+            // }
 
             return Status::OK;
 
@@ -791,6 +776,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+
+        Status AddToPending(ServerContext* context, const Operation* op, AddToPendingResponse* response) {
+            
+        }
 
         // For interserver communication stuff
         void addConnection(std::string server_address) {
@@ -861,7 +850,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         void leaderElection() {
-            int candidateValue = rand();
+            int candidateValue;
+            if (g_startingUp) {
+                // TODO: get length of commit log
+                commitLogWriter.seekp(0, commitLogWriter.end);
+                candidateValue = commitLogWriter.tellp();
+                commitLogWriter.seekp(0, commitLogWriter.beg);
+            } else {
+                candidateValue = rand();
+            }
 
             leaderElectionValuesMutex.lock();
             if (candidateValue > electionVals.maxLeaderElectionVal) {
@@ -893,10 +890,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 }
             }
 
-            // wait until we've received leader election values of all other servers
-            // TODO: we should handle what happens if one of the replicas goes down while waiting for
-            //  leader election. If we don't then we'll wait here forever as we'll never receive all
-            //  responses
             bool waitingForLeaderElection = true;
             while (waitingForLeaderElection) {
                 leaderElectionValuesMutex.lock();
