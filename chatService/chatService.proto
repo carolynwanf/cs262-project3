@@ -188,6 +188,7 @@ message Operation {
     string message_content=5;
     string messagesseen=6;
     string leader=7;
+    string clockVal=8;
 }
 
 message AddToPendingResponse {

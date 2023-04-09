@@ -347,6 +347,7 @@ TEST(UsernameTrieStorage, DeleteUser) {
   EXPECT_EQ(usernameTrie.userExists("Carolyn"), true);
 }
 
+
 int main(int argc, char* argv[]) {
   ::testing::InitGoogleTest(&argc,argv);
   return RUN_ALL_TESTS();

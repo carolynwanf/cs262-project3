@@ -48,5 +48,10 @@ void serverThread(const std::vector<std::string> serverAddresses) {
             }
         }
 
+        // If not leader, send pending to leader
+        if(!g_Service.isLeader()) {
+            
+        }
+
     }
 }

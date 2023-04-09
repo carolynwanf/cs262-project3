@@ -15,6 +15,7 @@
 #include <atomic>
 #include <unordered_map>
 #include <sstream>
+#include <algorithm>
 
 // namespaces used
 using chatservice::ChatMessage;
