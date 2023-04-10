@@ -130,10 +130,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         }
 
+        // Getter for pending filename
         std::string getPendingFilename() {
             return pendingFilename;
         }
 
+        // Getter for commit filename
         std::string getCommitFilename() {
             return commitFilename;
         }
@@ -144,6 +146,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             commitLogWriter << g_csvFields << std::endl;
         }
 
+        // Getter for number of connections
         int numberOfConnections() {
             int numberOfConnections;
             connectionMutex.lock();
@@ -153,13 +156,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return numberOfConnections;            
         }
 
+        // CreateAccount RPC implementation
         Status CreateAccount(ServerContext* context, const CreateAccountMessage* create_account_message, 
                             CreateAccountReply* server_reply) {
 
             std::string username = create_account_message->username();
             std::string password = create_account_message->password();
 
-            // If the message is from the leader or I am the leader, write to pending
+            // Update clock value and write to pending if the message was from the leader
             if (create_account_message->fromleader()) {
                 clockVal = std::max(create_account_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password, g_nullString, g_nullString, g_nullString, clockVal);
@@ -188,6 +192,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     }
                 }
 
+                // Remove dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
                     addressToStub.erase(droppedConnections[i]);
                 }
@@ -224,12 +229,12 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // Login RPC implementation
         Status Login(ServerContext* context, const LoginMessage* login_message, LoginReply* server_reply) {
             std::string username = login_message->username();
             std::string password = login_message->password();
 
-            // If the message is from the leader or I am the leader, write to pending
+            // Update clock value and write to pending if the message was from the leader
             if (login_message->fromleader()) {
                 clockVal = std::max(login_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, LOGIN, username, g_nullString, password, g_nullString, g_nullString, g_nullString, clockVal);
@@ -277,8 +282,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 connectionMutex.unlock();
 
                 // Add to storage
-                // Check for existing user and verify password
-
                 int loginStatus = tryLogin(username, password);
                 
                 if (loginStatus == 0) {
@@ -299,9 +302,9 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // Logout RPC implementation
         Status Logout(ServerContext* context, const LogoutMessage* logout_message, LogoutReply* server_reply) {
-            // If the message is from the leader or I am the leader, write to pending
+            // Update clock value and write to pending if the message was from the leader
             if (logout_message->fromleader()) {
                 clockVal = std::max(logout_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, LOGOUT, logout_message->username(), g_nullString, g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
@@ -337,7 +340,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 // Move last pending line to commit 
                 moveToCommit(pendingFilename, commitLogWriter);
 
-
                 // Tell replicas to commit
                 for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                     ClientContext context;
@@ -362,7 +364,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // ListUsers RPC implementation
         Status ListUsers(ServerContext* context, const QueryUsersMessage* query, ServerWriter<User>* writer) {
             if (leaderVals.isLeader) {
                 std::string prefix = query->username();
@@ -397,12 +399,13 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // SendMessage RPC implementation
         Status SendMessage(ServerContext* context, const ChatMessage* msg, SendMessageReply* server_reply) {
             std::string senderUsername = msg->senderusername();
             std::string recipientUsername = msg->recipientusername();
             std::string messageContent = msg->msgcontent();
 
+            // Update clock value and write to pending if the message was from the leader
             if (msg->fromleader()) {
                 clockVal = std::max(msg->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent, g_nullString, g_nullString, clockVal);
@@ -473,10 +476,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // QUeryNotifications RPC implementation
         Status QueryNotifications(ServerContext* context, const QueryNotificationsMessage* query, 
                                 ServerWriter<Notification>* writer) {
-            
+            // Update clock value and write to pending if the message was from the leader
             if (leaderVals.isLeader) {
                 std::string clientUsername = query->user();
                 std::vector<std::pair<char [g_UsernameLimit], char> > notifications = conversationsDictionary.getNotifications(clientUsername);
@@ -503,9 +506,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // QueryMessages RPC implemetation
         Status QueryMessages(ServerContext* context, const QueryMessagesMessage* query, 
                             ServerWriter<ChatMessage>* writer) {
+            // Update clock value and write to pending if the message was from the leader
             if (query->fromleader()) {
                 clockVal = std::max(query->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername(), g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
@@ -576,8 +580,11 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+        // DeleteAccount RPC implementation
         Status DeleteAccount(ServerContext* context, const DeleteAccountMessage* delete_account_message,
                             DeleteAccountReply* server_reply) {
+
+            // Update clock value and write to pending if the message was from the leader
             if (delete_account_message->fromleader()) {
                 clockVal = std::max(delete_account_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username(), g_nullString, g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
@@ -647,14 +654,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
-
+        // MessagesSeen RPC implementation
         Status MessagesSeen(ServerContext* context, const MessagesSeenMessage* msg, MessagesSeenReply* reply) {
+            // Update clock value and write to pending if the message was from the leader
             if (msg->fromleader()) {
                 clockVal = std::max(msg->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()), g_nullString, clockVal);
             }
 
-            // TODO: check if master, talk to replicas
+            // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 clockVal++;
                 writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()), g_nullString, clockVal);
@@ -714,6 +722,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status RefreshClient(ServerContext* context, const RefreshRequest* request, RefreshResponse* reply) {
             std::cout << "Refreshing for " << request->clientusername() << std::endl;
+            // Update clock value and write to pending if the message was from the leader
             if (leaderVals.isLeader) {
                 if (queuedOperationsDictionary.find(request->clientusername()) != queuedOperationsDictionary.end()) {
                     std::cout << "Running queued operations for '" << request->clientusername() << "'" << std::endl;
@@ -734,6 +743,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+        // Commit RPC implementation
         Status Commit(ServerContext* context, const CommitRequest* request, CommitResponse* reply) {
 
             std::vector<std::string> operationToCommit = moveToCommit(pendingFilename, commitLogWriter);
@@ -744,6 +754,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         }
 
+        // Heartbeat RPC implementation
         Status HeartBeat(ServerContext* context, const HeartBeatRequest* request, HeartBeatResponse* reply) {
             leaderMutex.lock();
             reply->set_isleader(leaderVals.isLeader);
@@ -751,8 +762,8 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+        // SuggestLeaderELection RPC implementation
         Status SuggestLeaderElection(ServerContext* context, const LeaderElectionProposal* request, LeaderElectionProposalResponse* reply) {
-            // TODO: implement leader election proposal RPC
             // Check if I am the leader or if leaderIdx != -1, otherwise we have no leader
             leaderMutex.lock();
             if (leaderVals.leaderidx != -1 || leaderVals.isLeader) {
@@ -769,6 +780,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+        // LeaderElection RPC implementation
         Status LeaderElection(ServerContext* context, const CandidateValue* request, LeaderElectionResponse* reply) {
             // Update leader candidate values
             leaderElectionValuesMutex.lock();
@@ -808,6 +820,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return Status::OK;
         }
 
+        // RequestPendingLog RPC implementation
         Status RequestPendingLog(ServerContext* context, const PendingLogRequest* request, 
                                 ServerWriter<Operation>* writer) {
             std::vector<std::vector<std::string>> vectorizedLines;
@@ -838,6 +851,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             addressToStub[server_address] = std::move(stub_);
         }
 
+        // Heartbeat message from replicas to leader
         bool heartbeat() {
             leaderMutex.lock();
             if (leaderVals.leaderidx != -1) {
@@ -866,6 +880,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
         }
 
+        // Proposes leader election
         bool proposeLeaderElection() {
             std::cout << "Proposing leader election" << std::endl;
             LeaderElectionProposal message;
@@ -897,10 +912,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return true;
         }
 
+        // Conducts leader election
         void leaderElection() {
             int candidateValue;
             if (g_startingUp) {
-                // TODO: get length of commit log
                 commitLogWriter.seekp(0, commitLogWriter.end);
                 candidateValue = commitLogWriter.tellp();
                 commitLogWriter.seekp(0, commitLogWriter.beg);
@@ -1034,7 +1049,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
         }
             
-
+        // Gets isLeader
         bool isLeader() {
             leaderMutex.lock();
             bool toReturn = leaderVals.isLeader;
@@ -1043,19 +1058,21 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             return toReturn;
         }
 
+        // Sets isLeader to true
         void setAsLeader() {
             leaderMutex.lock();
             leaderVals.isLeader = true;
             leaderMutex.unlock();
         }
 
-
+        // Sets isLeader to false
         void setNotLeader() {
             leaderMutex.lock();
             leaderVals.isLeader = false;
             leaderMutex.unlock();
         }
 
+        // Sends logs upon request
         void requestLogs(std::vector<OperationClass>& operations) {
             std::cout << "Iterating through connections" << std::endl;
             std::vector<std::string> droppedConnections;
@@ -1091,6 +1108,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
         }
 
+        // Writes vector of operations into pending
         void writePendingOperations(std::vector<OperationClass> operations) {
             for (OperationClass op : operations) {
                 writeToLogs(pendingLogWriter, op.opCode, op.username1, op.username2, op.password,
@@ -1098,6 +1116,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             }
         }
 
+        // Moves every operation from pending into the commit file
         void moveAllPendingToCommit() {
             // Read pending file
             std::vector<std::vector<std::string>> content;

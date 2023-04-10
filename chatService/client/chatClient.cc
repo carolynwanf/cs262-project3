@@ -6,6 +6,8 @@
 int main (void) {
     std::string server_addr;
     ChatServiceClient client;
+
+    // Client inputs server addresses
     while (true) {
         std::cout << "Input Address of Server (IP_ADDR:PORT_NUMBER), if done enter 'y'\n";
         std::cin >> server_addr;
@@ -18,9 +20,11 @@ int main (void) {
     }
 
 
-    // Main loop for user
+
     char userInput[g_InputLimit];
     std::cin.ignore();
+
+    // Takes input from the user for the application
     while(g_ProgramRunning) {
         if (!takeInput(userInput)) {
             continue;
@@ -46,6 +50,8 @@ int main (void) {
                         printUsage();
                         break;
                     }
+
+                    // Attempts to create an account
                     std::string username = input.arguments[0];
                     std::string password = input.arguments[1];
                     try {
@@ -68,6 +74,7 @@ int main (void) {
                         break;
                     }
 
+                    // Attempts to login
                     std::string username = input.arguments[0];
                     std::string password = input.arguments[1];
                     try {
@@ -100,6 +107,7 @@ int main (void) {
                         break;
                     }
                     
+                    // Attempts to list users
                     try {
                         std::string prefix;
                         if (input.arguments.size() == 1) {
@@ -126,6 +134,7 @@ int main (void) {
                     std::string username = input.arguments[0];
                     std::string msg_content = input.arguments[1];
 
+                    // Attempts to send message
                     try {
                         validateField("username", username, g_UsernameLimit);
                         client.sendMessage(username, msg_content);
@@ -145,6 +154,7 @@ int main (void) {
                         break;
                     }
 
+                    // Attempts to query notifications
                     try {
                         client.queryNotifications();
                     } catch (std::runtime_error &e) {
@@ -163,6 +173,7 @@ int main (void) {
 
                     std::string username = input.arguments[0];
 
+                    // Attempts to query messages
                     try {
                         validateField("username", username, g_UsernameLimit);
                         client.queryMessages(username);
@@ -185,6 +196,7 @@ int main (void) {
                     std::string username = input.arguments[0];
                     std::string password = input.arguments[1];
 
+                    // Attempts to delete account
                     try {
                         validateField("username", username, g_UsernameLimit);
                         validateField("password", password, g_PasswordLimit);

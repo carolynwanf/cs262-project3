@@ -52,22 +52,24 @@ std::string loggedInErrorMsg(std::string operationAttempted) {
 
 struct ChatServiceClient {
     private:
-        std::unique_ptr<ChatService::Stub> stub_;
-        // Boolean determining whether the user has logged in
-        bool USER_LOGGED_IN = false;
-        std::string clientUsername;
+        std::unique_ptr<ChatService::Stub> stub_;       // Current client stub
+        
+        bool USER_LOGGED_IN = false;                    // Boolean determining whether the user has logged in
+        std::string clientUsername;                     // Username associated with client
 
-        std::string currentIP;
+        std::string currentIP;                          // IP address the client is currently connected to
 
-        std::vector<std::string> serverAddresses;
+        std::vector<std::string> serverAddresses;       // List of all potential server IP addresses the client can connect to
 
     public:
         ChatServiceClient() {}
 
+        // Adds server addresses
         void addServerAddress(std::string addr) {
             serverAddresses.push_back(addr);
         }
 
+        // Changes stub to new one connected to the given address
         void changeStub(std::string address) {
             auto channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
 
@@ -75,6 +77,7 @@ struct ChatServiceClient {
             currentIP = address;
         }
 
+        // Calls the stub's CreateAccount RPC and handles surrounding logic
         void createAccount(std::string username, std::string password) {
             if (USER_LOGGED_IN) {
                 throw std::runtime_error("Cannot create account if already logged in.");
@@ -85,21 +88,26 @@ struct ChatServiceClient {
             message.set_username(username);
             message.set_password(password);
 
+            // Attempts to create an account
             CreateAccountReply reply;
             Status status = stub_->CreateAccount(&context, message, &reply);
+
+            // If the operation returns with status ok
             if (status.ok()) {
                 
+                // If the account was created successfully and there is not another server that is the leader, create the account
                 if (reply.createaccountsuccess() && !reply.has_leader()) {
                     std::cout << "Welcome " << username << "!" << std::endl;
                     USER_LOGGED_IN = true;
                     clientUsername = username;
+
                 } else if (reply.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If we contacted a server and it's not in the middle of an election, connect to the real leader and try again
                     if (reply.leader() != g_ElectionString) {
                         changeStub(reply.leader());
                     }
 
-                    // attempt to create account again
+                    // If the server is in the middle of an election, try again
                     createAccount(username, password);
                     return;
                 
@@ -108,13 +116,15 @@ struct ChatServiceClient {
                     std::cout << reply.errormsg() << std::endl;
                 }
             } else {
-                // delete current IP address from vector
+                // If the status is not OK, we assume the server has gone down 
+
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -128,6 +138,7 @@ struct ChatServiceClient {
             }
         }
 
+        // Calls the stub's Login RPC and handles surrounding logic
         void login(std::string username, std::string password) {
             if (USER_LOGGED_IN) {
                 throw std::runtime_error("Cannot log in if already logged in.");
@@ -138,8 +149,11 @@ struct ChatServiceClient {
             message.set_username(username);
             message.set_password(password);
 
+            // Attempts to login
             LoginReply reply;
             Status status = stub_->Login(&context, message, &reply);
+
+            // If the operation returns with status ok
             if (status.ok() && !reply.has_leader()) {
                 if (reply.loginsuccess()) {
                     std::cout << "Welcome " << username << "!" << std::endl;
@@ -149,23 +163,25 @@ struct ChatServiceClient {
                     std::cout << reply.errormsg() << std::endl;
                 }
             } else if (reply.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If we contacted a server and it's not in the middle of an election, connect to the real leader and try again
                     if (reply.leader() != g_ElectionString) {
                         changeStub(reply.leader());
                     }
 
-                    // Attempt to login again
+                    // If the server is in the middle of an election, try again
                     login(username, password);
                     return;
                 
             } else {
-                // delete current IP address from vector
+                // If the status is not OK, we assume the server has gone down 
+
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -182,6 +198,7 @@ struct ChatServiceClient {
 
 
         // ALL FUNCTIONS BELOW HERE REQUIRE USER TO BE LOGGED IN
+        // Calls the stub's Logout RPC and handles surrounding logic
         void logout() {
             if (!USER_LOGGED_IN) {
                 throw std::runtime_error(loggedInErrorMsg("logout"));
@@ -190,13 +207,17 @@ struct ChatServiceClient {
             ClientContext context;
             LogoutMessage message;
             message.set_username(clientUsername);
+
+            // Attempts to logout
             LogoutReply reply;
             Status status = stub_->Logout(&context, message, &reply);
+
+            // If the operation returns with status ok and I contacted the leader
             if (status.ok() && !reply.has_leader()) {
                 std::cout << "Goodbye!" << std::endl;
                 USER_LOGGED_IN = false;
             } else if (reply.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If we contacted a replica and it's not in the middle of an election, connect to the real leader
                     if (reply.leader() != g_ElectionString) {
                         changeStub(reply.leader());
                     }
@@ -205,13 +226,15 @@ struct ChatServiceClient {
                     logout();
                     return;
             } else {
-                // delete current IP address from vector
+                // If the connection dropped 
+
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -225,6 +248,7 @@ struct ChatServiceClient {
             } 
         }
 
+        // Calls the stub's ListUsers RPC and handles surrounding logic
         void listUsers(std::string prefix) {
             if (!USER_LOGGED_IN) {
                 throw std::runtime_error(loggedInErrorMsg("list_users"));
@@ -236,11 +260,14 @@ struct ChatServiceClient {
 
             User user;
             
+            // Attempt to list users
             std::unique_ptr<ClientReader<User>> reader(stub_->ListUsers(&context, message));
             std::cout << "Found Following Users:" << std::endl;
+
+            // Read the useres from the stream
             while (reader->Read(&user)) {
                 if (user.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If we contacted a replica and it's not in the middle of an election, contact the real leader
                     if (user.leader() != g_ElectionString) {
                         changeStub(user.leader());
                     }
@@ -250,19 +277,22 @@ struct ChatServiceClient {
                     return;
 
                 } else {
+                    // If we contacted the leader, print what it said
                     std::cout << user.username() << std::endl;
                 }
             }
 
             Status status = reader->Finish();
+
+            // If the connection was dropped
             if (!status.ok()) { 
-                // delete current IP address from vector
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -276,6 +306,7 @@ struct ChatServiceClient {
             } 
         }
 
+        // Calls the stub's SendMessage RPC and handles surrounding logic
         void sendMessage(std::string recipient, std::string message_content) {
             if (!USER_LOGGED_IN) {
                 throw std::runtime_error(loggedInErrorMsg("send_message"));
@@ -287,16 +318,22 @@ struct ChatServiceClient {
             message.set_recipientusername(recipient);
             message.set_senderusername(clientUsername);
             
+            // Attempts to send a message
             SendMessageReply reply;
             Status status = stub_->SendMessage(&context, message, &reply);
+
+            // If the request wen through and I contaced the leader
             if (status.ok() && !reply.has_leader()) {
+                // If the message was sent properly
                 if (reply.messagesent()) {
                     std::cout << "Message sent to " << recipient << "!" << std::endl;
                 } else {
                     std::cout << reply.errormsg() << std::endl;
                 }
+
+            // If I contacted someone other than the leader
             } else if (reply.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If the replica we contacted was not in the middle of an election, connect to the real leader
                     if (reply.leader() != g_ElectionString) {
                         changeStub(reply.leader());
                     }
@@ -304,15 +341,16 @@ struct ChatServiceClient {
                     // Send message again
                     sendMessage(recipient, message_content);
                     return;
-                
+
+            // If the connection dropped 
             } else {
-                // delete current IP address from vector
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -326,6 +364,7 @@ struct ChatServiceClient {
             } 
         }
 
+        // Calls the stub's QueryNoticiations RPC and handles surrounding logic
         void queryNotifications() {
             if (!USER_LOGGED_IN) {
                 throw std::runtime_error(loggedInErrorMsg("query_notifications"));
@@ -334,9 +373,11 @@ struct ChatServiceClient {
             QueryNotificationsMessage message;
             message.set_user(clientUsername);
 
+            // Attempts to query notifications
             Notification notification;
-            
             std::unique_ptr<ClientReader<Notification>> reader(stub_->QueryNotifications(&context, message));
+
+            // Reads notifications from the stream
             while (reader->Read(&notification)) {
                 if (notification.has_leader()) {
                     // If we contacted a replica and it's not in the middle of an election, change stub 
@@ -354,14 +395,15 @@ struct ChatServiceClient {
             }
             Status status = reader->Finish();
 
+            // If the connection dropped
             if (!status.ok()) {
-                // delete current IP address from vector
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -375,7 +417,7 @@ struct ChatServiceClient {
             } 
         }
 
-
+        // Calls the stub's QueryMessages RPC and handles surrounding logic
         void queryMessages(std::string username) {
             if (!USER_LOGGED_IN) {
                 throw std::runtime_error(loggedInErrorMsg("query_messages"));
@@ -385,12 +427,15 @@ struct ChatServiceClient {
             message.set_otherusername(username);
             message.set_clientusername(clientUsername);
 
+            // Attempts to query messages
             ChatMessage msg;
             int messagesRead = 0;
             std::unique_ptr<ClientReader<ChatMessage>> reader(stub_->QueryMessages(&context, message));
+
+            // Reads messages from the stream
             while (reader->Read(&msg)) {
                 if (msg.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If we contacted a replica and it's not in the middle of an election, connect to the real leader
                     if (msg.leader() != g_ElectionString) {
                         changeStub(msg.leader());
                     }
@@ -403,16 +448,18 @@ struct ChatServiceClient {
                 std::cout << msg.senderusername() << ": " << msg.msgcontent() << std::endl;
                 messagesRead++;
             }
+
             Status status = reader->Finish();
 
+            // If the connection dropped
             if (!status.ok()) {
-                // delete current IP address from vector
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -430,17 +477,20 @@ struct ChatServiceClient {
             message2.set_messagesseen(messagesRead);
             message2.set_clientusername(clientUsername);
             message2.set_otherusername(username);
+
+            // Tell the server that the messages were seen
             MessagesSeenReply server_reply;
             status = stub_->MessagesSeen(&context2, message2, &server_reply);
 
+            // If the connection was dropped
             if (!status.ok()) {
-                // delete current IP address from vector
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -454,7 +504,7 @@ struct ChatServiceClient {
             } 
         }
 
-
+        // Calls the stub's DeleteAccount RPC and handles surrounding logic
         void deleteAccount(std::string username, std::string password) {
             if (!USER_LOGGED_IN) {
                 throw std::runtime_error(loggedInErrorMsg("delete_account"));
@@ -466,7 +516,10 @@ struct ChatServiceClient {
             message.set_password(password);
             DeleteAccountReply reply;
 
+            // Attempts to delete account
             Status status = stub_->DeleteAccount(&context, message, &reply);
+
+            // If the server is still up and is actually the leader
             if (status.ok() && !reply.has_leader()) {
                 if (reply.deletedaccount()) {
                     std::cout << "Account deleted, goobye!" << std::endl;
@@ -474,8 +527,10 @@ struct ChatServiceClient {
                 } else {
                     std::cout << reply.errormsg() << std::endl;
                 }
+
+            // If the contacted replica is not the leader
             } else if (reply.has_leader()) {
-                    // If we contacted a replica and it's not in the middle of an election, change stub 
+                    // If the contacted replica is not in the middle of an election, connect to the real leader
                     if (reply.leader() != g_ElectionString) {
                         changeStub(reply.leader());
                     }
@@ -485,13 +540,13 @@ struct ChatServiceClient {
                     return;
                 
             }  else {
-                // delete current IP address from vector
+                // Delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
                     serverAddresses.erase(it);
                 }
 
-                // reset stub to IP address at first index if it exists
+                // Reset stub to IP address at first index if it exists
                 if (serverAddresses.size() > 0) {
                     changeStub(serverAddresses[0]);
                     std::cout << "Changing connection to server at " << serverAddresses[0] << std::endl;
@@ -505,7 +560,7 @@ struct ChatServiceClient {
             } 
         }
 
-        // handle server messages
+        // Handle server messages
         void refresh() {
             // If user not logged in there's nothing to refresh
             if (!USER_LOGGED_IN) {
@@ -517,6 +572,7 @@ struct ChatServiceClient {
             request.set_clientusername(clientUsername);
             RefreshResponse reply;
 
+            // Attempt to refresh client
             Status status = stub_->RefreshClient(&context, request, &reply);
 
             if (!status.ok() && !reply.has_leader()) {

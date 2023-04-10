@@ -37,6 +37,8 @@ int main (int argc, char const* argv[]) {
     IP = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0])); //Convert into IP string
     int port;
     bool noPort = true;
+
+    // Get port number from user
     while (noPort) {
         std::cout << "Please input port number (8080, 8081 or 8082) for server to use: ";
         std::cin >> port;
@@ -45,10 +47,12 @@ int main (int argc, char const* argv[]) {
         }
     }
 
+    // Prints server's IP
     std::string server_addr = std::string(IP)+":"+std::to_string(port);
     std::cout << "Server listening on " << server_addr << std::endl;
     g_Service.initialize(server_addr);
 
+    // Gets other server addresses from user
     while (true) {
         std::string other_server;
         std::cout << "Input address of a server, or input 'y' to finish: ";
@@ -59,50 +63,7 @@ int main (int argc, char const* argv[]) {
         serverAddresses.push_back(other_server);
     }
 
-    // read input from CSV files
-    // if (argc > 3) {
-    //     std::cout << "The only optional arguments are two CSV files (commit and pending) with information to start the server with." << std::endl;
-    //     return -1;
-    // }
-
-    // if (argc == 3) {
-    //     // verify valid CSV file
-    //     std::string historyFile = argv[1];
-    //     std::string pendingFile = argv[2];
-
-    //     if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv" || pendingFile.substr(pendingFile.find_last_of(".")+1) != "csv") {
-    //         std::cout << "File must be a CSV file" << std::endl;
-    //         return -1;
-    //     }
-
-    //     // populate data structures using file
-    //     // TODO: handle how we deal with matching fields in CSV file
-    //     std::vector<std::vector<std::string>> commitContent;
-
-    //     // Read the file into content
-    //     readFile(&commitContent, historyFile);
-        
-    //     for(int i=1; i < commitContent.size(); i++) {
-    //         parseLine(commitContent[i]);
-    //     }
-
-    //     std::vector<std::vector<std::string>> pendingContent;
-
-    //     // Read the file into content
-    //     readFile(&pendingContent, pendingFile);
-        
-    //     for(int i=1; i < pendingContent.size(); i++) {
-    //         parseLine(pendingContent[i]);
-    //     }
-
-    //     // if (commitContent.size() == 0) {
-    //     //     g_Service.addFields();
-    //     // }
-
-    //     // What do if 
-    // }
-
-    // start inter-server communication thread
+    // Start inter-server communication thread
     std::thread serverCommunicationThread(serverThread, serverAddresses);
     serverCommunicationThread.detach();
 
