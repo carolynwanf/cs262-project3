@@ -108,7 +108,6 @@ struct ChatServiceClient {
                     std::cout << reply.errormsg() << std::endl;
                 }
             } else {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -160,7 +159,6 @@ struct ChatServiceClient {
                     return;
                 
             } else {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -207,7 +205,6 @@ struct ChatServiceClient {
                     logout();
                     return;
             } else {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -259,7 +256,6 @@ struct ChatServiceClient {
 
             Status status = reader->Finish();
             if (!status.ok()) { 
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -310,7 +306,6 @@ struct ChatServiceClient {
                     return;
                 
             } else {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -360,7 +355,6 @@ struct ChatServiceClient {
             Status status = reader->Finish();
 
             if (!status.ok()) {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -412,7 +406,6 @@ struct ChatServiceClient {
             Status status = reader->Finish();
 
             if (!status.ok()) {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -441,7 +434,6 @@ struct ChatServiceClient {
             status = stub_->MessagesSeen(&context2, message2, &server_reply);
 
             if (!status.ok()) {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -493,7 +485,6 @@ struct ChatServiceClient {
                     return;
                 
             }  else {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {
@@ -541,7 +532,6 @@ struct ChatServiceClient {
                     return;
                 
             } else if (!status.ok()) {
-                std::cout << status.error_code() << ": " << status.error_message() << std::endl;
                 // delete current IP address from vector
                 std::vector<std::string>::iterator it = std::find(serverAddresses.begin(), serverAddresses.end(), currentIP);
                 if (it != serverAddresses.end()) {

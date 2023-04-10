@@ -796,7 +796,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
             Operation op;
             while (reader->Read(&op)) {
-                std::cout << "Writing operation with clock val " << op.clockval() << std::endl;
                 writeToLogs(commitLogWriter, std::stoi(op.message_type()), op.username1(), op.username2(),
                         op.password(), op.message_content(), op.messagesseen(), op.leader(), std::stoi(op.clockval()));
 
