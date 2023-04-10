@@ -25,7 +25,7 @@ using chatservice::Notification;
 // TODO: make it so that client tries to connect to others when it receives a not ok message
 std::string g_pendingLogFile = "pendingLog";
 std::string g_committedLogFile = "committedLog";
-std::string g_csvFields = "message_type,username1,username2,password,message_content,messagesseen,leader";
+std::string g_csvFields = "message_type,username1,username2,password,message_content,messagesseen,leader,clockVal";
 std::string g_nullString = "NULL";
 std::string g_ElectionString = "olive";
 

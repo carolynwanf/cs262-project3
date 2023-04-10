@@ -50,13 +50,17 @@ void serverThread(const std::vector<std::string> serverAddresses) {
         }
 
         // If leader
-        if(g_Service.isLeader()) {
+        if(g_Service.isLeader() && g_startingUp) {
             // Request pending with Request Pending Log
             std::vector<OperationClass> operations;
+            std::cout << "Requesting pending logs" << std::endl;
             g_Service.requestLogs(operations);
+            std::cout << "Reading own pending file" << std::endl;
             std::vector<std::vector<std::string>> vectorizedLines;
             readFile(&vectorizedLines, g_Service.getPendingFilename());
-            for (std::vector<std::string> line : vectorizedLines) {
+            std::cout << "Adding operations to vector" << std::endl;
+            for (int idx = 1; idx < vectorizedLines.size(); idx++) {
+                std::vector<std::string> line = vectorizedLines[idx];
                 OperationClass op;
                 op.clockVal = std::stoi(line[7]);
                 op.opCode = std::stoi(line[0]);
@@ -68,7 +72,9 @@ void serverThread(const std::vector<std::string> serverAddresses) {
                 op.leader = line[6];
                 operations.push_back(op);
             }
+            std::cout << "Sorting operations" << std::endl;
             sortOperations(operations);
+            std::cout << "Writing pending operatiions to pending file" << std::endl;
             g_Service.writePendingOperations(operations);
 
             // Send commit logs
@@ -82,12 +88,8 @@ void serverThread(const std::vector<std::string> serverAddresses) {
             // Sending pending logs
             std::cout << "sending pending logs" << std::endl;
             g_Service.sendLogs(g_Service.getPendingFilename());
-
-
-
-            
+            g_startingUp = false;
         }
-
 
 
     }

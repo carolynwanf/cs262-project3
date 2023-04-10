@@ -1,0 +1,70 @@
+message_type,username1,username2,password,message_content,messagesseen,leader,clockVal
+1,caro,NULL,p,NULL,NULL,NULL,1
+1,victor,NULL,p,NULL,NULL,NULL,2
+5,victor,caro,NULL,hey,NULL,NULL,3
+5,caro,victor,NULL,bah,NULL,NULL,4
+7,victor,caro,NULL,NULL,NULL,NULL,5
+9,victor,caro,NULL,NULL,2,NULL,6
+7,caro,victor,NULL,NULL,NULL,NULL,7
+9,caro,victor,NULL,NULL,2,NULL,8
+5,victor,caro,NULL,Hey again,NULL,NULL,9
+7,caro,victor,NULL,NULL,NULL,NULL,10
+9,caro,victor,NULL,NULL,0,NULL,11
+5,victor,caro,NULL,Hey one more time,NULL,NULL,12
+7,caro,victor,NULL,NULL,NULL,NULL,13
+9,caro,victor,NULL,NULL,0,NULL,14
+7,caro,victpr,NULL,NULL,NULL,NULL,15
+9,caro,victpr,NULL,NULL,0,NULL,16
+7,caro,victor,NULL,NULL,NULL,NULL,17
+9,caro,victor,NULL,NULL,4,NULL,18
+7,caro,victor,NULL,NULL,NULL,NULL,19
+9,caro,victor,NULL,NULL,0,NULL,20
+7,victor,caro,NULL,NULL,NULL,NULL,21
+9,victor,caro,NULL,NULL,0,NULL,22
+7,victor,caro,NULL,NULL,NULL,NULL,23
+9,victor,caro,NULL,NULL,0,NULL,24
+7,caro,victor,NULL,NULL,NULL,NULL,25
+9,caro,victor,NULL,NULL,0,NULL,26
+7,victor,myas,NULL,NULL,NULL,NULL,27
+9,victor,myas,NULL,NULL,0,NULL,28
+7,victor,caro,NULL,NULL,NULL,NULL,29
+9,victor,caro,NULL,NULL,4,NULL,30
+7,caro,victor,NULL,NULL,NULL,NULL,31
+9,caro,victor,NULL,NULL,0,NULL,32
+7,victor,caro,NULL,NULL,NULL,NULL,33
+9,victor,caro,NULL,NULL,0,NULL,34
+7,caro,c,NULL,NULL,NULL,NULL,35
+9,caro,c,NULL,NULL,0,NULL,36
+7,caro,victor,NULL,NULL,NULL,NULL,37
+9,caro,victor,NULL,NULL,4,NULL,38
+2,victor,NULL,p,NULL,NULL,NULL,39
+7,victor,caro,NULL,NULL,NULL,NULL,40
+9,victor,caro,NULL,NULL,4,NULL,41
+7,victor,caro,NULL,NULL,NULL,NULL,42
+9,victor,caro,NULL,NULL,4,NULL,43
+3,victor,NULL,NULL,NULL,NULL,NULL,44
+2,myass,NULL,p,NULL,NULL,NULL,45
+2,victor,NULL,p,NULL,NULL,NULL,46
+2,caro,NULL,p,NULL,NULL,NULL,47
+3,victor,NULL,NULL,NULL,NULL,NULL,48
+2,caro,NULL,p,NULL,NULL,NULL,49
+7,caro,victor,NULL,NULL,NULL,NULL,50
+9,caro,victor,NULL,NULL,4,NULL,51
+7,caro,victor,NULL,NULL,NULL,NULL,52
+9,caro,victor,NULL,NULL,4,NULL,53
+7,caro,victor,NULL,NULL,NULL,NULL,54
+9,caro,victor,NULL,NULL,4,NULL,55
+5,caro,victor,NULL,Hello,NULL,NULL,56
+5,caro,victor,NULL,i may cry,NULL,NULL,57
+3,caro,NULL,NULL,NULL,NULL,NULL,58
+1,robert,NULL,p,NULL,NULL,NULL,59
+5,caro,victor,NULL, death,NULL,NULL,60
+5,robert,victor,NULL,Hey dude,NULL,NULL,61
+3,robert,NULL,NULL,NULL,NULL,NULL,62
+5,caro,victor,NULL,cry cry,NULL,NULL,63
+2,caro,NULL,p,NULL,NULL,NULL,64
+7,caro,victor,NULL,NULL,NULL,NULL,65
+9,caro,victor,NULL,NULL,8,NULL,66
+2,robert,NULL,p,NULL,NULL,NULL,67
+7,robert,victor,NULL,NULL,NULL,NULL,68
+9,robert,victor,NULL,NULL,1,NULL,69

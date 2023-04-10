@@ -60,47 +60,47 @@ int main (int argc, char const* argv[]) {
     }
 
     // read input from CSV files
-    if (argc > 3) {
-        std::cout << "The only optional arguments are two CSV files (commit and pending) with information to start the server with." << std::endl;
-        return -1;
-    }
+    // if (argc > 3) {
+    //     std::cout << "The only optional arguments are two CSV files (commit and pending) with information to start the server with." << std::endl;
+    //     return -1;
+    // }
 
-    if (argc == 3) {
-        // verify valid CSV file
-        std::string historyFile = argv[1];
-        std::string pendingFile = argv[2];
+    // if (argc == 3) {
+    //     // verify valid CSV file
+    //     std::string historyFile = argv[1];
+    //     std::string pendingFile = argv[2];
 
-        if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv" || pendingFile.substr(pendingFile.find_last_of(".")+1) != "csv") {
-            std::cout << "File must be a CSV file" << std::endl;
-            return -1;
-        }
+    //     if (historyFile.substr(historyFile.find_last_of(".")+1) != "csv" || pendingFile.substr(pendingFile.find_last_of(".")+1) != "csv") {
+    //         std::cout << "File must be a CSV file" << std::endl;
+    //         return -1;
+    //     }
 
-        // populate data structures using file
-        // TODO: handle how we deal with matching fields in CSV file
-        std::vector<std::vector<std::string>> commitContent;
+    //     // populate data structures using file
+    //     // TODO: handle how we deal with matching fields in CSV file
+    //     std::vector<std::vector<std::string>> commitContent;
 
-        // Read the file into content
-        readFile(&commitContent, historyFile);
+    //     // Read the file into content
+    //     readFile(&commitContent, historyFile);
         
-        for(int i=1; i < commitContent.size(); i++) {
-            parseLine(commitContent[i]);
-        }
+    //     for(int i=1; i < commitContent.size(); i++) {
+    //         parseLine(commitContent[i]);
+    //     }
 
-        std::vector<std::vector<std::string>> pendingContent;
+    //     std::vector<std::vector<std::string>> pendingContent;
 
-        // Read the file into content
-        readFile(&pendingContent, pendingFile);
+    //     // Read the file into content
+    //     readFile(&pendingContent, pendingFile);
         
-        for(int i=1; i < pendingContent.size(); i++) {
-            parseLine(pendingContent[i]);
-        }
+    //     for(int i=1; i < pendingContent.size(); i++) {
+    //         parseLine(pendingContent[i]);
+    //     }
 
-        // if (commitContent.size() == 0) {
-        //     g_Service.addFields();
-        // }
+    //     // if (commitContent.size() == 0) {
+    //     //     g_Service.addFields();
+    //     // }
 
-        // What do if 
-    }
+    //     // What do if 
+    // }
 
     // start inter-server communication thread
     std::thread serverCommunicationThread(serverThread, serverAddresses);

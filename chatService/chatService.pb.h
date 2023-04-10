@@ -297,6 +297,7 @@ class CreateAccountMessage final :
     kUsernameFieldNumber = 1,
     kPasswordFieldNumber = 2,
     kFromLeaderFieldNumber = 3,
+    kClockValFieldNumber = 4,
   };
   // string username = 1;
   void clear_username();
@@ -339,6 +340,15 @@ class CreateAccountMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 4;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.CreateAccountMessage)
  private:
   class _Internal;
@@ -352,6 +362,7 @@ class CreateAccountMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -671,6 +682,7 @@ class LoginMessage final :
     kUsernameFieldNumber = 1,
     kPasswordFieldNumber = 2,
     kFromLeaderFieldNumber = 3,
+    kClockValFieldNumber = 4,
   };
   // string username = 1;
   void clear_username();
@@ -713,6 +725,15 @@ class LoginMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 4;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.LoginMessage)
  private:
   class _Internal;
@@ -726,6 +747,7 @@ class LoginMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -1044,6 +1066,7 @@ class LogoutMessage final :
   enum : int {
     kUsernameFieldNumber = 1,
     kFromLeaderFieldNumber = 2,
+    kClockValFieldNumber = 3,
   };
   // string username = 1;
   void clear_username();
@@ -1072,6 +1095,15 @@ class LogoutMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 3;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.LogoutMessage)
  private:
   class _Internal;
@@ -1084,6 +1116,7 @@ class LogoutMessage final :
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -1927,6 +1960,7 @@ class QueryNotificationsMessage final :
   enum : int {
     kUserFieldNumber = 1,
     kFromLeaderFieldNumber = 2,
+    kClockValFieldNumber = 3,
   };
   // string user = 1;
   void clear_user();
@@ -1955,6 +1989,15 @@ class QueryNotificationsMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 3;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.QueryNotificationsMessage)
  private:
   class _Internal;
@@ -1967,6 +2010,7 @@ class QueryNotificationsMessage final :
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2282,6 +2326,7 @@ class QueryMessagesMessage final :
     kClientUsernameFieldNumber = 1,
     kOtherUsernameFieldNumber = 2,
     kFromLeaderFieldNumber = 3,
+    kClockValFieldNumber = 4,
   };
   // string clientUsername = 1;
   void clear_clientusername();
@@ -2324,6 +2369,15 @@ class QueryMessagesMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 4;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.QueryMessagesMessage)
  private:
   class _Internal;
@@ -2337,6 +2391,7 @@ class QueryMessagesMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientusername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr otherusername_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2469,6 +2524,7 @@ class ChatMessage final :
     kMsgContentFieldNumber = 3,
     kLeaderFieldNumber = 4,
     kFromLeaderFieldNumber = 5,
+    kClockValFieldNumber = 6,
   };
   // string senderUsername = 1;
   void clear_senderusername();
@@ -2543,6 +2599,15 @@ class ChatMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 6;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.ChatMessage)
  private:
   class _Internal;
@@ -2558,6 +2623,7 @@ class ChatMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msgcontent_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr leader_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -2688,6 +2754,7 @@ class DeleteAccountMessage final :
     kUsernameFieldNumber = 1,
     kPasswordFieldNumber = 2,
     kFromLeaderFieldNumber = 3,
+    kClockValFieldNumber = 4,
   };
   // string username = 1;
   void clear_username();
@@ -2730,6 +2797,15 @@ class DeleteAccountMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 4;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.DeleteAccountMessage)
  private:
   class _Internal;
@@ -2743,6 +2819,7 @@ class DeleteAccountMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -3063,6 +3140,7 @@ class MessagesSeenMessage final :
     kOtherUsernameFieldNumber = 2,
     kMessagesSeenFieldNumber = 3,
     kFromLeaderFieldNumber = 4,
+    kClockValFieldNumber = 5,
   };
   // string clientUsername = 1;
   void clear_clientusername();
@@ -3114,6 +3192,15 @@ class MessagesSeenMessage final :
   void _internal_set_fromleader(bool value);
   public:
 
+  // int32 clockVal = 5;
+  void clear_clockval();
+  int32_t clockval() const;
+  void set_clockval(int32_t value);
+  private:
+  int32_t _internal_clockval() const;
+  void _internal_set_clockval(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chatservice.MessagesSeenMessage)
  private:
   class _Internal;
@@ -3128,6 +3215,7 @@ class MessagesSeenMessage final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr otherusername_;
     int32_t messagesseen_;
     bool fromleader_;
+    int32_t clockval_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_chatService_2eproto;
@@ -5354,6 +5442,26 @@ inline void CreateAccountMessage::set_fromleader(bool value) {
   // @@protoc_insertion_point(field_set:chatservice.CreateAccountMessage.fromLeader)
 }
 
+// int32 clockVal = 4;
+inline void CreateAccountMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t CreateAccountMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t CreateAccountMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.CreateAccountMessage.clockVal)
+  return _internal_clockval();
+}
+inline void CreateAccountMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void CreateAccountMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.CreateAccountMessage.clockVal)
+}
+
 // -------------------------------------------------------------------
 
 // CreateAccountReply
@@ -5646,6 +5754,26 @@ inline void LoginMessage::set_fromleader(bool value) {
   // @@protoc_insertion_point(field_set:chatservice.LoginMessage.fromLeader)
 }
 
+// int32 clockVal = 4;
+inline void LoginMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t LoginMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t LoginMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.LoginMessage.clockVal)
+  return _internal_clockval();
+}
+inline void LoginMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void LoginMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.LoginMessage.clockVal)
+}
+
 // -------------------------------------------------------------------
 
 // LoginReply
@@ -5886,6 +6014,26 @@ inline void LogoutMessage::_internal_set_fromleader(bool value) {
 inline void LogoutMessage::set_fromleader(bool value) {
   _internal_set_fromleader(value);
   // @@protoc_insertion_point(field_set:chatservice.LogoutMessage.fromLeader)
+}
+
+// int32 clockVal = 3;
+inline void LogoutMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t LogoutMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t LogoutMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.LogoutMessage.clockVal)
+  return _internal_clockval();
+}
+inline void LogoutMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void LogoutMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.LogoutMessage.clockVal)
 }
 
 // -------------------------------------------------------------------
@@ -6492,6 +6640,26 @@ inline void QueryNotificationsMessage::set_fromleader(bool value) {
   // @@protoc_insertion_point(field_set:chatservice.QueryNotificationsMessage.fromLeader)
 }
 
+// int32 clockVal = 3;
+inline void QueryNotificationsMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t QueryNotificationsMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t QueryNotificationsMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.QueryNotificationsMessage.clockVal)
+  return _internal_clockval();
+}
+inline void QueryNotificationsMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void QueryNotificationsMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.QueryNotificationsMessage.clockVal)
+}
+
 // -------------------------------------------------------------------
 
 // Notification
@@ -6766,6 +6934,26 @@ inline void QueryMessagesMessage::set_fromleader(bool value) {
   // @@protoc_insertion_point(field_set:chatservice.QueryMessagesMessage.fromLeader)
 }
 
+// int32 clockVal = 4;
+inline void QueryMessagesMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t QueryMessagesMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t QueryMessagesMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.QueryMessagesMessage.clockVal)
+  return _internal_clockval();
+}
+inline void QueryMessagesMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void QueryMessagesMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.QueryMessagesMessage.clockVal)
+}
+
 // -------------------------------------------------------------------
 
 // ChatMessage
@@ -7016,6 +7204,26 @@ inline void ChatMessage::set_fromleader(bool value) {
   // @@protoc_insertion_point(field_set:chatservice.ChatMessage.fromLeader)
 }
 
+// int32 clockVal = 6;
+inline void ChatMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t ChatMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t ChatMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.ChatMessage.clockVal)
+  return _internal_clockval();
+}
+inline void ChatMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void ChatMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.ChatMessage.clockVal)
+}
+
 // -------------------------------------------------------------------
 
 // DeleteAccountMessage
@@ -7146,6 +7354,26 @@ inline void DeleteAccountMessage::_internal_set_fromleader(bool value) {
 inline void DeleteAccountMessage::set_fromleader(bool value) {
   _internal_set_fromleader(value);
   // @@protoc_insertion_point(field_set:chatservice.DeleteAccountMessage.fromLeader)
+}
+
+// int32 clockVal = 4;
+inline void DeleteAccountMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t DeleteAccountMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t DeleteAccountMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.DeleteAccountMessage.clockVal)
+  return _internal_clockval();
+}
+inline void DeleteAccountMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void DeleteAccountMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.DeleteAccountMessage.clockVal)
 }
 
 // -------------------------------------------------------------------
@@ -7458,6 +7686,26 @@ inline void MessagesSeenMessage::_internal_set_fromleader(bool value) {
 inline void MessagesSeenMessage::set_fromleader(bool value) {
   _internal_set_fromleader(value);
   // @@protoc_insertion_point(field_set:chatservice.MessagesSeenMessage.fromLeader)
+}
+
+// int32 clockVal = 5;
+inline void MessagesSeenMessage::clear_clockval() {
+  _impl_.clockval_ = 0;
+}
+inline int32_t MessagesSeenMessage::_internal_clockval() const {
+  return _impl_.clockval_;
+}
+inline int32_t MessagesSeenMessage::clockval() const {
+  // @@protoc_insertion_point(field_get:chatservice.MessagesSeenMessage.clockVal)
+  return _internal_clockval();
+}
+inline void MessagesSeenMessage::_internal_set_clockval(int32_t value) {
+  
+  _impl_.clockval_ = value;
+}
+inline void MessagesSeenMessage::set_clockval(int32_t value) {
+  _internal_set_clockval(value);
+  // @@protoc_insertion_point(field_set:chatservice.MessagesSeenMessage.clockVal)
 }
 
 // -------------------------------------------------------------------

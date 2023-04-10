@@ -28,6 +28,7 @@ message CreateAccountMessage {
     string username=1;
     string password=2;
     optional bool fromLeader=3;
+    int32 clockVal=4;
 }
 
 
@@ -42,6 +43,7 @@ message LoginMessage {
     string username=1;
     string password=2;
     optional bool fromLeader=3;
+    int32 clockVal=4;
 }
 
 
@@ -55,6 +57,7 @@ message LoginReply {
 message LogoutMessage {
     string username=1;
     optional bool fromLeader=2;
+    int32 clockVal=3;
 }
 
 
@@ -88,6 +91,7 @@ message QueryNotificationsMessage {
     // bool queryingNotifications=1;
     string user=1;
     optional bool fromLeader=2;
+    int32 clockVal=3;
 }
 
 
@@ -102,6 +106,7 @@ message QueryMessagesMessage {
     string clientUsername=1;
     string otherUsername=2;
     optional bool fromLeader=3;
+    int32 clockVal=4;
 }
 
 
@@ -111,6 +116,7 @@ message ChatMessage {
     string msgContent=3;
     optional string leader=4;
     optional bool fromLeader=5;
+    int32 clockVal=6;
 }
 
 
@@ -118,6 +124,7 @@ message DeleteAccountMessage {
     string username=1;
     string password=2;
     optional bool fromLeader=3;
+    int32 clockVal=4;
 }
 
 
@@ -133,6 +140,7 @@ message MessagesSeenMessage {
     string otherUsername=2;
     int32 messagesSeen=3;
     optional bool fromLeader=4;
+    int32 clockVal=5;
 }
 
 message MessagesSeenReply {

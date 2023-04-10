@@ -57,6 +57,7 @@ int tryLogout(std::string username) {
 
 // Update messages dictionary
 int trySendMessage(std::string sender, std::string recipient, std::string content) {
+    std::cout << "updating storage with a message '" << content << "' from " << sender << " to " << recipient << std::endl;
     int status = 0;
     bool senderExists = userTrie.userExists(sender);
     bool recipientExists = userTrie.userExists(recipient);
@@ -125,10 +126,14 @@ std::vector<ChatMessage> tryQueryMessages(std::string clientusername, std::strin
     int lastMessageDeliveredIndex = -1;
     currentConversationsDictMutex.lock();
     CurrentConversation currentConversation = currentConversationsDict[clientusername];
-    if (currentConversation.username == otherusername) {
+    if (currentConversation.username == otherusername && messagesDictionary[userPair].messageList.size() > g_MessageLimit) {
         lastMessageDeliveredIndex = currentConversation.messagesSentStartIndex;
     } else {
         currentConversation.username = otherusername;
+    }
+
+    if (currentConversation.messagesSentStartIndex == 0) {
+        lastMessageDeliveredIndex = -1;
     }
 
     GetStoredMessagesReturnValue returnVal = messagesDictionary[userPair].getStoredMessages(clientusername, lastMessageDeliveredIndex);
@@ -143,29 +148,40 @@ std::vector<ChatMessage> tryQueryMessages(std::string clientusername, std::strin
 }
 
 void parseLine(std::vector<std::string> line) {
-    // std::cout<<line[0]<<std::endl;
+    // 
+    if (line.size() < 8) {
+        std::cout<<"would have seg faulted " << std::to_string(line.size()) <<std::endl;
+        return;
+    }
     int operation = stoi(line[0]);
 
     switch (operation) {
         case CREATE_ACCOUNT:
+            std::cout << "Trying to create account" << std::endl;
             tryCreateAccount(line[1], line[3]);
             break;
         case LOGIN:
+            std::cout << "Trying to login" << std::endl;
             tryLogin(line[1], line[3]);
             break;
         case LOGOUT:
+            std::cout << "Trying to logout" << std::endl;
             tryLogout(line[1]);
             break;
         case SEND_MESSAGE:
+            std::cout << "Trying to send message" << std::endl;
             trySendMessage(line[1], line[2], line[4]);
             break;
         case QUERY_MESSAGES:
+            std::cout << "Trying to query messages" << std::endl;
             tryQueryMessages(line[1], line[2]);
             break;
         case DELETE_ACCOUNT:
+            std::cout << "Trying to delete account" << std::endl;
             tryDeleteAccount(line[1]);
             break;
         case MESSAGES_SEEN:
+            std::cout << "Trying to update messages seen" << std::endl;
             tryMessagesSeen(line[1], line[2], stoi(line[5]));
             break; 
         default:
@@ -178,7 +194,7 @@ void writeToLogs(std::ofstream& logWriter, int operation, std::string username1 
 
     // Check if operation was valid
     if (operation == CREATE_ACCOUNT || operation == LOGIN || operation == LOGOUT || operation == SEND_MESSAGE || operation == QUERY_MESSAGES || operation == MESSAGES_SEEN || operation == DELETE_ACCOUNT) {
-        logWriter << std::to_string(operation) << "," << username1 << "," << username2 << "," << password << "," << messageContent << "," << messagesSeen << "," << leader << std::to_string(clockVal) << std::endl;
+        logWriter << std::to_string(operation) << "," << username1 << "," << username2 << "," << password << "," << messageContent << "," << messagesSeen << "," << leader << "," << std::to_string(clockVal) << std::endl;
     } else {
         std::cout << "unrecognized operation in write to logs" << std::endl;
     }

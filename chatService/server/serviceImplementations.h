@@ -160,13 +160,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string password = create_account_message->password();
 
             // If the message is from the leader or I am the leader, write to pending
-            if (create_account_message->fromleader() || leaderVals.isLeader) {
+            if (create_account_message->fromleader()) {
+                clockVal = std::max(create_account_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password, g_nullString, g_nullString, g_nullString, clockVal);
             } 
             
              // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, CREATE_ACCOUNT, username, g_nullString, password, g_nullString, g_nullString, g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
 
                 // Tell replicas to write to pending
@@ -178,6 +180,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     new_msg.set_fromleader(true);
                     new_msg.set_password(create_account_message->password());
                     new_msg.set_username(create_account_message->username());
+                    new_msg.set_clockval(clockVal);
                     Status status = it->second->CreateAccount(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
@@ -204,7 +207,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 // Add to storage
                 int createAccountStatus = tryCreateAccount(username, password);
 
-                std::cout << "this is create account status " << std::to_string(createAccountStatus) << std::endl; 
 
                 // Update error messages and reply based on account creation status
                 if (createAccountStatus == 1) {
@@ -228,13 +230,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string password = login_message->password();
 
             // If the message is from the leader or I am the leader, write to pending
-            if (login_message->fromleader() || leaderVals.isLeader) {
+            if (login_message->fromleader()) {
+                clockVal = std::max(login_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, LOGIN, username, g_nullString, password, g_nullString, g_nullString, g_nullString, clockVal);
             }
 
             // If master, talk to replicas, if not master just return ok after writing to pending
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, LOGIN, username, g_nullString, password, g_nullString, g_nullString, g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
 
                 // Get consensus 
@@ -246,6 +250,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     new_msg.set_fromleader(true);
                     new_msg.set_password(login_message->password());
                     new_msg.set_username(login_message->username());
+                    new_msg.set_clockval(clockVal);
                     Status status = it->second->Login(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
@@ -297,13 +302,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status Logout(ServerContext* context, const LogoutMessage* logout_message, LogoutReply* server_reply) {
             // If the message is from the leader or I am the leader, write to pending
-            if (logout_message->fromleader() || leaderVals.isLeader) {
+            if (logout_message->fromleader()) {
+                clockVal = std::max(logout_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, LOGOUT, logout_message->username(), g_nullString, g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
             }
             
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, LOGOUT, logout_message->username(), g_nullString, g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
 
                 // Get consensus 
@@ -314,6 +321,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     LogoutMessage new_msg;
                     new_msg.set_fromleader(true);
                     new_msg.set_username(logout_message->username());
+                    new_msg.set_clockval(clockVal);
                     Status status = it->second->Logout(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
@@ -395,13 +403,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             std::string recipientUsername = msg->recipientusername();
             std::string messageContent = msg->msgcontent();
 
-            if (msg->fromleader() || leaderVals.isLeader) {
+            if (msg->fromleader()) {
+                clockVal = std::max(msg->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent, g_nullString, g_nullString, clockVal);
             }
              
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, SEND_MESSAGE, senderUsername, recipientUsername, g_nullString, messageContent, g_nullString, g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
 
                 // Get consensus 
@@ -415,6 +425,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     new_msg.set_recipientusername(msg->recipientusername());
                     new_msg.set_leader(msg->leader());
                     new_msg.set_fromleader(true);
+                    new_msg.set_clockval(clockVal);
                     Status status = it->second->SendMessage(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
@@ -495,13 +506,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         Status QueryMessages(ServerContext* context, const QueryMessagesMessage* query, 
                             ServerWriter<ChatMessage>* writer) {
-            if (query->fromleader() || leaderVals.isLeader) {
+            if (query->fromleader()) {
+                clockVal = std::max(query->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername(), g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
             }
 
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, QUERY_MESSAGES, query->clientusername(), query->otherusername(), g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
 
                 // Get consensus 
@@ -512,6 +525,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     new_msg.set_clientusername(query->clientusername());
                     new_msg.set_otherusername(query->otherusername());
                     new_msg.set_fromleader(true);
+                    new_msg.set_clockval(clockVal);
                     std::unique_ptr<ClientReader<ChatMessage>> reader(it->second->QueryMessages(&context, new_msg));
                     Status status = reader->Finish();
                     
@@ -522,6 +536,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
                 // Removing dropped connections
                 for (int i = 0; i < droppedConnections.size(); i++) {
+                    std::cout << "Erasing connection to " << droppedConnections[i] << std::endl;
                     addressToStub.erase(droppedConnections[i]);
                 }
                
@@ -547,30 +562,31 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                 for (auto message : queryMessagesMessageList) {
                     writer->Write(message);
                 }
-            } else if (leaderVals.leaderidx != -1) {
+            } else if (leaderVals.leaderidx != -1 && !query->fromleader()) {
                 // If there is a leader, but it's not me
                 ChatMessage message;
                 message.set_leader(leaderVals.leaderAddress);
                 writer->Write(message);
-            } else {
+            } else if (!query->fromleader()) {
                 // if there is no leader, election is going on
                 ChatMessage message;
                 message.set_leader(g_ElectionString);
                 writer->Write(message);
             }
-
             return Status::OK;
         }
 
         Status DeleteAccount(ServerContext* context, const DeleteAccountMessage* delete_account_message,
                             DeleteAccountReply* server_reply) {
-            if (delete_account_message->fromleader() || leaderVals.isLeader) {
+            if (delete_account_message->fromleader()) {
+                clockVal = std::max(delete_account_message->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username(), g_nullString, g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
             }
             
             // check if master, talk to replicas
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, DELETE_ACCOUNT, delete_account_message->username(), g_nullString, g_nullString, g_nullString, g_nullString, g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
 
                 // Get consensus 
@@ -583,7 +599,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     new_msg.set_username(delete_account_message->username());
                     new_msg.set_password(delete_account_message->password());
                     new_msg.set_fromleader(true);
-                    
+                    new_msg.set_clockval(clockVal);
                     Status status = it->second->DeleteAccount(&context, new_msg, &reply); 
                     
                     if (!status.ok()) {
@@ -633,13 +649,15 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
 
         Status MessagesSeen(ServerContext* context, const MessagesSeenMessage* msg, MessagesSeenReply* reply) {
-            if (msg->fromleader() || leaderVals.isLeader) {
+            if (msg->fromleader()) {
+                clockVal = std::max(msg->clockval(), clockVal);
                 writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()), g_nullString, clockVal);
             }
 
             // TODO: check if master, talk to replicas
             if (leaderVals.isLeader) {
                 clockVal++;
+                writeToLogs(pendingLogWriter, MESSAGES_SEEN, msg->clientusername(), msg->otherusername(), g_nullString, g_nullString, std::to_string(msg->messagesseen()), g_nullString, clockVal);
                 std::vector<std::string> droppedConnections;
                 
                 // Get consensus 
@@ -653,7 +671,7 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                     new_msg.set_otherusername(msg->otherusername());
                     new_msg.set_messagesseen(msg->messagesseen());
                     new_msg.set_fromleader(true);  
-                             
+                    new_msg.set_clockval(clockVal);
                     Status status = it->second->MessagesSeen(&context, new_msg, &reply);
                     
                     if (!status.ok()) {
@@ -772,16 +790,20 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         // Write stream of operations to logs
-        Status AddToPending(ServerContext* context, ServerReader<Operation>* reader) {
+        Status AddToPending(ServerContext* context, ServerReader<Operation>* reader, AddToPendingResponse* response) {
             // delete your own commit logs
-            std::ofstream commitLogOverWriter;
-            commitLogOverWriter.open(commitFilename, std::fstream::trunc);
-            commitLogOverWriter.close();
+            std::cout << "Adding stuff to pending" << std::endl;
 
             Operation op;
             while (reader->Read(&op)) {
+                std::cout << "Writing operation with clock val " << op.clockval() << std::endl;
                 writeToLogs(commitLogWriter, std::stoi(op.message_type()), op.username1(), op.username2(),
-                        op.password(), op.message_content(), op.messagesseen(), op.leader(), clockVal);
+                        op.password(), op.message_content(), op.messagesseen(), op.leader(), std::stoi(op.clockval()));
+
+                std::vector<std::string> row{op.message_type(), op.username1(), op.username2(), op.password(),
+                                             op.message_content(), op.messagesseen(), op.leader(), op.clockval()};
+                clockVal = std::stoi(op.clockval());
+                parseLine(row);
             }
             
             return Status::OK;
@@ -790,8 +812,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         Status RequestPendingLog(ServerContext* context, const PendingLogRequest* request, 
                                 ServerWriter<Operation>* writer) {
             std::vector<std::vector<std::string>> vectorizedLines;
+            std::cout << "Pending logs were requested, reading file" << std::endl;
             readFile(&vectorizedLines, pendingFilename);
-            for (std::vector<std::string> line : vectorizedLines) {
+            for (int idx = 1; idx < vectorizedLines.size(); idx++) {
+                std::vector<std::string> line = vectorizedLines[idx];
                 Operation op;
                 op.set_clockval(line[7]);
                 op.set_message_type(line[0]);
@@ -809,7 +833,6 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
         // For interserver communication stuff
         void addConnection(std::string server_address) {
-            // TODO: do we want to put this in a loop to keep trying until it works?
             auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
             std::unique_ptr<ChatService::Stub> stub_ = ChatService::NewStub(channel);
             std::cout << "Adding connection to " << server_address << std::endl;
@@ -948,25 +971,42 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
             leaderElectionValuesMutex.unlock();
 
             std::cout << "Leader election finished" << std::endl;
-            g_startingUp = false;
+            if (!leaderVals.isLeader && g_startingUp) {
+                g_startingUp = false;
+
+                // truncate leader
+                std::ofstream commitLogOverWriter;
+                commitLogOverWriter.open(commitFilename, std::fstream::trunc);
+                commitLogOverWriter.close();
+
+                commitLogWriter << g_csvFields << std::endl;
+                
+            }
         }
         
         // For leader to send commit logs
         void sendLogs(std::string filename) {
-            ClientContext context;
         
             // Read committed content
             std::vector<std::vector<std::string>> content;
             readFile(&content, filename);
 
-            // Send to other connections
+            if (filename == commitFilename) {
+                for (int i = 1; i < content.size(); i++) {
+                    parseLine(content[i]);
+                    clockVal = std::stoi(content[i][7]);
+                }
+            }
 
+            // Send to other connections
+            std::cout << "Iterating over connections " << std::endl;
             for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
                 if (it->first != leaderVals.leaderAddress) {
+                    ClientContext context;
                     AddToPendingResponse response;
-                    auto stream = it->second->AddToPending(&context, &response);
+                    std::unique_ptr<ClientWriter<Operation>> writer(it->second->AddToPending(&context, &response));
 
-                    for (int i = 0; i < content.size(); i++) {
+                    for (int i = 1; i < content.size(); i++) {
                         Operation op;
 
                         op.set_message_type(content[i][0]);
@@ -978,12 +1018,13 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
                         op.set_leader(content[i][6]);
                         op.set_clockval(content[i][7]);
 
-                        stream->Write(op);
+                        writer->Write(op);
+
                     }
 
-                    stream->WritesDone();
+                    writer->WritesDone();
 
-                    Status status = stream->Finish();
+                    Status status = writer->Finish();
                     
                     if (status.ok()) {
                         std::cout << "RPC succeeded." << std::endl;
@@ -1017,7 +1058,10 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         void requestLogs(std::vector<OperationClass>& operations) {
+            std::cout << "Iterating through connections" << std::endl;
+            std::vector<std::string> droppedConnections;
             for (auto it = addressToStub.begin(); it != addressToStub.end(); it++) {
+                std::cout << "Requesting pending logs from " << it->first << std::endl;
                 ClientContext context;
                 PendingLogRequest request;
                 Operation op;
@@ -1037,8 +1081,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
 
                 Status status = reader->Finish();
                 if (!status.ok()) {
-                    addressToStub.erase(it->first);
+                    std::cout << "Erasing connection to " << it->first << std::endl;
+                    std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+                    droppedConnections.push_back(it->first);
                 }
+            }
+
+            for (std::string addr : droppedConnections) {
+                addressToStub.erase(addr);
             }
         }
 
@@ -1050,26 +1100,14 @@ class ChatServiceImpl final : public chatservice::ChatService::Service {
         }
 
         void moveAllPendingToCommit() {
-            std::vector<std::string> rows;
-            std::string line;
-
             // Read pending file
-            std::fstream file;
-            file.open(pendingFilename, std::ios::in);
-            file.seekg(0, file.beg);
-
-            if (file.is_open()) {
-                while (getline(file, line)) {
-                    rows.push_back(line);
-                }
-            }
-            else {
-                std::cout<<"Could not open " << pendingFilename << std::endl;
-            }
+            std::vector<std::vector<std::string>> content;
+            readFile(&content, pendingFilename);
 
             // Write to commit file
-            for (int i = 0; i < rows.size(); i++) {
-                commitLogWriter << rows[i] << std::endl;
+            for (int i = 1; i < content.size(); i++) {
+                writeToLogs(commitLogWriter, stoi(content[i][0]), content[i][1], content[i][2], content[i][3], content[i][4], content[i][5], content[i][6], stoi(content[i][7]));
+                parseLine(content[i]);
             }
 
             // Clear pending log, write first line back
